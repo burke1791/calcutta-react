@@ -4,8 +4,6 @@ import './app.css';
 
 import Button from './button/button';
 import Auth from './auth/auth';
-import Modal from './modal/modal';
-import LoginForm from './loginForm/loginForm';
 
 class App extends Component {
   render() {
@@ -18,18 +16,16 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to March Madness Calcutta</h1>
         </header>
-        <div className='login-modal'>
-          <Modal show='' onHide='' modalType='login' />
-        </div>
         <p className="App-intro">
           To get started, create or join a league
         </p>
-        <div className='league-options'>
-          <Button btnValue="Join" />
-          <Button btnValue="Create" />
-        </div>
-        <div className='container'>
-          <LoginForm />
+        <div className='btn-toolbar justify-content-center'>
+          <div className='btn-group m-2'>
+            <Button btnValue="Join" />
+          </div>
+          <div className='btn-group m-2'>
+            <Button btnValue="Create" />
+          </div>
         </div>
       </div>
     );
