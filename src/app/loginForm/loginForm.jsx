@@ -67,9 +67,11 @@ class LoginForm extends Component {
     // Check for valid inputs
     
     if (this.state.createUser) {
-      authRef.createUserWithEmailAndPassword(this.state.emailVal, this.state.pass1Val).then(function(user) {
-        var user = authRef.createUser;
+      var thisForm = this;
 
+      authRef.createUserWithEmailAndPassword(this.state.emailVal, this.state.pass1Val).then(function(user) {
+        var newUser = authRef.createUser;
+        thisForm.logUserInDatabase(newUser);
       });
     }
     // Wait for return from firebase
