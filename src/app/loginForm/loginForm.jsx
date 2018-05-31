@@ -70,7 +70,8 @@ class LoginForm extends Component {
       var thisForm = this;
 
       authRef.createUserWithEmailAndPassword(this.state.emailVal, this.state.pass1Val).then(function(user) {
-        var newUser = authRef.createUser;
+        var newUser = authRef.currentUser;
+        console.log('newUser: ' + newUser);
         thisForm.logUserInDatabase(newUser);
       });
     }
@@ -85,6 +86,7 @@ class LoginForm extends Component {
   }
 
   logUserInDatabase(user) {
+    console.log('user: ' + user);
     var uid = user.uid;
 
     if (user != null) {
