@@ -1,4 +1,5 @@
 export const NOTIF_MODAL_TOGGLE = 'notif_modal_toggle';
+export const NOTIF_AUTH_SUBMIT = 'notif_auth_submit';
 
 var observers = {};
 let instance = null;

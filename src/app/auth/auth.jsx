@@ -22,7 +22,7 @@ class Auth extends Component {
   render() {
     return (
       <div className='auth-header'>
-        <Button onClick={this.onBtnClicked} btnValue="Sign In" />
+        <Button btnType='button' btnClass='btn btn-primary' onClick={this.onBtnClicked} btnValue="Sign In" />
         <LoginModal modalType='login' />
       </div>
     );
