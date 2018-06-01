@@ -5,9 +5,12 @@ import Button from './button/button';
 import AuthHeader from './authHeader/authHeader';
 import AuthenticationService from '../services/authentication-service';
 import DataService from '../services/data-service';
+import { auth } from '../services/fire';
+import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../services/notification-service';
 
 let authService = new AuthenticationService();
 let ds = new DataService();
+let ns = new NotificationService();
 
 class App extends Component {
   
@@ -15,19 +18,56 @@ class App extends Component {
     super();
 
     this.state = {
-      loading: true
+      loading: true,
+      authenticatedUser: {},
+      authenticatedUsername: ''
     };
 
     //Bind functions
     this.printUserInfo = this.printUserInfo.bind(this);
   }
 
+  componentDidMount() {
+    var thisApp = this;
+
+    auth.onAuthStateChanged(function(user) {
+      if (user) {
+        console.log('user signed in');
+        thisApp.setState({authenticatedUser: user});
+
+        ds.getDisplayName(thisApp.state.authenticatedUser.uid).then(function(res) {
+          thisApp.setState({authenticatedUsername: res});
+        });
+        ns.postNotification(NOTIF_SIGNIN, null);
+      } else {
+        console.log('user is signed out');
+        ns.postNotification(NOTIF_SIGNOUT);
+        thisApp.setState({
+          authenticatedUser: {},
+          authenticatedUsername: ''
+        })
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    auth.onAuthStateChanged();
+  }
+
   // TEST
   printUserInfo() {
-    var user = authService.getUser
+    var user = this.state.authenticatedUser;
 
     var uid = user.uid;
-    var name = ds.getDisplayName(uid);
+    var name = '';
+
+    var thisForm = this;
+
+    ds.getDisplayName(uid).then(function(res) {
+      name = res;
+      thisForm.setState({authenticatedUsername: name});
+      console.log('name from promise: ' + name);
+    });
 
     console.log('uid: ' + uid);
     console.log('name: ' + name);
@@ -38,7 +78,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <div className='auth-header col-sm-2'>
-            <AuthHeader username={ds.getDisplayName(authService.getUser.uid)}/>
+            <AuthHeader username={this.state.authenticatedUsername}/>
           </div>
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to March Madness Calcutta</h1>

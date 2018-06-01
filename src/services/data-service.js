@@ -1,10 +1,8 @@
 import NotificationService, {} from './notification-service';
-import Fire from './fire';
+import { database } from './fire';
 
 let ns = new NotificationService();
 let instance = null;
-
-let usersRef = Fire.database().ref('users');
 
 class DataService {
   constructor() {
@@ -16,15 +14,12 @@ class DataService {
   }
 
   logUserInDatabase(user, username) {
-    console.log('user: ' + user);
     var uid = user.uid;
-    console.log(usersRef == null);
-    console.log('username: ' + username);
 
     var userData = {
       'username': username
     };
-    usersRef.child(uid).update(userData);
+    database.ref('/users').child(uid).update(userData);
 
     if (user != null) {
       user.providerData.forEach(function(profile) {
@@ -35,17 +30,21 @@ class DataService {
           'email': profile.email,
           'photo-url': profile.photoURL
         };
-        usersRef.child(uid).update(userData);
+        database.ref('users').child(uid).update(userData);
       })
     }
   }
 
   getDisplayName = (uid) => {
     if (uid != null) {
-      var displayName = usersRef.child(uid).username;
-      console.log('username: ' + displayName);
-
-      return displayName;
+      return new Promise((resolve, reject) => {
+        var displayName = 'didn\'t work'
+        database.ref('/users/' + uid).once('value').then(function(snapshot) {
+          displayName = snapshot.child('username').val();
+          console.log('display snapshot: ' + displayName);
+          resolve(displayName);
+        });
+      })
     } else {
       return null;
     }

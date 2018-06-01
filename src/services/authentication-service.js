@@ -1,11 +1,10 @@
-import NotificationService, {NOTIF_SIGNIN, NOTIF_SIGNOUT} from './notification-service';
+import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from './notification-service';
 import DataService from './data-service';
-import Fire from './fire';
+import { auth } from './fire';
 
 let ns = new NotificationService();
 let ds = new DataService();
 let instance = null;
-let authRef = Fire.auth();
 
 class AuthenticationService {
   constructor() {
@@ -17,15 +16,16 @@ class AuthenticationService {
   }
 
   getUser = () => {
-    console.log(authRef.currentUser.uid);
-    return authRef.currentUser;
+    console.log(auth.currentUser.uid);
+    return auth.currentUser;
   }
 
   createUser(email, password, username) {
     console.log('username in authServ: ' + username);
-    authRef.createUserWithEmailAndPassword(email, password).then(function(user) {
-      var user = authRef.currentUser;
+    auth.createUserWithEmailAndPassword(email, password).then(function(user) {
+      var user = auth.currentUser;
       ds.logUserInDatabase(user, username);
+      ns.postNotification(NOTIF_SIGNIN, null);
     }, function(error) {
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -35,8 +35,9 @@ class AuthenticationService {
   }
 
   signInUser(email, password) {
-    authRef.signInWithEmailAndPassword(email, password).then(function(user) {
+    auth.signInWithEmailAndPassword(email, password).then(function(user) {
       // Post notification?
+      ns.postNotification(NOTIF_SIGNIN, null);
     }, function(error) {
       var errorCode = error.code;
       var errorMessage = error.message;
@@ -46,7 +47,8 @@ class AuthenticationService {
   }
 
   signOutUser() {
-
+    auth.signOut();
+    ns.postNotification(NOTIF_SIGNOUT, null);
   }
 }
 
