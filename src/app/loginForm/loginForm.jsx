@@ -2,12 +2,11 @@ import React, {Component} from 'react';
 import './loginForm.css';
 import Fire from '../../services/fire';
 import NotificationService, {NOTIF_AUTH_SUBMIT} from '../../services/notification-service';
+import AuthenticationService from '../../services/authentication-service';
 import Button from '../button/button';
 
 let ns = new NotificationService();
-
-let usersRef = Fire.database().ref('users');
-let authRef = Fire.auth();
+let authService = new AuthenticationService();
 
 class LoginForm extends Component {
   
@@ -28,7 +27,6 @@ class LoginForm extends Component {
     //Bind functions
     this.authTypeToggle = this.authTypeToggle.bind(this);
     this.authSubmission = this.authSubmission.bind(this);
-    this.logUserInDatabase = this.logUserInDatabase.bind(this);
     this.onUsernameChange = this.onUsernameChange.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onPass1Change = this.onPass1Change.bind(this);
@@ -36,8 +34,6 @@ class LoginForm extends Component {
   }
 
   componentWillMount() {
-    
-
     ns.addObserver(NOTIF_AUTH_SUBMIT, this, this.authSubmission);
   }
 
@@ -66,41 +62,15 @@ class LoginForm extends Component {
   authSubmission(event) {
     // Check for valid inputs
     
-    if (this.state.createUser) {
-      var thisForm = this;
+    event.preventDefault();
 
-      authRef.createUserWithEmailAndPassword(this.state.emailVal, this.state.pass1Val).then(function(user) {
-        var newUser = authRef.currentUser;
-        console.log('newUser: ' + newUser);
-        thisForm.logUserInDatabase(newUser);
-      });
+    var thisForm = this;
+    if (this.state.createUser) {
+      authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
+    } else {
+      authService.signInUser(this.state.emailVal, this.state.pass1Val);
     }
     // Wait for return from firebase
-
-    // Test
-    event.preventDefault();
-    console.log('Username ' + this.state.usernameVal);
-    console.log('Email ' + this.state.emailVal);
-    console.log('Pass 1 ' + this.state.pass1Val);
-    console.log('Pass 2 ' + this.state.pass2Val);
-  }
-
-  logUserInDatabase(user) {
-    console.log('user: ' + user);
-    var uid = user.uid;
-
-    if (user != null) {
-      user.providerData.forEach(function(profile) {
-        var userData = {
-          'provider': profile.providerId,
-          'provider-uid': profile.uid,
-          'name': profile.displayName,
-          'email': profile.email,
-          'photo-url': profile.photoURL
-        }
-        usersRef.child(uid).update(userData);
-      })
-    }
   }
 
   onUsernameChange(event) {
