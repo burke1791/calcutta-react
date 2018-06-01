@@ -66,11 +66,12 @@ class LoginForm extends Component {
 
     var thisForm = this;
     if (this.state.createUser) {
-      authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
+      var success = authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
     } else {
       authService.signInUser(this.state.emailVal, this.state.pass1Val);
     }
-    // Wait for return from firebase
+    
+    this.props.submitHandler();
   }
 
   onUsernameChange(event) {
@@ -112,7 +113,7 @@ class LoginForm extends Component {
           <div className='container'>
             <div className='row'>
               <div className='col-12'>
-                <Button btnType='submit' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
+                <Button btnType='button' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
               </div>
             </div>
             <div className='row'>

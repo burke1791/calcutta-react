@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import './auth.css'
+import './authHeader.css'
 import Button from '../button/button';
 import LoginModal from '../modal/modal';
 import NotificationService, {NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT} from '../../services/notification-service';
 
 let ns = new NotificationService();
 
-class Auth extends Component {
+class AuthHeader extends Component {
   
   constructor(props) {
     super(props);
@@ -45,17 +45,31 @@ class Auth extends Component {
   
   render() {
     
-    if (this.state.authenticated) {
+    var signedInClass = 'btn btn-link';
+    var signedOutClass = 'btn btn-primary';
 
+    if (this.state.authenticated) {
+      signedInClass = 'btn btn-link';
+      signedOutClass = 'btn btn-primary d-none';
+    } else {
+      signedInClass = 'btn btn-link';
+      signedOutClass = 'btn btn-primary';
     }
 
     return (
       <div className='auth-header'>
-        <Button btnType='button' btnClass='btn btn-primary' onClick={this.onBtnClicked} btnValue="Sign In" />
+        <div className='btn-toolbar'>
+          <div className='btn-group'>
+            <Button btnType='button' btnClass={signedInClass} btnValue={'Signed in as: ' + this.props.username} />
+          </div>
+          <div className='btn-group'>
+            <Button btnType='button' btnClass={signedOutClass} onClick={this.onBtnClicked} btnValue="Sign In" />
+          </div>
+        </div>
         <LoginModal modalType='login' />
       </div>
     );
   }
 }
 
-export default Auth;
+export default AuthHeader;

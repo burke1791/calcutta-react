@@ -5,7 +5,6 @@ import Fire from './fire';
 let ns = new NotificationService();
 let ds = new DataService();
 let instance = null;
-
 let authRef = Fire.auth();
 
 class AuthenticationService {
@@ -17,6 +16,11 @@ class AuthenticationService {
     return instance;
   }
 
+  getUser = () => {
+    console.log(authRef.currentUser.uid);
+    return authRef.currentUser;
+  }
+
   createUser(email, password, username) {
     console.log('username in authServ: ' + username);
     authRef.createUserWithEmailAndPassword(email, password).then(function(user) {
@@ -26,12 +30,19 @@ class AuthenticationService {
       var errorCode = error.code;
       var errorMessage = error.message;
 
-      console.log('error message: ' + errorMessage);
+      console.log('create user error: ' + errorMessage);
     });
   }
 
   signInUser(email, password) {
+    authRef.signInWithEmailAndPassword(email, password).then(function(user) {
+      // Post notification?
+    }, function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
 
+      console.log('sign in error: ' + errorMessage);
+    })
   }
 
   signOutUser() {

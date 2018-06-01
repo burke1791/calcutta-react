@@ -39,6 +39,17 @@ class DataService {
       })
     }
   }
+
+  getDisplayName = (uid) => {
+    if (uid != null) {
+      var displayName = usersRef.child(uid).username;
+      console.log('username: ' + displayName);
+
+      return displayName;
+    } else {
+      return null;
+    }
+  }
 }
 
 export default DataService;
