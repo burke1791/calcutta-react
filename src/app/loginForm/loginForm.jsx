@@ -113,7 +113,7 @@ class LoginForm extends Component {
           <div className='container'>
             <div className='row'>
               <div className='col-12'>
-                <Button btnType='button' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
+                <Button btnType='submit' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
               </div>
             </div>
             <div className='row'>
