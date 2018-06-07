@@ -36,7 +36,7 @@ class AuthenticationService {
 
   signInUser(email, password) {
     auth.signInWithEmailAndPassword(email, password).then(function(user) {
-      // Post notification?
+      console.log('sign in notification posted');
       ns.postNotification(NOTIF_SIGNIN, null);
     }, function(error) {
       var errorCode = error.code;

@@ -41,11 +41,12 @@ class NotificationService {
   }
 
   postNotification = (notifName, data) => {
+    console.log('notification: ' + notifName);
     let obs = observers[notifName];
+    console.log('obs: ' + obs);
     for (var x = 0; x < obs.length; x++) {
       var obj = obs[x];
       obj.callBack(data);
-      break;
     }
   }
 }
