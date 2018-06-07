@@ -7,6 +7,7 @@ import AuthenticationService from '../services/authentication-service';
 import DataService from '../services/data-service';
 import { auth } from '../services/fire';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../services/notification-service';
+import LeagueTable from './leagueTable/leagueTable';
 
 let authService = new AuthenticationService();
 let ds = new DataService();
@@ -96,6 +97,9 @@ class App extends Component {
           <div className='btn-group m-2'>
             <Button btnType='button' btnClass='btn btn-secondary' btnValue='Print User Info' onClick={this.printUserInfo} />
           </div>
+        </div>
+        <div className='table'>
+          <LeagueTable className='league-list' />
         </div>
       </div>
     );

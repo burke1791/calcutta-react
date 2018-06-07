@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './leagueTable.css';
 import LeagueRow from '../leagueRow/leagueRow';
+import { auth, database } from '../../services/fire';
 
 class LeagueTable extends Component {
   constructor(props) {
@@ -15,6 +16,24 @@ class LeagueTable extends Component {
   }
 
   loadLeagues = () => {
+    var self = this;
+    var uid = auth.currentUser.uid;
+    var leagues = [];
+    console.log('loadLeagues uid: ' + uid);
+    database.ref('/leagues/').once('value').then(function(snapshot) {
+      console.log('snapshot keys: ' + Object.keys(snapshot.val()));
+      snapshot.forEach(function(childSnapshot) {
+        var league = childSnapshot.val();
+        console.log(league);
+        if (uid == childSnapshot.uid) {
+          leagues.push(league);
+        }
+      });
+      self.setState({leagues: leagues});
+    });
+  }
+
+  leagueList = () => {
     const list = this.state.leagues.map((league) => {
       <div className='' key={league.id}>
         
@@ -25,6 +44,7 @@ class LeagueTable extends Component {
   render() {
     return(
       <div className='table-info'>
+        <button onClick={this.loadLeagues} />
         <table className={this.props.className}>
           <thead>
           
