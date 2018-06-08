@@ -47,7 +47,6 @@ class LeagueForm extends Component {
     if (this.state.leagueNameVal == '' || this.state.leaguePassVal == '') {
       alert('Please enter a league name and password');
     } else if (this.state.leagueType == 'join') {
-      // TODO: check if user is already a member
       // TODO: check for multiple leagues using the same name and password before adding user to members list
       database.ref('/leagues').once('value').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
