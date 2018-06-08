@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './leagueTable.css';
 import { auth, database } from '../../services/fire';
-import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../services/notification-service';
+import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../services/notification-service';
 
 let ns = new NotificationService();
 
@@ -25,6 +25,8 @@ class LeagueTable extends Component {
   componentWillMount() {
     ns.addObserver(NOTIF_SIGNIN, this, this.loadLeagues);
     ns.addObserver(NOTIF_SIGNOUT, this, this.clearTables);
+    ns.addObserver(NOTIF_LEAGUE_CREATED, this, this.loadLeagues);
+    ns.addObserver(NOTIF_LEAGUE_JOINED, this, this.loadLeagues);
   }
 
   componentWillUnmount() {

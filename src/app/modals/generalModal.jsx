@@ -57,11 +57,11 @@ class GeneralModal extends Component {
   }
 
   getTitle = () => {
-    if (this.state.modalType == 'login') {
+    if (this.state.modalType === 'login') {
       return 'Please Sign In';
-    } else if (this.state.modalType == 'join') {
+    } else if (this.state.modalType === 'join') {
       return 'Join a League';
-    } else if (this.state.modalType == 'create') {
+    } else if (this.state.modalType === 'create') {
       return 'Create a League';
     }
   }

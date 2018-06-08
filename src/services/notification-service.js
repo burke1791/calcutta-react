@@ -4,6 +4,8 @@ export const NOTIF_SIGNIN = 'notif_signin';
 export const NOTIF_SIGNOUT = 'notif_signout';
 export const NOTIF_LEAGUE_SUBMIT = 'notif_league_submit';
 export const NOTIF_MODAL_TYPE_CHANGE = 'notif_modal_type_change';
+export const NOTIF_LEAGUE_JOINED = 'notif_league_joined';
+export const NOTIF_LEAGUE_CREATED = 'notif_league_created';
 
 var observers = {};
 let instance = null;
