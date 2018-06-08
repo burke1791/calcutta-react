@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './app.css';
-import Button from './button/button';
-import AuthHeader from './authHeader/authHeader';
+import Button from './components/button/button';
+import AuthHeader from './components/authHeader/authHeader';
 import AuthenticationService from '../services/authentication-service';
 import DataService from '../services/data-service';
 import { auth } from '../services/fire';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TOGGLE } from '../services/notification-service';
-import LeagueTable from './leagueTable/leagueTable';
+import LeagueTable from './components/leagueTable/leagueTable';
 
 let authService = new AuthenticationService();
 let ds = new DataService();

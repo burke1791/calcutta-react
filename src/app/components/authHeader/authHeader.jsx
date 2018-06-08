@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './authHeader.css'
 import Button from '../button/button';
 import GeneralModal from '../modals/generalModal';
-import NotificationService, { NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../services/notification-service';
-import AuthenticationService from '../../services/authentication-service';
+import NotificationService, { NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../../services/notification-service';
+import AuthenticationService from '../../../services/authentication-service';
 
 let ns = new NotificationService();
 let authService = new AuthenticationService();

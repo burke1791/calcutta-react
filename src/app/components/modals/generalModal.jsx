@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal';
-import NotificationService, {NOTIF_MODAL_TOGGLE, NOTIF_MODAL_TYPE_CHANGE} from '../../services/notification-service';
+import NotificationService, {NOTIF_MODAL_TOGGLE, NOTIF_MODAL_TYPE_CHANGE} from '../../../services/notification-service';
 import LoginForm from '../loginForm/loginForm';
 import LeagueForm from '../leagueForm/leagueForm';
 

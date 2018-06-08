@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import './loginForm.css';
-import NotificationService, {NOTIF_AUTH_SUBMIT} from '../../services/notification-service';
-import AuthenticationService from '../../services/authentication-service';
+import NotificationService, {NOTIF_AUTH_SUBMIT} from '../../../services/notification-service';
+import AuthenticationService from '../../../services/authentication-service';
 import Button from '../button/button';
 
 let ns = new NotificationService();

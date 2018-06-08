@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import './leagueForm.css';
-import NotificationService, { NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TYPE_CHANGE, NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from '../../services/notification-service';
-import AuthenticationService from '../../services/authentication-service';
+import NotificationService, { NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TYPE_CHANGE, NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from '../../../services/notification-service';
+import AuthenticationService from '../../../services/authentication-service';
 import Button from '../button/button';
-import { auth, database } from '../../services/fire';
+import { auth, database } from '../../../services/fire';
 
 let ns = new NotificationService();
 let authService = new AuthenticationService();

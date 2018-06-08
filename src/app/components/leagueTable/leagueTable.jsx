@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './leagueTable.css';
-import { auth, database } from '../../services/fire';
-import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../services/notification-service';
+import { auth, database } from '../../../services/fire';
+import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../../services/notification-service';
 
 let ns = new NotificationService();
 
