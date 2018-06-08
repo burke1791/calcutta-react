@@ -94,9 +94,6 @@ class App extends Component {
           <div className='btn-group m-2'>
             <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" />
           </div>
-          <div className='btn-group m-2'>
-            <Button btnType='button' btnClass='btn btn-secondary' btnValue='Print User Info' onClick={this.printUserInfo} />
-          </div>
         </div>
         <div className='container card my-4'>
           <h3>In Progress Leagues</h3>

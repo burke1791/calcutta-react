@@ -85,23 +85,39 @@ class LeagueTable extends Component {
     if (value < 0) {
       s = '-';
     }
-    currencyString = s + sym + ' ' + value.toFixed(2);
+    currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
   }
 
   leagueList = () => {
-    // tr data will eventually be the <LeagueRow /> component - or perhaps not..?
-    // and will need to provide a "key" for each "league" in the "leagues" array
-    const list = this.state.leagues.map((league) =>
-      <tr className='d-flex'>
-        <td className='col col-md-6'>{league.name}</td>
-        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[0])}</td>
-        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[1])}</td>
-        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[2])}</td>
-      </tr>
-    );
+    // will need to provide a "key" for each "league" in the "leagues" array
+    if (this.state.leagues.length) {
+      const list = this.state.leagues.map((league) => {
+        var buyIn = this.formatMoney(this.getUserLeagueSummary(league)[0]);
+        var payout = this.formatMoney(this.getUserLeagueSummary(league)[1]);
+        var netReturn = this.formatMoney(this.getUserLeagueSummary(league)[2]);
+  
+        var netReturnNegativeClass = this.getUserLeagueSummary(league)[2] < 0 ? ' text-danger' : '';
+  
+        return (
+          <tr className='d-flex'>
+            <td className='col col-md-6'>{league.name}</td>
+            <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[0])}</td>
+            <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[1])}</td>
+            <td className={'col col-md-2' + netReturnNegativeClass}>{this.formatMoney(this.getUserLeagueSummary(league)[2])}</td>
+          </tr>
+        );
+        
+      });
 
-    return (list);
+      return (list);
+    } else {
+      return (
+        <tr className='d-flex'>
+          <td className='col-md' colSpan='4'>**Create or Join a League**</td>
+        </tr>
+      );
+    }
   }
   
   render() {
