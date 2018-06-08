@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './leagueTable.css';
-import LeagueRow from '../leagueRow/leagueRow';
 import { auth, database } from '../../services/fire';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../services/notification-service';
 
@@ -11,7 +10,8 @@ class LeagueTable extends Component {
     super(props);
 
     this.state = {
-      leagues: []
+      leagues: [],
+      tableDataSource: this.props.tableSource // Can be one of three values: 'in-progress', 'complete', or 'pending'
     }
 
     // Bind functions
@@ -19,6 +19,7 @@ class LeagueTable extends Component {
     this.leagueList = this.leagueList.bind(this);
     this.clearTables = this.clearTables.bind(this);
     this.getUserLeagueSummary = this.getUserLeagueSummary.bind(this);
+    this.formatMoney = this.formatMoney.bind(this);
   }
 
   componentWillMount() {
@@ -34,14 +35,16 @@ class LeagueTable extends Component {
   loadLeagues() {
     console.log('loadLeagues called');
     var self = this;
+    var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
     var uid = auth.currentUser.uid;
     var leagues = [];
     database.ref('/leagues/').once('value').then(function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         var league = childSnapshot.val();
         var members = childSnapshot.child('members').val();
+        var leagueStatus = childSnapshot.child('status').val();
 
-        if (members[uid]) {
+        if (members[uid] && leagueStatus == self.state.tableDataSource) {
           leagues.push(league);
         }
       });
@@ -73,15 +76,28 @@ class LeagueTable extends Component {
     return [buyIn, payout, netReturn];
   }
 
+  formatMoney = (value) => {
+    var currencyString = '';
+
+    var s = '';
+    var sym = '$';
+    
+    if (value < 0) {
+      s = '-';
+    }
+    currencyString = s + sym + ' ' + value.toFixed(2);
+    return (currencyString);
+  }
+
   leagueList = () => {
     // tr data will eventually be the <LeagueRow /> component - or perhaps not..?
     // and will need to provide a "key" for each "league" in the "leagues" array
     const list = this.state.leagues.map((league) =>
-      <tr>
-        <td className='col col-md-4'>{league.name}</td>
-        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[0]}</td>
-        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[1]}</td>
-        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[2]}</td>
+      <tr className='d-flex'>
+        <td className='col col-md-6'>{league.name}</td>
+        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[0])}</td>
+        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[1])}</td>
+        <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[2])}</td>
       </tr>
     );
 
@@ -91,11 +107,10 @@ class LeagueTable extends Component {
   render() {
     return(
       <div className='row justify-content-md-center'>
-        <button onClick={this.loadLeagues} />
         <table className={this.props.className}>
           <thead>
-            <tr>
-              <th className='col col-md-4'>League Name</th>
+            <tr className='d-flex'>
+              <th className='col col-md-6'>League Name</th>
               <th className='col col-md-2'>Buy In</th>
               <th className='col col-md-2'>Current Payout</th>
               <th className='col col-md-2'>Net Return</th>
