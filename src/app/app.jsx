@@ -58,11 +58,21 @@ class App extends Component {
   }
 
   onJoinLeagueBtnClicked() {
-    ns.postNotification(NOTIF_MODAL_TOGGLE, 'join');
+    if (auth.currentUser != null) {
+      ns.postNotification(NOTIF_MODAL_TOGGLE, 'join');
+    } else {
+      alert('Please Sign In Before Joining a League');
+    }
+    
   }
 
   onCreateLeagueBtnClicked() {
-    ns.postNotification(NOTIF_MODAL_TOGGLE, 'create');
+    if (auth.currentUser != null) {
+      ns.postNotification(NOTIF_MODAL_TOGGLE, 'create');
+    } else {
+      alert('Please Sign In Before Creating a League');
+    }
+    
   }
 
   // TEST
