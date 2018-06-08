@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import './loginForm.css';
-import Fire from '../../services/fire';
 import NotificationService, {NOTIF_AUTH_SUBMIT} from '../../services/notification-service';
 import AuthenticationService from '../../services/authentication-service';
 import Button from '../button/button';
@@ -91,6 +90,7 @@ class LoginForm extends Component {
   }
   
   render() {
+    // TODO: refactor to have the create/login differences returned by a function
     return (
       <div className='login-form'>
         <form>

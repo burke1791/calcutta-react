@@ -2,6 +2,8 @@ export const NOTIF_MODAL_TOGGLE = 'notif_modal_toggle';
 export const NOTIF_AUTH_SUBMIT = 'notif_auth_submit';
 export const NOTIF_SIGNIN = 'notif_signin';
 export const NOTIF_SIGNOUT = 'notif_signout';
+export const NOTIF_LEAGUE_SUBMIT = 'notif_league_submit';
+export const NOTIF_MODAL_TYPE_CHANGE = 'notif_modal_type_change';
 
 var observers = {};
 let instance = null;

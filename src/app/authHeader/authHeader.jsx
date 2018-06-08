@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './authHeader.css'
 import Button from '../button/button';
-import LoginModal from '../modal/modal';
+import GeneralModal from '../modals/generalModal';
 import NotificationService, { NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../services/notification-service';
 import AuthenticationService from '../../services/authentication-service';
 
@@ -35,7 +35,7 @@ class AuthHeader extends Component {
   }
 
   onSignInClicked() {
-    ns.postNotification(NOTIF_MODAL_TOGGLE, null);
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'login');
   }
 
   onSignOutClicked() {
@@ -73,7 +73,7 @@ class AuthHeader extends Component {
         <div className='btn-toolbar'>
           {this.generateAuthBtn()}
         </div>
-        <LoginModal modalType='login' />
+        <GeneralModal modalType='login' />
       </div>
     );
   }

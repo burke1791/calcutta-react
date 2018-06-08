@@ -6,7 +6,7 @@ import AuthHeader from './authHeader/authHeader';
 import AuthenticationService from '../services/authentication-service';
 import DataService from '../services/data-service';
 import { auth } from '../services/fire';
-import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../services/notification-service';
+import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TOGGLE } from '../services/notification-service';
 import LeagueTable from './leagueTable/leagueTable';
 
 let authService = new AuthenticationService();
@@ -26,6 +26,8 @@ class App extends Component {
 
     //Bind functions
     this.printUserInfo = this.printUserInfo.bind(this);
+    this.onCreateLeagueBtnClicked = this.onCreateLeagueBtnClicked.bind(this);
+    this.onJoinLeagueBtnClicked = this.onJoinLeagueBtnClicked.bind(this);
   }
 
   componentDidMount() {
@@ -53,6 +55,14 @@ class App extends Component {
 
   componentWillUnmount() {
     auth.onAuthStateChanged();
+  }
+
+  onJoinLeagueBtnClicked() {
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'join');
+  }
+
+  onCreateLeagueBtnClicked() {
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'create');
   }
 
   // TEST
@@ -89,10 +99,10 @@ class App extends Component {
         </p>
         <div className='btn-toolbar justify-content-center'>
           <div className='btn-group m-2'>
-            <Button btnType='butto2n' btnClass='btn btn-primary' btnValue="Join" />
+            <Button btnType='button' btnClass='btn btn-primary' btnValue="Join" onClick={this.onJoinLeagueBtnClicked} />
           </div>
           <div className='btn-group m-2'>
-            <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" />
+            <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" onClick={this.onCreateLeagueBtnClicked}/>
           </div>
         </div>
         <div className='container card my-4'>
