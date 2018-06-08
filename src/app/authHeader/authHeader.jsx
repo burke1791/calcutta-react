@@ -21,6 +21,7 @@ class AuthHeader extends Component {
     this.onSignInClicked = this.onSignInClicked.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.onSignOut = this.onSignOut.bind(this);
+    this.generateAuthBtn = this.generateAuthBtn.bind(this);
   }
 
   componentWillMount() {
@@ -48,29 +49,29 @@ class AuthHeader extends Component {
   onSignOut() {
     this.setState({authenticated: false});
   }
+
+  generateAuthBtn = () => {
+    if (this.state.authenticated) {
+      return (
+        <div className='btn-group'>
+          <Button btnType='button' btnClass='btn btn-link' onClick={this.onSignOutClicked} btnValue={'Signed in as: ' + this.props.username} />
+        </div>
+      );
+    } else {
+      return (
+        <div className='btn-group'>
+          <Button btnType='button' btnClass='btn btn-primary' onClick={this.onSignInClicked} btnValue={'Sign In'} />
+        </div>
+      );
+    }
+  }
   
   render() {
-    
-    var signedInClass = 'btn btn-link';
-    var signedOutClass = 'btn btn-primary';
-
-    if (this.state.authenticated) {
-      signedInClass = 'btn btn-link';
-      signedOutClass = 'btn btn-primary d-none';
-    } else {
-      signedInClass = 'btn btn-link d-none';
-      signedOutClass = 'btn btn-primary';
-    }
 
     return (
       <div className='auth-header'>
         <div className='btn-toolbar'>
-          <div className='btn-group'>
-            <Button btnType='button' btnClass={signedInClass} onClick={this.onSignOutClicked} btnValue={'Signed in as: ' + this.props.username} />
-          </div>
-          <div className='btn-group'>
-            <Button btnType='button' btnClass={signedOutClass} onClick={this.onSignInClicked} btnValue="Sign In" />
-          </div>
+          {this.generateAuthBtn()}
         </div>
         <LoginModal modalType='login' />
       </div>

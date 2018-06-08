@@ -89,7 +89,7 @@ class App extends Component {
         </p>
         <div className='btn-toolbar justify-content-center'>
           <div className='btn-group m-2'>
-            <Button btnType='button' btnClass='btn btn-primary' btnValue="Join" />
+            <Button btnType='butto2n' btnClass='btn btn-primary' btnValue="Join" />
           </div>
           <div className='btn-group m-2'>
             <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" />
