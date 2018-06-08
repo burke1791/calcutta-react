@@ -98,8 +98,8 @@ class App extends Component {
             <Button btnType='button' btnClass='btn btn-secondary' btnValue='Print User Info' onClick={this.printUserInfo} />
           </div>
         </div>
-        <div className='league-list container'>
-          <LeagueTable className='table-striped' /> 
+        <div className='container'>
+          <LeagueTable className='table table-striped' /> 
         </div>
       </div>
     );

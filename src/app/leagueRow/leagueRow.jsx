@@ -6,19 +6,17 @@ class LeagueRow extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      leagues: []
-    }
-
-    // Bind functions
-    this.loadLeagues = this.loadLeagues.bind(this);
+    // gets a "league" passed in as a prop
   }
 
   render() {
     return(
-      <div className={this.props.className}>
-
-      </div>
+        <tr>
+        <td>{this.props.league.name}</td>
+        <td>$0.00</td>
+        <td>$0.00</td>
+        <td>$0.00</td>
+      </tr>
     );
   }
 }

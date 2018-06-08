@@ -18,6 +18,7 @@ class LeagueTable extends Component {
     this.loadLeagues = this.loadLeagues.bind(this);
     this.leagueList = this.leagueList.bind(this);
     this.clearTables = this.clearTables.bind(this);
+    this.getUserLeagueSummary = this.getUserLeagueSummary.bind(this);
   }
 
   componentWillMount() {
@@ -52,14 +53,35 @@ class LeagueTable extends Component {
     this.setState({leagues: []});
   }
 
+  getUserLeagueSummary = (league) => {
+    var uid = auth.currentUser.uid;
+    var buyIn = 0;
+    var payout = 0;
+    var netReturn = 0;
+
+    var teams = (league.teams != null ? league.teams : []);
+
+    for (const [key, value] of Object.entries(teams)) {
+      if (value.owner == uid) {
+        buyIn += value.price;
+        payout += value.return;
+      }
+    }
+
+    netReturn = payout - buyIn;
+
+    return [buyIn, payout, netReturn];
+  }
+
   leagueList = () => {
-    // tr data will eventually be the <LeagueRow /> component
+    // tr data will eventually be the <LeagueRow /> component - or perhaps not..?
+    // and will need to provide a "key" for each "league" in the "leagues" array
     const list = this.state.leagues.map((league) =>
       <tr>
-        <td>{league.name}</td>
-        <td>$0.00</td>
-        <td>$0.00</td>
-        <td>$0.00</td>
+        <td className='col col-md-4'>{league.name}</td>
+        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[0]}</td>
+        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[1]}</td>
+        <td className='col col-md-2'>{this.getUserLeagueSummary(league)[2]}</td>
       </tr>
     );
 
@@ -68,15 +90,15 @@ class LeagueTable extends Component {
   
   render() {
     return(
-      <div className='table-info'>
+      <div className='row justify-content-md-center'>
         <button onClick={this.loadLeagues} />
         <table className={this.props.className}>
           <thead>
             <tr>
-              <td>League Name</td>
-              <td>Buy In</td>
-              <td>Current Payout</td>
-              <td>Net Return</td>
+              <th className='col col-md-4'>League Name</th>
+              <th className='col col-md-2'>Buy In</th>
+              <th className='col col-md-2'>Current Payout</th>
+              <th className='col col-md-2'>Net Return</th>
             </tr>
           </thead>
           <tbody>
