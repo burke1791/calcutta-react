@@ -54,12 +54,15 @@ class LeagueForm extends Component {
           var leagueName = childSnapshot.child('name').val();
           var leaguePass = childSnapshot.child('password').val();
           var leagueStatus = childSnapshot.child('status').val();
+          var leagueMembers = childSnapshot.child('members').val();
           var key = childSnapshot.key;
 
           if (leagueStatus != 'pending') {
             if (leagueName === self.state.leagueNameVal && leaguePass === self.state.leaguePassVal) {
-              database.ref('/leagues/' + key + '/members/' + uid).set(true);
-              ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+              if (!leagueMembers[uid]) {
+                database.ref('/leagues/' + key + '/members/' + uid).set(true);
+                ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+              }
             }
           }
         });
