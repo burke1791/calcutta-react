@@ -40,7 +40,9 @@ class LeagueTable extends Component {
     var leagues = [];
     database.ref('/leagues/').once('value').then(function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
+        var id = childSnapshot.key;
         var league = childSnapshot.val();
+        league['key'] = id;
         var members = childSnapshot.child('members').val();
         var leagueStatus = childSnapshot.child('status').val();
 
@@ -100,7 +102,7 @@ class LeagueTable extends Component {
         var netReturnNegativeClass = this.getUserLeagueSummary(league)[2] < 0 ? ' text-danger' : '';
   
         return (
-          <tr className='d-flex'>
+          <tr className='d-flex' key={league.key}>
             <td className='col col-md-6'>{league.name}</td>
             <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[0])}</td>
             <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[1])}</td>
@@ -112,9 +114,10 @@ class LeagueTable extends Component {
 
       return (list);
     } else {
+      var tableText = auth.currentUser != null ? '**Create or Join a League**' : '**Please Log In to View Your Leagues**';
       return (
         <tr className='d-flex'>
-          <td className='col-md' colSpan='4'>**Create or Join a League**</td>
+          <td className='col-md' colSpan='4'>{tableText}</td>
         </tr>
       );
     }
