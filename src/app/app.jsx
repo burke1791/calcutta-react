@@ -81,7 +81,7 @@ class App extends Component {
           <div className='auth-header col-sm-2'>
             <AuthHeader username={this.state.authenticatedUsername}/>
           </div>
-          <img src={logo} className="App-logo" alt="logo" />
+          <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to March Madness Calcutta</h1>
         </header>
         <p className="App-intro">
