@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './app.css';
 import Button from './components/button/button';
-import AuthHeader from './components/authHeader/authHeader';
+import Header from './components/header/header';
 import AuthenticationService from '../services/authentication-service';
 import DataService from '../services/data-service';
 import { auth } from '../services/fire';
@@ -32,6 +32,8 @@ class App extends Component {
 
   componentDidMount() {
     var thisApp = this;
+
+    // TODO: Remove these lifecycle functions and put the Auth listener in the auth service
 
     auth.onAuthStateChanged(function(user) {
       if (user) {
@@ -97,13 +99,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <div className='auth-header col-sm-2'>
-            <AuthHeader username={this.state.authenticatedUsername}/>
-          </div>
-          <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to March Madness Calcutta</h1>
-        </header>
+        <Header />
         <p className="App-intro">
           To get started, create or join a league
         </p>
