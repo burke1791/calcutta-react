@@ -35,6 +35,8 @@ class LeagueTable extends Component {
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_SIGNIN);
     ns.removeObserver(this, NOTIF_SIGNOUT);
+    ns.removeObserver(this, NOTIF_LEAGUE_CREATED);
+    ns.removeObserver(this, NOTIF_LEAGUE_JOINED);
   }
 
   loadLeagues() {
@@ -100,7 +102,6 @@ class LeagueTable extends Component {
   }
 
   leagueList = () => {
-    // will need to provide a "key" for each "league" in the "leagues" array
     if (this.state.leagues.length) {
       const list = this.state.leagues.map((league) => {
         var buyIn = this.formatMoney(this.getUserLeagueSummary(league)[0]);
