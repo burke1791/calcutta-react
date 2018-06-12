@@ -13,29 +13,6 @@ let ns = new NotificationService();
 
 class App extends Component {
   
-  constructor() {
-    super();
-
-    this.state = {
-      loading: true,
-      authenticatedUser: {},
-      authenticatedUsername: ''
-    };
-
-    //Bind functions
-    
-  }
-
-  componentDidMount() {
-    var self = this;
-
-    authService.addAuthListener(self);
-  }
-
-  componentWillUnmount() {
-    authService.removeAuthListener();
-  }
-  
   render() {
     return (
       <div className="App">

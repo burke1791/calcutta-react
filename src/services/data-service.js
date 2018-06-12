@@ -1,4 +1,4 @@
-import NotificationService, {} from './notification-service';
+import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from './notification-service';
 import { database } from './fire';
 
 let ns = new NotificationService();
@@ -48,6 +48,25 @@ class DataService {
     } else {
       return null;
     }
+  }
+
+  getDataSnapshot = (ref) => {
+    return new Promise((resolve, reject) => {
+      database.ref(ref).once('value').then(function(snapshot) {
+        resolve(snapshot);
+      });
+    });
+  }
+
+  joinLeague(key, uid) {
+    database.ref('/leagues/' + key + '/members/' + uid).set(true);
+    ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+  }
+
+  createLeague(league) {
+    database.ref('/leagues').push(league);
+    ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+    // Redirect to league setup page (react router)
   }
 }
 

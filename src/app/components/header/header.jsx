@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import AuthHeader from '../authHeader/authHeader';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
-import { auth } from '../../../services/fire';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TOGGLE } from '../../../services/notification-service';
 
 let authService = new AuthenticationService();
@@ -21,30 +20,13 @@ class Header extends Component {
   }
   
   componentDidMount() {
-    var thisApp = this;
+    var self = this;
 
-    auth.onAuthStateChanged(function(user) {
-      if (user) {
-        console.log('user signed in');
-        thisApp.setState({authenticatedUser: user});
-
-        ds.getDisplayName(thisApp.state.authenticatedUser.uid).then(function(res) {
-          thisApp.setState({authenticatedUsername: res});
-        });
-        ns.postNotification(NOTIF_SIGNIN, null);
-      } else {
-        console.log('user is signed out');
-        ns.postNotification(NOTIF_SIGNOUT);
-        thisApp.setState({
-          authenticatedUser: {},
-          authenticatedUsername: ''
-        })
-      }
-    });
+    authService.addAuthListener(self);
   }
 
   componentWillUnmount() {
-    auth.onAuthStateChanged();
+    authService.removeAuthListener();
   }
 
   render() {

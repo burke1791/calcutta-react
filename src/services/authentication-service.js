@@ -16,7 +16,6 @@ class AuthenticationService {
   }
 
   getUser = () => {
-    console.log(auth.currentUser.uid);
     return auth.currentUser;
   }
 

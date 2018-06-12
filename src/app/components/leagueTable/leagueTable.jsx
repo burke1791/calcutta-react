@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import './leagueTable.css';
-import { auth, database } from '../../../services/fire';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../../services/notification-service';
+import AuthenticationService from '../../../services/authentication-service';
+import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
+let authService = new AuthenticationService();
+let ds = new DataService();
 
 class LeagueTable extends Component {
   constructor(props) {
@@ -38,9 +41,11 @@ class LeagueTable extends Component {
     console.log('loadLeagues called');
     var self = this;
     var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
-    var uid = auth.currentUser.uid;
+    var user = authService.getUser();
+    var uid = user.uid;
     var leagues = [];
-    database.ref('/leagues/').once('value').then(function(snapshot) {
+
+    ds.getDataSnapshot('/leagues').then(function(snapshot) {
       snapshot.forEach(function(childSnapshot) {
         var id = childSnapshot.key;
         var league = childSnapshot.val();
@@ -61,7 +66,8 @@ class LeagueTable extends Component {
   }
 
   getUserLeagueSummary = (league) => {
-    var uid = auth.currentUser.uid;
+    var user = authService.getUser();
+    var uid = user.uid;
     var buyIn = 0;
     var payout = 0;
     var netReturn = 0;
@@ -116,7 +122,8 @@ class LeagueTable extends Component {
 
       return (list);
     } else {
-      var tableText = auth.currentUser != null ? '**Create or Join a League**' : '**Please Log In to View Your Leagues**';
+      var userSignedIn = authService.getUser() != null;
+      var tableText = userSignedIn ? '**Create or Join a League**' : '**Please Log In to View Your Leagues**';
       return (
         <tr className='d-flex'>
           <td className='col-md' colSpan='4'>{tableText}</td>

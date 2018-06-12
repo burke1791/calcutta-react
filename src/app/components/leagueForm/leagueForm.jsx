@@ -2,11 +2,12 @@ import React, {Component} from 'react';
 import './leagueForm.css';
 import NotificationService, { NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TYPE_CHANGE, NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
+import DataService from '../../../services/data-service';
 import Button from '../button/button';
-import { auth, database } from '../../../services/fire';
 
 let ns = new NotificationService();
 let authService = new AuthenticationService();
+let ds = new DataService();
 
 class LeagueForm extends Component {
 
@@ -41,26 +42,27 @@ class LeagueForm extends Component {
   leagueSubmission(event) {
     event.preventDefault();
 
-    var uid = auth.currentUser.uid;
+    var user = authService.getUser();
+    var uid = user.uid;
     var self = this;
 
     if (this.state.leagueNameVal == '' || this.state.leaguePassVal == '') {
       alert('Please enter a league name and password');
     } else if (this.state.leagueType == 'join') {
       // TODO: check for multiple leagues using the same name and password before adding user to members list
-      database.ref('/leagues').once('value').then(function(snapshot) {
+      
+      ds.getDataSnapshot('/leagues').then(function(snapshot) {
         snapshot.forEach(function(childSnapshot) {
           var leagueName = childSnapshot.child('name').val();
           var leaguePass = childSnapshot.child('password').val();
           var leagueStatus = childSnapshot.child('status').val();
           var leagueMembers = childSnapshot.child('members').val();
           var key = childSnapshot.key;
-
+  
           if (leagueStatus != 'pending') {
             if (leagueName === self.state.leagueNameVal && leaguePass === self.state.leaguePassVal) {
               if (!leagueMembers[uid]) {
-                database.ref('/leagues/' + key + '/members/' + uid).set(true);
-                ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+                ds.joinLeague(key, uid);
               }
             }
           }
@@ -78,8 +80,7 @@ class LeagueForm extends Component {
         'sport' : this.state.leagueSportVal
       };
 
-      database.ref('/leagues').push(league);
-      ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+      ds.createLeague(league);
       // redirect to new league page to complete setup information
     }
     // this will need to be moved - in some cases the modal will need to display an error message
