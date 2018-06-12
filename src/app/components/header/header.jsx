@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 import AuthHeader from '../authHeader/authHeader';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
@@ -36,7 +37,9 @@ class Header extends Component {
           <AuthHeader username={this.state.authenticatedUsername}/>
         </div>
         <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
-        <h1 className="App-title">Welcome to March Madness Calcutta</h1>
+        <h1 className="App-title">
+          <NavLink exact to='/'>Welcome to March Madness Calcutta</NavLink>
+        </h1>
       </header>
     );
   }

@@ -11,7 +11,7 @@ let authService = new AuthenticationService();
 class MembersTable extends Component {
   // TODO: Refactor leagueTable.jsx to accomodate a members list
 
-  construtcor(props) {
+  constructor(props) {
     super(props);
 
     this.state = {
