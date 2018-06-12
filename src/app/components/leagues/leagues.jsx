@@ -61,7 +61,7 @@ class Leagues extends Component {
         </div>
         <div className='container card my-4'>
           <h3>Completed Leagues</h3>
-          <LeagueTable className='table table-striped' tableSource='complete' /> 
+          <LeagueTable className='table table-striped' tableSource='complete' />
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AuthHeader from '../authHeader/authHeader';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
@@ -38,7 +38,7 @@ class Header extends Component {
         </div>
         <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
         <h1 className="App-title">
-          <NavLink exact to='/'>Welcome to March Madness Calcutta</NavLink>
+          <Link exact='true' to='/'>Welcome to March Madness Calcutta</Link>
         </h1>
       </header>
     );

@@ -10,8 +10,8 @@ class Main extends Component {
   render() {
     return (
       <Switch>
-        <Route exact path='/' Component={Leagues}></Route>
-        <Route exact path='/league-home' Component={LeagueHome}></Route>
+        <Route exact path='/' component={Leagues}></Route>
+        <Route exact path='/league-home' component={LeagueHome}></Route>
       </Switch>
     );
   }

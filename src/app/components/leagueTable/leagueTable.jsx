@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import './leagueTable.css';
+import LeagueRow from '../leagueRow/leagueRow';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
@@ -108,15 +110,10 @@ class LeagueTable extends Component {
         var payout = this.formatMoney(this.getUserLeagueSummary(league)[1]);
         var netReturn = this.formatMoney(this.getUserLeagueSummary(league)[2]);
   
-        var netReturnNegativeClass = this.getUserLeagueSummary(league)[2] < 0 ? ' text-danger' : '';
+        var netReturnNegativeClass = this.getUserLeagueSummary(league)[2] < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
   
         return (
-          <tr className='d-flex' key={league.key}>
-            <td className='col col-md-6'>{league.name}</td>
-            <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[0])}</td>
-            <td className='col col-md-2'>{this.formatMoney(this.getUserLeagueSummary(league)[1])}</td>
-            <td className={'col col-md-2' + netReturnNegativeClass}>{this.formatMoney(this.getUserLeagueSummary(league)[2])}</td>
-          </tr>
+            <LeagueRow id={league.key} key={league.key} name={league.name} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
         
       });
@@ -154,4 +151,4 @@ class LeagueTable extends Component {
   }
 }
 
-export default LeagueTable;
+export default withRouter(LeagueTable);
