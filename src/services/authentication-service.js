@@ -50,6 +50,31 @@ class AuthenticationService {
     auth.signOut();
     ns.postNotification(NOTIF_SIGNOUT, null);
   }
+
+  addAuthListener(thisApp) {
+    auth.onAuthStateChanged(function(user) {
+      if (user) {
+        console.log('user signed in');
+        thisApp.setState({authenticatedUser: user});
+
+        ds.getDisplayName(thisApp.state.authenticatedUser.uid).then(function(res) {
+          thisApp.setState({authenticatedUsername: res});
+        });
+        ns.postNotification(NOTIF_SIGNIN, null);
+      } else {
+        console.log('user is signed out');
+        ns.postNotification(NOTIF_SIGNOUT);
+        thisApp.setState({
+          authenticatedUser: {},
+          authenticatedUsername: ''
+        })
+      }
+    });
+  }
+
+  removeAuthListener() {
+    auth.onAuthStateChanged();
+  }
 }
 
 export default AuthenticationService;
