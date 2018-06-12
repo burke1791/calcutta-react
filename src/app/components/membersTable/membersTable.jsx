@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './membersTable.css';
+import { withRouter } from 'react-router-dom';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
@@ -35,6 +36,7 @@ class MembersTable extends Component {
   }
 
   loadMembers() {
+    // need to figure out the 'match' portion of react router, I believe
     console.log('TEST: loadMembers called');
     
   }
