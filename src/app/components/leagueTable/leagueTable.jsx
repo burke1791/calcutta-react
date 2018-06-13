@@ -34,6 +34,10 @@ class LeagueTable extends Component {
     ns.addObserver(NOTIF_LEAGUE_JOINED, this, this.loadLeagues);
 
     // TODO: figure out how to call loadLeagues() upon rerender without a notification
+    // The below works only because on the first load, the auth service is slower in loggin in
+    if (authService.getUser() != null) {
+      this.loadLeagues(); 
+    }
   }
 
   componentWillUnmount() {

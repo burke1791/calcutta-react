@@ -11,7 +11,9 @@ class LeagueHome extends Component {
   render() {
     return (
       <div className='league-home'>
-        <MembersTable leagueId={this.props.leagueId} className='table table-striped' />
+        <div className='container card'>
+          <MembersTable leagueId={this.props.leagueId} className='table table-striped' />
+        </div>
       </div>
     );
   }
