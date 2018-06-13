@@ -10,8 +10,8 @@ let ns = new NotificationService();
 
 class Leagues extends Component {
   
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     // Bind functions
     this.onJoinLeagueBtnClicked = this.onJoinLeagueBtnClicked.bind(this);
@@ -38,6 +38,7 @@ class Leagues extends Component {
   }
 
   render() {
+    console.log('render called');
     return (
       <div className='leagues'>
         <p className="App-intro">

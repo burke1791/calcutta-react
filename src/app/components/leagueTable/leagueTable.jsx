@@ -27,11 +27,13 @@ class LeagueTable extends Component {
     this.formatMoney = this.formatMoney.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     ns.addObserver(NOTIF_SIGNIN, this, this.loadLeagues);
     ns.addObserver(NOTIF_SIGNOUT, this, this.clearTables);
     ns.addObserver(NOTIF_LEAGUE_CREATED, this, this.loadLeagues);
     ns.addObserver(NOTIF_LEAGUE_JOINED, this, this.loadLeagues);
+
+    // TODO: figure out how to call loadLeagues() upon rerender without a notification
   }
 
   componentWillUnmount() {
@@ -62,6 +64,7 @@ class LeagueTable extends Component {
         }
       });
       self.setState({leagues: leagues});
+      console.log('loadLeagues updated state');
     });
   }
 
