@@ -58,6 +58,19 @@ class DataService {
     });
   }
 
+  getLeagueInfo = (leagueId, uid) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
+        var members = snapshot.child('members').val()
+        if (members[uid]) {
+          resolve(snapshot);
+        } else {
+          reject(new Error('failed to get league info'));
+        }
+      });
+    })
+  }
+
   joinLeague(key, uid) {
     database.ref('/leagues/' + key + '/members/' + uid).set(true);
     ns.postNotification(NOTIF_LEAGUE_JOINED, null);

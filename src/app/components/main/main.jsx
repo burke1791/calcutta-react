@@ -10,10 +10,8 @@ class Main extends Component {
   render() {
     return (
       <Switch>
-        <Route exact path='/' component={ () => (
-          <Leagues timestamp={new Date().toString()} />
-        )}></Route>
-        <Route exact path='/league-home' component={LeagueHome}></Route>
+        <Route exact path='/' component={Leagues}></Route>
+        <Route path='/league-home/:id' component={LeagueHome}></Route>
       </Switch>
     );
   }

@@ -48,7 +48,8 @@ class LeagueTable extends Component {
   }
 
   loadLeagues() {
-    console.log('loadLeagues called');
+    // TODO: move this to DataService (maybe)
+
     var self = this;
     var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
     var user = authService.getUser();
