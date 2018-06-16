@@ -71,6 +71,17 @@ class DataService {
     })
   }
 
+  getLeagueName = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
+        var leagueName = snapshot.child('name').val();
+        console.log('leagueName: ' + leagueName);
+        // need some sort of conditional check
+        resolve(leagueName);
+      });
+    });
+  }
+
   joinLeague(key, uid) {
     database.ref('/leagues/' + key + '/members/' + uid).set(true);
     ns.postNotification(NOTIF_LEAGUE_JOINED, null);
