@@ -39,7 +39,7 @@ class LeagueHome extends Component {
       return (
         <div className='league-home'>
           <div className='container card'>
-            <MembersTable leagueId={this.props.leagueId} className='table table-striped' isAuthenticated={this.state.isAuthenticated} />
+            <MembersTable leagueId={this.props.leagueId} className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
           </div>
         </div>
       );

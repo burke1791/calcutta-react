@@ -71,15 +71,15 @@ class GeneralModal extends Component {
   }
 
   generateModalForm = () => {
-    if (this.state.modalType == 'login') {
+    if (this.state.modalType === 'login') {
       return (
         <LoginForm submitHandler={this.toggleModal} />
       );
-    } else if (this.state.modalType == 'join') {
+    } else if (this.state.modalType === 'join') {
       return (
         <LeagueForm submitHandler={this.toggleModal} leagueType={this.state.modalType} />
       );
-    } else if (this.state.modalType == 'create') {
+    } else if (this.state.modalType === 'create') {
       return (
         <LeagueForm submitHandler={this.toggleModal} leagueType={this.state.modalType} />
       );

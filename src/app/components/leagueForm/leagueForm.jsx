@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './leagueForm.css';
-import NotificationService, { NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TYPE_CHANGE, NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from '../../../services/notification-service';
+import NotificationService, { NOTIF_LEAGUE_SUBMIT, NOTIF_MODAL_TYPE_CHANGE } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
 import Button from '../button/button';
@@ -16,7 +16,7 @@ class LeagueForm extends Component {
 
     this.state = {
       leagueType: props.leagueType,
-      submitBtnText: props.leagueType == 'join' ? 'Join' : 'Create',
+      submitBtnText: props.leagueType === 'join' ? 'Join' : 'Create',
       leagueNameVal: '',
       leaguePassVal: '',
       leagueSportVal: 'ncaa-mens'
@@ -46,9 +46,9 @@ class LeagueForm extends Component {
     var uid = user.uid;
     var self = this;
 
-    if (this.state.leagueNameVal == '' || this.state.leaguePassVal == '') {
+    if (this.state.leagueNameVal === '' || this.state.leaguePassVal === '') {
       alert('Please enter a league name and password');
-    } else if (this.state.leagueType == 'join') {
+    } else if (this.state.leagueType === 'join') {
       // TODO: check for multiple leagues using the same name and password before adding user to members list
       
       ds.getDataSnapshot('/leagues').then(function(snapshot) {
@@ -59,7 +59,7 @@ class LeagueForm extends Component {
           var leagueMembers = childSnapshot.child('members').val();
           var key = childSnapshot.key;
   
-          if (leagueStatus != 'pending') {
+          if (leagueStatus !== 'pending') {
             if (leagueName === self.state.leagueNameVal && leaguePass === self.state.leaguePassVal) {
               if (!leagueMembers[uid]) {
                 ds.joinLeague(key, uid);
@@ -68,7 +68,7 @@ class LeagueForm extends Component {
           }
         });
       });
-    } else if (this.state.leagueType == 'create') {
+    } else if (this.state.leagueType === 'create') {
       var league = {
         'status' : 'pending',
         'creator' : uid,
@@ -116,7 +116,7 @@ class LeagueForm extends Component {
   }
 
   generateFormContents = () => {
-    if (this.state.leagueType == 'join') {
+    if (this.state.leagueType === 'join') {
       return (
         <div className='join-form'>
           <div className='form-group'>
@@ -155,9 +155,9 @@ class LeagueForm extends Component {
     var joinChecked = false;
     var createChecked = false;
 
-    if (this.state.leagueType == 'join') {
+    if (this.state.leagueType === 'join') {
       joinChecked = true;
-    } else if (this.state.leagueType == 'create') {
+    } else if (this.state.leagueType === 'create') {
       createChecked = true;
     }
 

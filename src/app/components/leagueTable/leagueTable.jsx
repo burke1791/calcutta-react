@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import './leagueTable.css';
 import LeagueRow from '../leagueRow/leagueRow';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_CREATED, NOTIF_LEAGUE_JOINED } from '../../../services/notification-service';
@@ -64,7 +64,7 @@ class LeagueTable extends Component {
         var members = childSnapshot.child('members').val();
         var leagueStatus = childSnapshot.child('status').val();
 
-        if (members[uid] && leagueStatus == self.state.tableDataSource) {
+        if (members[uid] && leagueStatus === sourceData) {
           leagues.push(league);
         }
       });
@@ -87,7 +87,7 @@ class LeagueTable extends Component {
     var teams = (league.teams != null ? league.teams : []);
 
     for (const [key, value] of Object.entries(teams)) {
-      if (value.owner == uid) {
+      if (value.owner === uid) {
         buyIn += value.price;
         payout += value.return;
       }

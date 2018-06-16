@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Redirect, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import './leagueRow.css';
 
 class LeagueRow extends Component {
@@ -24,7 +24,7 @@ class LeagueRow extends Component {
   render() {
 
     return (
-      <tr className='d-flex' key={this.props.id} onClick={this.handleClick}>
+      <tr className='d-flex tr-hover' key={this.props.id} onClick={this.handleClick}>
         <td className='col col-md-6'>{this.props.name}</td>
         <td className='col col-md-2'>{this.props.buyIn}</td>
         <td className='col col-md-2'>{this.props.payout}</td>

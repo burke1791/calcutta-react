@@ -59,7 +59,6 @@ class MembersTable extends Component {
     // TODO: move to DataService
     console.log('loadUsers() called');
     console.log('this.state.isAuthenticated: ' + this.state.isAuthenticated);
-    var uid = authService.getUser() != null ? authService.getUser().uid : null;
     var self = this;
     var users = {};
 
@@ -88,7 +87,7 @@ class MembersTable extends Component {
       var members = {};
 
       if (uid != null) {
-        var league = ds.getLeagueInfo(this.state.leagueId, uid).then(function(league) {
+        ds.getLeagueInfo(this.state.leagueId, uid).then(function(league) {
           var members = league.child('members').val();
           var teams = league.val().teams;
 
@@ -101,11 +100,10 @@ class MembersTable extends Component {
 
             var buyIn = 0;
             var payout = 0;
-            var netReturn = 0;
 
             if (members[mem]) {
               for (var team in teams) {
-                if (teams[team].owner == mem) {
+                if (teams[team].owner === mem) {
                   buyIn += teams[team].price;
                   payout += teams[team].return;
                 }

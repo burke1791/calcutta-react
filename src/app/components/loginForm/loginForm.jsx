@@ -63,8 +63,8 @@ class LoginForm extends Component {
     
     event.preventDefault();
 
-    var thisForm = this;
     if (this.state.createUser) {
+      // Utilize a promise later on to identify a successful account creation
       var success = authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
     } else {
       authService.signInUser(this.state.emailVal, this.state.pass1Val);

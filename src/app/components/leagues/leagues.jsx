@@ -38,7 +38,6 @@ class Leagues extends Component {
   }
 
   render() {
-    console.log('render called');
     return (
       <div className='leagues'>
         <p className="App-intro">
@@ -54,15 +53,15 @@ class Leagues extends Component {
         </div>
         <div className='container card my-4'>
           <h3>In Progress Leagues</h3>
-          <LeagueTable className='table table-striped' tableSource='in-progress' />
+          <LeagueTable className='table table-striped table-hover' tableSource='in-progress' />
         </div>
         <div className='container card my-4'>
           <h3>Leagues Pending Setup</h3>
-          <LeagueTable className='table table-striped' tableSource='pending' />
+          <LeagueTable className='table table-striped table-hover' tableSource='pending' />
         </div>
         <div className='container card my-4'>
           <h3>Completed Leagues</h3>
-          <LeagueTable className='table table-striped' tableSource='complete' />
+          <LeagueTable className='table table-striped table-hover' tableSource='complete' />
         </div>
       </div>
     );
