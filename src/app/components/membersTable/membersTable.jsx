@@ -163,7 +163,8 @@ class MembersTable extends Component {
         <table className={this.props.className}>
           <thead>
             <tr className='d-flex'>
-              <th className='col col-md-6'>Name</th>
+              <th className='col col-md-2'>Rank</th>
+              <th className='col col-md-4'>Name</th>
               <th className='col col-md-2'>Buy In</th>
               <th className='col col-md-2'>Current Payout</th>
               <th className='col col-md-2'>Net Return</th>
