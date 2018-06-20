@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './leagueHome.css';
 import { Redirect } from 'react-router-dom';
+import LeagueHeader from '../leagueHeader/leagueHeader';
 import MembersTable from '../membersTable/membersTable';
 import NotificationService, { NOTIF_SIGNOUT } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
@@ -50,8 +51,8 @@ class LeagueHome extends Component {
     if (this.state.isAuthenticated) {
       return (
         <div className='league-home'>
-          <div className='container'>
-            <h1>{this.state.leagueName}</h1>
+          <div className='container league-header'>
+            <LeagueHeader leagueId={this.props.match.params.id} />
           </div>
           <div className='container card'>
             <MembersTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
