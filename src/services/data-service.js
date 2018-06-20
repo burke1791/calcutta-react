@@ -82,6 +82,62 @@ class DataService {
     });
   }
 
+  getLeagueUserInfo = (leagueId, uid) => {
+    return new Promise((resolve, reject) => {
+      var thisMembers = {};
+
+      database.ref('/leagues/' + leagueId).once('value').then(function(league) {
+        var members = league.child('members').val();
+        var teams = league.val().teams;
+
+        for (var mem in members) {
+          var member = {
+            buyIn: 0,
+            payout: 0,
+            netReturn: 0,
+            rank: 0
+          }
+
+          var buyIn = 0;
+          var payout = 0;
+
+          if (members[mem]) {
+            for (var team in teams) {
+              if (teams[team].owner === mem) {
+                buyIn += teams[team].price;
+                payout += teams[team].return;
+              }
+            }
+            member.buyIn = buyIn;
+            member.payout = payout;
+            member.netReturn = payout - buyIn;
+
+            thisMembers[mem] = member;
+          }
+        }
+
+        var netReturns = [];
+
+        for (var mem in thisMembers) {
+          netReturns.push(thisMembers[mem].netReturn);
+        }
+
+        netReturns.sort(function(a, b) {return(b - a)});
+
+        for (var mem in thisMembers) {
+          for (var i = 0; i < netReturns.length; i++) {
+            if (netReturns[i] == thisMembers[mem].netReturn) {
+              thisMembers[mem].rank = i + 1;
+              break;
+            }
+          }
+        }
+
+        resolve(thisMembers);
+      });
+    });
+  }
+
   joinLeague(key, uid) {
     database.ref('/leagues/' + key + '/members/' + uid).set(true);
     ns.postNotification(NOTIF_LEAGUE_JOINED, null);

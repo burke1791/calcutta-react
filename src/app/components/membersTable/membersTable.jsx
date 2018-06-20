@@ -36,7 +36,7 @@ class MembersTable extends Component {
   }
 
   componentDidMount() {
-    // Shouldn't have a signin observer becasue this page should be accessed unless you're signed in
+    // Shouldn't have a signin observer becasue this page shouldn't be accessed unless you're signed in
     ns.addObserver(NOTIF_SIGNIN, this, this.userAuthenticated);
     ns.addObserver(NOTIF_SIGNOUT, this, this.clearTable);
 
@@ -85,40 +85,12 @@ class MembersTable extends Component {
     if (this.state.usersDownloaded) {
       var uid = authService.getUser() != null ? authService.getUser().uid : null;
       var self = this;
-      var members = {};
+      var thisMembers = {};
 
       if (uid != null) {
-        ds.getLeagueInfo(this.state.leagueId, uid).then(function(league) {
-          var members = league.child('members').val();
-          var teams = league.val().teams;
-
-          for (var mem in members) {
-            var member = {
-              buyIn: 0,
-              payout: 0,
-              netReturn: 0
-            }
-
-            var buyIn = 0;
-            var payout = 0;
-
-            if (members[mem]) {
-              for (var team in teams) {
-                if (teams[team].owner === mem) {
-                  buyIn += teams[team].price;
-                  payout += teams[team].return;
-                }
-              }
-              member.buyIn = buyIn;
-              member.payout = payout;
-              member.netReturn = payout - buyIn;
-
-              members[mem] = member;
-            }
-          }
-
+        ds.getLeagueUserInfo(this.state.leagueId, uid).then(function(members) {
           self.setState({members: members});
-        });
+        })
       }
     }
   }
@@ -141,6 +113,7 @@ class MembersTable extends Component {
   }
 
   membersList = () => {
+    // TODO: write logic to display them in order of rank
     if (Object.keys(this.state.members).length > 0) {
       const list = Object.keys(this.state.members).map((member) => {
         var buyIn = this.formatMoney(this.state.members[member].buyIn);
@@ -151,7 +124,7 @@ class MembersTable extends Component {
   
         return (
           // TODO: Create a MemberRow component that has a "rank" column
-          <MembersRow key={member} id={member} rank='#' name={this.state.users[member]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+          <MembersRow key={member} id={member} rank={this.state.members[member].rank} name={this.state.users[member]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
       });
       return (list);
