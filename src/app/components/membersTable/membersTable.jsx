@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './membersTable.css';
 import { withRouter } from 'react-router-dom';
 import LeagueRow from '../leagueRow/leagueRow';
+import MembersRow from '../membersRow/membersRow';
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
@@ -150,7 +151,7 @@ class MembersTable extends Component {
   
         return (
           // TODO: Create a MemberRow component that has a "rank" column
-          <LeagueRow key={member} id={member} name={this.state.users[member]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+          <MembersRow key={member} id={member} rank='#' name={this.state.users[member]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
       });
       return (list);
