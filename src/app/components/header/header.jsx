@@ -34,7 +34,7 @@ class Header extends Component {
         </div>
         <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
         <h1 className="App-title">
-          <Link exact='true' to='/'>Welcome to March Madness Calcutta</Link>
+          <Link exact='true' to='/'>March Madness Calcutta</Link>
         </h1>
       </header>
     );
