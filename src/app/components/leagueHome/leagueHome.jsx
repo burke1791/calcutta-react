@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import MembersTable from '../membersTable/membersTable';
 import NotificationService, { NOTIF_SIGNOUT } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
+import LeagueSummary from '../leagueSummary/leagueSummary';
 
 let ns = new NotificationService();
 let ds = new DataService();
@@ -65,28 +66,9 @@ class LeagueHome extends Component {
               <button type='button' onClick={this.goToAuction} className='btn btn-primary'>Go To Auction</button>
             </div>
           </div>
-          <div className='container'>
-            <div className='row justify-content-md-center'>
-              <div className='card col-md-4'>
-                <h4>Total Pot</h4>
-                <h5>$ 321.00</h5>
-              </div>
-            </div>
-            <div className='row justify-content-md-center'>
-              <div className='card col-md-3'>
-                <h4>My Bet</h4>
-                <h5>$ 81.00</h5>
-              </div>
-              <div className='card col-md-3'>
-                <h4>Gross Return</h4>
-                <h5>$ 99.00</h5>
-              </div>
-              <div className='card col-md-3'>
-                <h4>% Return</h4>
-                <h5>22.2%</h5>
-              </div>
-            </div>
-          </div>  
+          <div>
+            <LeagueSummary />
+          </div>            
           <div className='container card'>
             <MembersTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
           </div>
