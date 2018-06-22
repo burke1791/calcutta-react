@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\public",
+    "\\src",
+    "\\src\\app",
+    "\\src\\app\\components",
+    "\\src\\app\\components\\header",
+    "\\src\\app\\components\\leagueHome",
+    "\\src\\app\\components\\leagues",
+    "\\src\\app\\components\\main"
+  ],
+  "SelectedNode": "\\src\\app\\components\\leagueHeader",
+  "PreviewInSolutionExplorer": false
+}
