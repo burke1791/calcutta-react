@@ -35,6 +35,16 @@ class DataService {
     }
   }
 
+  // Needs to be called when league creator chooses the sport
+  populateLeagueTeams(leagueId, sport) {
+    if (leagueId != null && sport == 'mlb-2018') {
+      this.getDataSnapshot('/sports/mlb').then(function(snapshot) {
+        var mlbTeams = snapshot.val();
+        database.ref('/leagues/' + leagueId + '/teams').set(mlbTeams);
+      });
+    }
+  }
+
   getDisplayName = (uid) => {
     if (uid != null) {
       return new Promise((resolve, reject) => {
