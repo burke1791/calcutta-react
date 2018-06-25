@@ -5,8 +5,10 @@ import AuctionBid from '../auctionBid/auctionBid';
 import AuctionItemHistory from '../auctionItemHistory/auctionItemHistory';
 
 import DataService from '../../../services/data-service';
+import AuthenticationService from '../../../services/authentication-service';
 
 let ds = new DataService();
+let authService = new AuthenticationService();
 
 class AuctionMain extends Component {
   constructor(props) {
@@ -28,17 +30,28 @@ class AuctionMain extends Component {
     
   }
 
+  generateAuctionHeader() {
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+    
+  }
+
   render() {
     return (
-      <div className='container auction-main'>
-        <div className='row'>
-          <AuctionTeam teamName='Stl. Cardinals' /> 
-          <AuctionBid leagueId={this.props.match.params.id} />
+      <div className='container'>
+        <div className='container auction-header'>
+          {this.generateAuctionHeader()}
         </div>
-        <div className='row'>
-          <AuctionItemHistory />
+        <div className='container auction-main'>
+          <div className='row'>
+            <AuctionTeam teamName='Stl. Cardinals' /> 
+            <AuctionBid leagueId={this.props.match.params.id} />
+          </div>
+          <div className='row'>
+            <AuctionItemHistory />
+          </div>
         </div>
       </div>
+      
     );
   }
 }

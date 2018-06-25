@@ -58,6 +58,7 @@ class DataService {
     });
   }
 
+  // Grabs the entire league's node
   getLeagueInfo = (leagueId, uid) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
@@ -78,6 +79,15 @@ class DataService {
         console.log('leagueName: ' + leagueName);
         // need some sort of conditional check
         resolve(leagueName);
+      });
+    });
+  }
+
+  getLeagueOwner = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/creator').once('value').then(function(snapshot) {
+        var leagueOwner = snapshot.val();
+        resolve(leagueOwner);
       });
     });
   }
