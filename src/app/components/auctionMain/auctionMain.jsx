@@ -10,7 +10,7 @@ class AuctionMain extends Component {
   render() {
     return (
       <div className='container auction-main'>
-        <AuctionTeam teamName='Stl. Cardinals' />
+        <AuctionTeam teamName='Stl. Cardinals' /> 
         { /* AuctionBidActions component */ }
         { /* ItemBidHistory component */ }
       </div>

@@ -7,14 +7,15 @@ class AuctionTeam extends Component {
     super(props);
 
     this.state = {
-
+      currentBid: 'Bid: $0',
+      currentWinner: 'High Bid: '
     }
 
     this.generatePotInfo = this.generatePotInfo.bind(this);
   }
 
-  generatePotInfo() {
-
+  generatePotInfo() { 
+    // fetch auction history from database
   }
 
   render() {
@@ -23,10 +24,10 @@ class AuctionTeam extends Component {
         <h3>{this.props.teamName}</h3>
         <h5>{this.state.currentBid}</h5>
         <div className='auction-clock'>
-          <AuctionClock />
+          <AuctionClock  interval={20} />
         </div>
         <h5>{this.state.currentWinner}</h5>
-        <br></br>
+        <hr />
         <div>
           {this.generatePotInfo()}
         </div>
