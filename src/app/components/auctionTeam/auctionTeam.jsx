@@ -16,6 +16,7 @@ class AuctionTeam extends Component {
 
   generatePotInfo() { 
     // fetch auction history from database
+    
   }
 
   render() {
