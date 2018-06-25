@@ -3,6 +3,7 @@ import './auctionMain.css';
 import AuctionTeam from '../auctionTeam/auctionTeam';
 import AuctionBid from '../auctionBid/auctionBid';
 import AuctionItemHistory from '../auctionItemHistory/auctionItemHistory';
+import AuctionAdmin from '../auctionAdmin/auctionAdmin';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
@@ -15,27 +16,50 @@ class AuctionMain extends Component {
     super(props);
 
     this.state = {
-      teams: []
+      teams: [],
+      owner: ''
     }
 
     // Bind functions
     this.fetchTeams = this.fetchTeams.bind(this);
+    this.getLeagueOwner = this.getLeagueOwner.bind(this);
   }
 
   componentDidMount() {
     this.fetchTeams();
+    this.getLeagueOwner();
   }
 
   fetchTeams() {
     
   }
 
-  generateAuctionHeader() {
+  getLeagueOwner() {
+    var self = this;
+
+    ds.getLeagueOwner(this.props.match.params.id).then(function(owner) {
+      self.setState({owner: owner});
+    }); 
+  }
+
+  generateAuctionHeader = () => {
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
-    
+
+    if (uid != null && uid === this.state.owner) {
+      return (
+        <AuctionAdmin />
+      );
+    } else {
+      return (
+        <div className='normal-header' >
+          <h4>**NEED STANDARD HEADER**</h4>
+        </div>
+      );
+    }
   }
 
   render() {
+    console.log('owner: ' + this.state.owner);
     return (
       <div className='container'>
         <div className='container auction-header'>
