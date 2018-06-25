@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './leagueHome.css';
 import { Redirect } from 'react-router-dom';
+//import LeagueHeader from '../leagueHeader/leagueHeader';
 import MembersTable from '../membersTable/membersTable';
 import NotificationService, { NOTIF_SIGNOUT } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
