@@ -5,6 +5,7 @@ import LeagueHeader from '../leagueHeader/leagueHeader';
 import MembersTable from '../membersTable/membersTable';
 import NotificationService, { NOTIF_SIGNOUT } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
+import LeagueSummary from '../leagueSummary/leagueSummary';
 
 let ns = new NotificationService();
 let ds = new DataService();
@@ -54,6 +55,9 @@ class LeagueHome extends Component {
           <div className='container league-header'>
             <LeagueHeader leagueId={this.props.match.params.id} />
           </div>
+          <div>
+            <LeagueSummary />
+          </div>            
           <div className='container card'>
             <MembersTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
           </div>
