@@ -1,4 +1,4 @@
-import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from './notification-service';
+import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED, NOTIF_AUCTION_CHANGE } from './notification-service';
 import { database } from './fire';
 
 let ns = new NotificationService();
@@ -81,6 +81,19 @@ class DataService {
         resolve(leagueName);
       });
     });
+  }
+
+  attachAuctionListener = (leagueId) => {
+    database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
+      console.log('auction snapshot: ' + snapshot.child('current-item').child('current-bid').val());
+      ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.child('current-item').val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchAuctionListener = (leagueId) => {
+    database.ref('/auctions/' + leagueId).off('value');
   }
 
   getLeagueOwner = (leagueId) => {

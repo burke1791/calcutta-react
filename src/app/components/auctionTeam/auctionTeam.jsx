@@ -14,6 +14,10 @@ class AuctionTeam extends Component {
     this.generatePotInfo = this.generatePotInfo.bind(this);
   }
 
+  componentDidMount() {
+    // attach listener to auction node in firebase
+  }
+
   generatePotInfo() { 
     // fetch auction history from database
     

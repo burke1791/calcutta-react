@@ -7,9 +7,13 @@ import AuctionAdmin from '../auctionAdmin/auctionAdmin';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
+import NotificationService, { NOTIF_AUCTION_CHANGE } from '../../../services/notification-service';
 
 let ds = new DataService();
+let ns = new NotificationService();
 let authService = new AuthenticationService();
+
+let auctionListener = null;
 
 class AuctionMain extends Component {
   constructor(props) {
@@ -17,17 +21,34 @@ class AuctionMain extends Component {
 
     this.state = {
       teams: [],
-      owner: ''
+      owner: '',
+      leagueId: this.props.match.params.id,
+      currentItem: null
     }
 
     // Bind functions
     this.fetchTeams = this.fetchTeams.bind(this);
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
+    this.newAuctionData = this.newAuctionData.bind(this);
   }
 
   componentDidMount() {
     this.fetchTeams();
     this.getLeagueOwner();
+
+    ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
+
+    ds.attachAuctionListener(this.props.match.params.id);
+  }
+
+  componentWillUnmount() {
+    ds.detatchAuctionListener(this.props.match.params.id);
+
+    ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
+  }
+
+  newAuctionData(newData) {
+    this.setState({currentItem: newData});
   }
 
   fetchTeams() {
@@ -67,7 +88,7 @@ class AuctionMain extends Component {
         </div>
         <div className='container auction-main'>
           <div className='row'>
-            <AuctionTeam teamName='Stl. Cardinals' /> 
+            <AuctionTeam teamName='Stl. Cardinals' currentItem={this.state.currentItem} /> 
             <AuctionBid leagueId={this.props.match.params.id} />
           </div>
           <div className='row'>
