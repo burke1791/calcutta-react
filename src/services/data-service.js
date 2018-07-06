@@ -84,9 +84,9 @@ class DataService {
   }
 
   attachAuctionListener = (leagueId) => {
-    database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
-      console.log('auction snapshot: ' + snapshot.child('current-item').child('current-bid').val());
-      ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.child('current-item').val());
+    database.ref('/auctions/' + leagueId + '/current-item').on('value', function(snapshot) {
+      console.log('auction snapshot: ' + snapshot.child('current-bid').val());
+      ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
     }, function(errorObject) {
       console.log('the read failed: ' + errorObject.code);
     });
@@ -94,6 +94,24 @@ class DataService {
 
   detatchAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).off('value');
+  }
+
+  placeBid(leagueId, name, bid) {
+    var bidDate = new Date();
+
+    var bidTime = bidDate.toLocaleDateString() + ' ' + bidDate.toLocaleTimeString();
+
+    var bidObj = {
+      amount: bid,
+      bidder: name,
+      time: bidTime
+    }
+
+    database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
+    database.ref('/auctions/' + leagueId + '/current-item').update({
+      'current-bid': bid,
+      'current-winner': name
+    });
   }
 
   getLeagueOwner = (leagueId) => {

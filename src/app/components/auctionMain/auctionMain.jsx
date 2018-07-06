@@ -91,7 +91,7 @@ class AuctionMain extends Component {
         </div>
         <div className='container auction-main'>
           <div className='row'>
-            <AuctionTeam currentItem={this.state.currentItem} /> 
+            <AuctionTeam currentItem={this.state.currentItem} leagueId={this.props.match.params.id} /> 
             <AuctionBid leagueId={this.props.match.params.id} />
           </div>
           <div className='row'>
