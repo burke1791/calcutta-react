@@ -6,6 +6,7 @@ export const NOTIF_LEAGUE_SUBMIT = 'notif_league_submit';
 export const NOTIF_MODAL_TYPE_CHANGE = 'notif_modal_type_change';
 export const NOTIF_LEAGUE_JOINED = 'notif_league_joined';
 export const NOTIF_LEAGUE_CREATED = 'notif_league_created';
+export const NOTIF_AUCTION_CHANGE = 'notif_auction_change';
 
 var observers = {};
 let instance = null;
@@ -47,7 +48,6 @@ class NotificationService {
   postNotification = (notifName, data) => {
     console.log('notification: ' + notifName);
     let obs = observers[notifName];
-    console.log('obs: ' + obs);
     for (var x = 0; x < obs.length; x++) {
       var obj = obs[x];
       obj.callBack(data);

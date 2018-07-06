@@ -1,4 +1,4 @@
-import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED } from './notification-service';
+import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED, NOTIF_AUCTION_CHANGE } from './notification-service';
 import { database } from './fire';
 
 let ns = new NotificationService();
@@ -68,6 +68,7 @@ class DataService {
     });
   }
 
+  // Grabs the entire league's node
   getLeagueInfo = (leagueId, uid) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
@@ -88,6 +89,46 @@ class DataService {
         console.log('leagueName: ' + leagueName);
         // need some sort of conditional check
         resolve(leagueName);
+      });
+    });
+  }
+
+  attachAuctionListener = (leagueId) => {
+    database.ref('/auctions/' + leagueId + '/current-item').on('value', function(snapshot) {
+      console.log('auction snapshot: ' + snapshot.child('current-bid').val());
+      ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchAuctionListener = (leagueId) => {
+    database.ref('/auctions/' + leagueId).off('value');
+  }
+
+  placeBid(leagueId, name, bid) {
+    var bidDate = new Date();
+
+    var bidTime = bidDate.toLocaleDateString() + ' ' + bidDate.toLocaleTimeString();
+
+    var bidObj = {
+      amount: bid,
+      bidder: name,
+      time: bidTime
+    }
+
+    database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
+    database.ref('/auctions/' + leagueId + '/current-item').update({
+      'current-bid': bid,
+      'current-winner': name
+    });
+  }
+
+  getLeagueOwner = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/creator').once('value').then(function(snapshot) {
+        var leagueOwner = snapshot.val();
+        resolve(leagueOwner);
       });
     });
   }

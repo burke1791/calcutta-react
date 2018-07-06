@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
 import './leagueHome.css';
 import { Redirect } from 'react-router-dom';
+<<<<<<< HEAD
 import LeagueHeader from '../leagueHeader/leagueHeader';
+=======
+//import LeagueHeader from '../leagueHeader/leagueHeader';
+>>>>>>> auction
 import MembersTable from '../membersTable/membersTable';
 import NotificationService, { NOTIF_SIGNOUT } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
@@ -22,6 +26,7 @@ class LeagueHome extends Component {
     // Bind functions
     this.onSignOut = this.onSignOut.bind(this);
     this.getLeagueName = this.getLeagueName.bind(this);
+    this.goToAuction = this.goToAuction.bind(this);
   }
 
   componentDidMount() {
@@ -47,12 +52,27 @@ class LeagueHome extends Component {
     });
   }
 
+  // TEST
+  goToAuction() {
+    this.props.history.push('/league-home/' + this.props.match.params.id + '/auction/test');
+  }
+
   render() {
     if (this.state.isAuthenticated) {
       return (
         <div className='league-home'>
+<<<<<<< HEAD
           <div className='container league-header'>
             <LeagueHeader leagueId={this.props.match.params.id} />
+=======
+          <div className='container'>
+            <div className='row justify-content-md-center'>
+              <h1>{this.state.leagueName}</h1>
+            </div>
+            <div className='row justify-content-md-center'>
+              <button type='button' onClick={this.goToAuction} className='btn btn-primary'>Go To Auction</button>
+            </div>
+>>>>>>> auction
           </div>
           <div className='container card'>
             <MembersTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />

@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import './main.css';
 import Leagues from '../leagues/leagues';
 import LeagueHome from '../leagueHome/leagueHome';
+import AuctionMain from '../auctionMain/auctionMain';
 
 class Main extends Component {
 
@@ -11,7 +12,8 @@ class Main extends Component {
     return (
       <Switch>
         <Route exact path='/' component={Leagues}></Route>
-        <Route path='/league-home/:id' component={LeagueHome}></Route>
+        <Route exact path='/league-home/:id' component={LeagueHome}></Route>
+        <Route path='/league-home/:id/auction/:auctionId' component={AuctionMain}></Route>
       </Switch>
     );
   }
