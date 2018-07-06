@@ -21,7 +21,7 @@ class LeagueRow extends Component {
     // this.setState({toLeagueHome: true});
   }
 
-  render() {
+  render() { 
 
     return (
       <tr className='d-flex tr-hover' key={this.props.id} onClick={this.handleClick}>

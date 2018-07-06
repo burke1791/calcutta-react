@@ -95,7 +95,7 @@ class AuctionMain extends Component {
             <AuctionBid leagueId={this.props.match.params.id} />
           </div>
           <div className='row'>
-            <AuctionItemHistory />
+            <AuctionItemHistory leagueId={this.props.match.params.id} />
           </div>
         </div>
       </div>
@@ -103,5 +103,5 @@ class AuctionMain extends Component {
     );
   }
 }
-
+ 
 export default AuctionMain;

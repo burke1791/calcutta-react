@@ -120,7 +120,7 @@ class LeagueTable extends Component {
   
         var netReturnNegativeClass = this.getUserLeagueSummary(league)[2] < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
   
-        return (
+        return ( 
             <LeagueRow id={league.key} key={league.key} name={league.name} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
         

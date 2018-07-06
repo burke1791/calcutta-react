@@ -54,6 +54,14 @@ class AuctionBid extends Component {
 
   placeBid() {
     //push bid amount to firebase
+    var uid = authService.getUser().uid;
+    var self = this;
+
+    ds.getDisplayName(uid).then(function(username) {
+      if (self.state.bid > self.state.currentBid) {
+        ds.placeBid(self.state.leagueId, username, self.state.bid);
+      }
+    });
   }
 
   onBidChange(event) {
