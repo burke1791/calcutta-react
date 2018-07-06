@@ -49,6 +49,8 @@ class AuctionMain extends Component {
 
   newAuctionData(newData) {
     this.setState({currentItem: newData});
+
+    console.log('current Item: ' + this.state.currentItem['current-bid']);
   }
 
   fetchTeams() {
@@ -81,6 +83,7 @@ class AuctionMain extends Component {
 
   render() {
     console.log('owner: ' + this.state.owner);
+
     return (
       <div className='container'>
         <div className='container auction-header'>
@@ -88,7 +91,7 @@ class AuctionMain extends Component {
         </div>
         <div className='container auction-main'>
           <div className='row'>
-            <AuctionTeam teamName='Stl. Cardinals' currentItem={this.state.currentItem} /> 
+            <AuctionTeam currentItem={this.state.currentItem} /> 
             <AuctionBid leagueId={this.props.match.params.id} />
           </div>
           <div className='row'>

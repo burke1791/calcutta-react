@@ -24,20 +24,37 @@ class AuctionTeam extends Component {
   }
 
   render() {
-    return (
-      <div className='card auction-team'>
-        <h3>{this.props.teamName}</h3>
-        <h5>{this.state.currentBid}</h5>
-        <div className='auction-clock'>
-          <AuctionClock  interval={20} />
+    if (this.props.currentItem == null) {
+      return (
+        <div className='card auction-team'>
+          <h3>...</h3>
+          <h5>Bid:</h5>
+          <div className='auction-clock'>
+            <AuctionClock  interval={20} />
+          </div>
+          <h5>Current Winner:</h5>
+          <hr />
+          <div>
+            {this.generatePotInfo()}
+          </div>
         </div>
-        <h5>{this.state.currentWinner}</h5>
-        <hr />
-        <div>
-          {this.generatePotInfo()}
+      );
+    } else {
+      return (
+        <div className='card auction-team'>
+          <h3>{this.props.currentItem['name']}</h3>
+          <h5>{'Bid: $' + this.props.currentItem['current-bid']}</h5>
+          <div className='auction-clock'>
+            <AuctionClock  interval={20} />
+          </div>
+          <h5>{'High Bid: ' + this.props.currentItem['current-winner']}</h5>
+          <hr />
+          <div>
+            {this.generatePotInfo()}
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 

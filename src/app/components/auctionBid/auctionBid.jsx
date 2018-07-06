@@ -14,7 +14,7 @@ class AuctionBid extends Component {
     this.state = {
       minBid: 1,
       bid: 1,
-      leagueId: this.props.leagueId
+      leagueId: this.props.leagueId 
     }
 
     // Bind functions
