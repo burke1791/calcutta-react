@@ -84,7 +84,7 @@ class DataService {
   }
 
   attachAuctionListener = (leagueId) => {
-    database.ref('/auctions/' + leagueId + '/current-item').on('value', function(snapshot) {
+    database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       console.log('auction snapshot: ' + snapshot.child('current-bid').val());
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
     }, function(errorObject) {

@@ -71,21 +71,31 @@ class AuctionBid extends Component {
   }
 
   incrementBid() {
-    var newBid = parseInt(this.state.bid) + 1;
-    this.setState({bid: newBid});
-  }
-
-  decrementBid() {
-    var newBid = parseInt(this.state.bid) - 1;
-    if (newBid < 0) {
-      this.setState({bid: 0});
+    if (this.state.bid == '') {
+      var newBid = 1;
+      this.setState({bid: newBid});
     } else {
+      var newBid = parseInt(this.state.bid) + 1;
       this.setState({bid: newBid});
     }
   }
 
+  decrementBid() {
+    if (this.state.bid == '') {
+      var newBid = 0;
+      this.setState({bid: 0});
+    } else {
+      var newBid = parseInt(this.state.bid) - 1;
+      if (newBid < 0) {
+        this.setState({bid: 0});
+      } else {
+        this.setState({bid: newBid});
+      }
+    }
+  }
+
   newAuctionData(newData) {
-    var currentBid = newData['current-bid'];
+    var currentBid = newData['current-item']['current-bid'];
 
     this.setState({
       minBid: Number(currentBid) + 1,

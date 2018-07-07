@@ -7,6 +7,8 @@ export const NOTIF_MODAL_TYPE_CHANGE = 'notif_modal_type_change';
 export const NOTIF_LEAGUE_JOINED = 'notif_league_joined';
 export const NOTIF_LEAGUE_CREATED = 'notif_league_created';
 export const NOTIF_AUCTION_CHANGE = 'notif_auction_change';
+export const NOTIF_AUCTION_START_CLOCK = 'notif_auction_start_clock';
+export const NOTIF_AUCTION_RESTART_CLOCK = 'notif_auction_restart_clock';
 
 var observers = {};
 let instance = null;

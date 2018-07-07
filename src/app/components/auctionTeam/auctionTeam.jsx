@@ -30,8 +30,8 @@ class AuctionTeam extends Component {
   }
 
   newAuctionData(newData) {
-    var currentBid = newData['current-bid'];
-    var currentWinner = newData['current-winner'];
+    var currentBid = newData['current-item']['current-bid'];
+    var currentWinner = newData['current-item']['current-winner'];
 
     this.setState({
       currentBid: 'Bid: $' + currentBid,

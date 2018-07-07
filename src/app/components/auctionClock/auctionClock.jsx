@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './auctionClock.css';
-import NotificationService, { NOTIF_AUCTION_CHANGE } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK } from '../../../services/notification-service';
 
 let ns = new NotificationService();
 
@@ -17,20 +17,22 @@ class AuctionClock extends Component {
     this.generateCountdownDisplay = this.generateCountdownDisplay.bind(this);
     this.tick = this.tick.bind(this);
     this.newAuctionData = this.newAuctionData.bind(this);
+    this.startClock = this.startClock.bind(this);
+    this.restartClcok = this.restartClcok.bind(this);
   }
 
   componentDidMount() {
-    this.timerID = setInterval(
-      () => this.tick(),
-      1000
-    );
-
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
+    ns.addObserver(NOTIF_AUCTION_START_CLOCK, this, this.startClock);
+    ns.addObserver(NOTIF_AUCTION_RESTART_CLOCK, this, this.restartClcok);
   }
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
+    ns.removeObserver(this, NOTIF_AUCTION_START_CLOCK);
+    ns.removeObserver(this, NOTIF_AUCTION_RESTART_CLOCK);
   }
 
   tick() {
@@ -44,9 +46,23 @@ class AuctionClock extends Component {
 
   newAuctionData(newData) {
     this.setState({
-      currentBid: newData['current-bid'],
+      currentBid: newData['current-item']['current-bid'],
       timeRemaining: this.props.interval
     });
+  }
+
+  startClock() {
+    this.timerID = setInterval(
+      () => this.tick(),
+      1000
+    );
+  }
+
+  restartClcok() {
+    clearInterval(this.timerID);
+    this.setState({timeRemaining: this.props.interval});
+
+    this.startClock();
   }
 
   generateCountdownDisplay = () => {
