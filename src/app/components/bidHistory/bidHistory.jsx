@@ -29,8 +29,11 @@ class BidHistory extends Component {
 
   newAuctionData(newData) {
     var bids = newData['bids'];
-    var keys = Object.keys(bids);
-    keys.reverse();
+    var keys = [];
+    if (bids != null && typeof(bids) != 'undefined') {
+      keys = Object.keys(bids);
+      keys.reverse();
+    }
 
     this.setState({
       bidHistory: bids,

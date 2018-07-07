@@ -88,7 +88,7 @@ class AuctionBid extends Component {
     var currentBid = newData['current-bid'];
 
     this.setState({
-      minBid: currentBid + 1,
+      minBid: Number(currentBid) + 1,
       currentBid: currentBid
     });
   }
