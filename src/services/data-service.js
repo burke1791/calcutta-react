@@ -96,10 +96,18 @@ class DataService {
     database.ref('/auctions/' + leagueId).off('value');
   }
 
+  restartAuctionClock = (leagueId) => {
+    var newTime = new Date();
+    newTime = newTime.toLocaleTimeString();
+    database.ref('/auctions/' + leagueId + '/current-item').update({
+      'end-time': newTime
+    });
+  }
+
   placeBid(leagueId, name, bid) {
     var bidDate = new Date();
 
-    var bidTime = bidDate.toLocaleDateString() + ' ' + bidDate.toLocaleTimeString();
+    var bidTime = bidDate.toLocaleTimeString();
 
     var bidObj = {
       amount: bid,

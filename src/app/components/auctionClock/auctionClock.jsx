@@ -18,13 +18,13 @@ class AuctionClock extends Component {
     this.tick = this.tick.bind(this);
     this.newAuctionData = this.newAuctionData.bind(this);
     this.startClock = this.startClock.bind(this);
-    this.restartClcok = this.restartClcok.bind(this);
+    //this.restartClcok = this.restartClcok.bind(this);
   }
 
   componentDidMount() {
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
     ns.addObserver(NOTIF_AUCTION_START_CLOCK, this, this.startClock);
-    ns.addObserver(NOTIF_AUCTION_RESTART_CLOCK, this, this.restartClcok);
+    //ns.addObserver(NOTIF_AUCTION_RESTART_CLOCK, this, this.restartClcok);
   }
 
   componentWillUnmount() {
@@ -32,7 +32,7 @@ class AuctionClock extends Component {
 
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
     ns.removeObserver(this, NOTIF_AUCTION_START_CLOCK);
-    ns.removeObserver(this, NOTIF_AUCTION_RESTART_CLOCK);
+    //ns.removeObserver(this, NOTIF_AUCTION_RESTART_CLOCK);
   }
 
   tick() {
@@ -58,12 +58,15 @@ class AuctionClock extends Component {
     );
   }
 
+  /*
   restartClcok() {
+    ds.
     clearInterval(this.timerID);
     this.setState({timeRemaining: this.props.interval});
 
     this.startClock();
   }
+  */
 
   generateCountdownDisplay = () => {
     if (this.state.timeRemaining < 10) {

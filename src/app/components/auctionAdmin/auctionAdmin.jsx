@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './auctionAdmin.css';
 import Button from '../button/button';
 
-import NotificationService, { NOTIF_AUCTION_RESTART_CLOCK } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_START_CLOCK } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
@@ -39,15 +39,16 @@ class AuctionAdmin extends Component {
   }
 
   startAuction() {
-
+    
   }
 
   nextItem() {
-
+    // Test
+    ns.postNotification(NOTIF_AUCTION_START_CLOCK, null);
   }
 
   restartClcok() {
-    ns.postNotification(NOTIF_AUCTION_RESTART_CLOCK, null);
+    ds.restartAuctionClock(this.state.leagueId);
   }
 
   undoLastBid() {
