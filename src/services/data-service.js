@@ -122,6 +122,12 @@ class DataService {
     });
   }
 
+  auctionItemComplete(leagueId) {
+    database.ref('/auctions/' + leagueId + '/current-item').update({
+      'complete': true
+    });
+  }
+
   getLeagueOwner = (leagueId) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/creator').once('value').then(function(snapshot) {

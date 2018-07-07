@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './auctionAdmin.css';
 import Button from '../button/button';
 
-import NotificationService, { NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_START_CLOCK } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
@@ -24,6 +24,7 @@ class AuctionAdmin extends Component {
     this.restartClcok = this.restartClcok.bind(this);
     this.undoLastBid = this.undoLastBid.bind(this);
     this.endAuction = this.endAuction.bind(this);
+    this.itemComplete = this.itemComplete.bind(this);
     this.generateAdminHeader = this.generateAdminHeader.bind(this);
   }
 
@@ -32,10 +33,12 @@ class AuctionAdmin extends Component {
     ds.getDataSnapshot('/auctions/' + this.state.leagueId + '/in-progress').then(function(auctionStarted) {
       self.setState({auctionStarted: auctionStarted});
     });
+
+    ns.addObserver(NOTIF_AUCTION_ITEM_COMPLETE, this, this.itemComplete);
   }
 
   componentWillUnmount() {
-
+    ns.removeObserver(this, NOTIF_AUCTION_ITEM_COMPLETE);
   }
 
   startAuction() {
@@ -57,6 +60,10 @@ class AuctionAdmin extends Component {
 
   endAuction() {
 
+  }
+
+  itemComplete() {
+    ds.auctionItemComplete(this.state.leagueId);
   }
 
   generateAdminHeader = () => {

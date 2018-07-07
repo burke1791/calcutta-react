@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './auctionClock.css';
-import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
 
 let ns = new NotificationService();
 
@@ -38,6 +38,7 @@ class AuctionClock extends Component {
   tick() {
     if (this.state.timeRemaining == 0) {
       clearInterval(this.timerID);
+      ns.postNotification(NOTIF_AUCTION_ITEM_COMPLETE, null);
     } else {
       var newRemainingTime = this.state.timeRemaining - 1;
       this.setState({timeRemaining: newRemainingTime});
@@ -45,10 +46,19 @@ class AuctionClock extends Component {
   }
 
   newAuctionData(newData) {
-    this.setState({
-      currentBid: newData['current-item']['current-bid'],
-      timeRemaining: this.props.interval
-    });
+    var itemComplete = newData['current-item']['complete'];
+
+    if (itemComplete) {
+      this.setState({
+        currentBid: newData['current-item']['current-bid']
+      });
+    } else {
+      this.setState({
+        currentBid: newData['current-item']['current-bid'],
+        timeRemaining: this.props.interval
+      });
+    }
+    
   }
 
   startClock() {

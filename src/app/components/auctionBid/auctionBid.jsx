@@ -19,7 +19,8 @@ class AuctionBid extends Component {
       minBid: 1,
       bid: 1,
       leagueId: this.props.leagueId,
-      currentBid: 0
+      currentBid: 0,
+      itemComplete: true
     }
 
     // Bind functions
@@ -96,26 +97,36 @@ class AuctionBid extends Component {
 
   newAuctionData(newData) {
     var currentBid = newData['current-item']['current-bid'];
-
+    var itemComplete = newData['current-item']['complete'];
+    console.log('item complete: ' + itemComplete);
     this.setState({
       minBid: Number(currentBid) + 1,
-      currentBid: currentBid
+      currentBid: currentBid,
+      itemComplete: itemComplete
     });
   }
 
   render() {
     var bidBtnClass = 'btn btn-primary';
+    var disabled = false;
+
     if (this.state.bid < this.state.minBid) {
       bidBtnClass = 'btn btn-danger';
     }
 
+    if (this.state.itemComplete) {
+      disabled = true;
+    }
+
+    console.log('disabled: ' + disabled == true);
+
     return (
       <div className='card bid-actions'>
-        <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} />
-        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid: $' + this.state.bid} onClick={this.placeBid} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} />
+        <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
+        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid: $' + this.state.bid} onClick={this.placeBid} disabled={disabled} />
+        <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} disabled={disabled} />
         <input type='number' value={this.state.bid} onChange={this.onBidChange} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} />
+        <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} disabled={disabled} />
       </div>
     );
   }
