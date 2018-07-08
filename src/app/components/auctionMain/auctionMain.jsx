@@ -23,7 +23,8 @@ class AuctionMain extends Component {
       teams: [],
       owner: '',
       leagueId: this.props.match.params.id,
-      currentItem: null
+      currentItem: null,
+      auctionStarted: false
     }
 
     // Bind functions
@@ -38,18 +39,22 @@ class AuctionMain extends Component {
 
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
 
-    ds.attachAuctionListener(this.props.match.params.id);
+    ds.attachAuctionListener(this.state.leagueId);
   }
 
   componentWillUnmount() {
-    ds.detatchAuctionListener(this.props.match.params.id);
+    ds.detatchAuctionListener(this.state.leagueId);
 
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
   }
 
   newAuctionData(newData) {
-    this.setState({currentItem: newData});
+    this.setState({
+      currentItem: newData['current-item'],
+      auctionStarted: newData['in-progress']
+    });
 
+    console.log('in-progress: ' + this.state.auctionStarted);
     console.log('current Item: ' + this.state.currentItem['current-bid']);
   }
 
@@ -60,7 +65,7 @@ class AuctionMain extends Component {
   getLeagueOwner() {
     var self = this;
 
-    ds.getLeagueOwner(this.props.match.params.id).then(function(owner) {
+    ds.getLeagueOwner(this.state.leagueId).then(function(owner) {
       self.setState({owner: owner});
     }); 
   }
@@ -70,7 +75,7 @@ class AuctionMain extends Component {
 
     if (uid != null && uid === this.state.owner) {
       return (
-        <AuctionAdmin />
+        <AuctionAdmin auctionStarted={this.state.auctionStarted} leagueId={this.state.leagueId} />
       );
     } else {
       return (
@@ -91,11 +96,11 @@ class AuctionMain extends Component {
         </div>
         <div className='container auction-main'>
           <div className='row'>
-            <AuctionTeam currentItem={this.state.currentItem} leagueId={this.props.match.params.id} /> 
-            <AuctionBid leagueId={this.props.match.params.id} />
+            <AuctionTeam currentItem={this.state.currentItem} leagueId={this.state.leagueId} /> 
+            <AuctionBid leagueId={this.state.leagueId} />
           </div>
           <div className='row'>
-            <AuctionItemHistory leagueId={this.props.match.params.id} />
+            <AuctionItemHistory leagueId={this.state.leagueId} />
           </div>
         </div>
       </div>

@@ -19,7 +19,8 @@ class AuctionBid extends Component {
       minBid: 1,
       bid: 1,
       leagueId: this.props.leagueId,
-      currentBid: 0
+      currentBid: 0,
+      itemComplete: true
     }
 
     // Bind functions
@@ -46,7 +47,7 @@ class AuctionBid extends Component {
     
     ds.getDisplayName(uid).then(function(username) {
       if (self.state.minBid > self.state.currentBid) {
-        ds.placeBid(self.state.leagueId, username, self.state.minBid);
+        ds.placeBid(self.state.leagueId, uid, username, self.state.minBid);
       }
     });
     
@@ -59,7 +60,7 @@ class AuctionBid extends Component {
 
     ds.getDisplayName(uid).then(function(username) {
       if (self.state.bid > self.state.currentBid) {
-        ds.placeBid(self.state.leagueId, username, self.state.bid);
+        ds.placeBid(self.state.leagueId, uid, username, self.state.bid);
       }
     });
   }
@@ -71,41 +72,64 @@ class AuctionBid extends Component {
   }
 
   incrementBid() {
-    var newBid = parseInt(this.state.bid) + 1;
-    this.setState({bid: newBid});
-  }
-
-  decrementBid() {
-    var newBid = parseInt(this.state.bid) - 1;
-    if (newBid < 0) {
-      this.setState({bid: 0});
+    if (this.state.bid == '') {
+      var newBid = 1;
+      this.setState({bid: newBid});
     } else {
+      var newBid = parseInt(this.state.bid) + 1;
       this.setState({bid: newBid});
     }
   }
 
-  newAuctionData(newData) {
-    var currentBid = newData['current-bid'];
+  decrementBid() {
+    if (this.state.bid == '') {
+      var newBid = 0;
+      this.setState({bid: 0});
+    } else {
+      var newBid = parseInt(this.state.bid) - 1;
+      if (newBid < 0) {
+        this.setState({bid: 0});
+      } else {
+        this.setState({bid: newBid});
+      }
+    }
+  }
 
+  newAuctionData(newData) {
+    var currentBid = newData['current-item']['current-bid'];
+    var itemComplete = newData['current-item']['complete'];
+    console.log('item complete: ' + itemComplete);
     this.setState({
-      minBid: currentBid + 1,
-      currentBid: currentBid
+      minBid: Number(currentBid) + 1,
+      currentBid: currentBid,
+      itemComplete: itemComplete
     });
   }
 
   render() {
     var bidBtnClass = 'btn btn-primary';
+    var bidBtnDisabled = false;
+    var disabled = false;
+
     if (this.state.bid < this.state.minBid) {
       bidBtnClass = 'btn btn-danger';
+      bidBtnDisabled = true;
     }
+
+    if (this.state.itemComplete) {
+      disabled = true;
+      bidBtnDisabled = true;
+    }
+
+    console.log('disabled: ' + disabled == true);
 
     return (
       <div className='card bid-actions'>
-        <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} />
-        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid: $' + this.state.bid} onClick={this.placeBid} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} />
-        <input type='number' value={this.state.bid} onChange={this.onBidChange} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} />
+        <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
+        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid: $' + this.state.bid} onClick={this.placeBid} disabled={bidBtnDisabled} />
+        <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} disabled={disabled} />
+        <input type='number' value={this.state.bid} onChange={this.onBidChange} disabled={disabled} />
+        <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} disabled={disabled} />
       </div>
     );
   }

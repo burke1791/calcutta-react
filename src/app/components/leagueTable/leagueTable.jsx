@@ -88,8 +88,8 @@ class LeagueTable extends Component {
 
     for (const [key, value] of Object.entries(teams)) {
       if (value.owner === uid) {
-        buyIn += value.price;
-        payout += value.return;
+        buyIn += Number(value.price);
+        payout += Number(value.return);
       }
     }
 
