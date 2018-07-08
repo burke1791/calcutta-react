@@ -96,15 +96,80 @@ class DataService {
     database.ref('/auctions/' + leagueId).off('value');
   }
 
+  getTeamCodes = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
+        var teams = snapshot.val();
+        resolve(teams);
+      });
+    });
+  }
+
+  logAuctionItemResult = (leagueId) => {
+    var itemCode = '';
+    var winnerUID = '';
+    var winningBid = 0;
+
+    return new Promise((resolve, reject) => {
+      database.ref('/auctions/' + leagueId + '/current-item').once('value').then(function(snapshot) {
+        itemCode = snapshot.child('code').val();
+        winnerUID = snapshot.child('winner-uid').val();
+        winningBid = snapshot.child('current-bid').val();
+  
+        database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
+          'owner': winnerUID,
+          'price': winningBid
+        }, function(error) {
+          if (error) {
+            console.log('logAuctionItemResult failed');
+            reject();
+          } else {
+            console.log('logAuctionItemResult succeeded');
+            resolve(itemCode);
+          }
+        });
+      });
+    });
+  }
+
+  loadNextItem = (teamCode, leagueId) => {
+    var name = '';
+
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
+        name = snapshot.child('name').val();
+        database.ref('/auctions/' + leagueId + '/current-item').set({
+          'code': teamCode,
+          'complete': false,
+          'current-bid': 0,
+          'current-winner': '',
+          'end-time': '',
+          'name': name,
+          'winner-uid': ''
+        }, function(error) {
+          if (error) {
+            console.log('loadNextItem failed');
+            reject();
+          } else {
+            console.log('loadNextItem succeeded');
+            resolve();
+          }
+        });
+      });
+    });
+    
+  }
+
   restartAuctionClock = (leagueId) => {
     var newTime = new Date();
     newTime = newTime.toLocaleTimeString();
     database.ref('/auctions/' + leagueId + '/current-item').update({
-      'end-time': newTime
+      'end-time': newTime,
+      'complete': false
     });
   }
 
-  placeBid(leagueId, name, bid) {
+  placeBid(leagueId, uid, name, bid) {
     var bidDate = new Date();
 
     var bidTime = bidDate.toLocaleTimeString();
@@ -118,7 +183,8 @@ class DataService {
     database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
     database.ref('/auctions/' + leagueId + '/current-item').update({
       'current-bid': bid,
-      'current-winner': name
+      'current-winner': name,
+      'winner-uid': uid
     });
   }
 

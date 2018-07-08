@@ -15,12 +15,16 @@ class AuctionAdmin extends Component {
 
     this.state = {
       auctionStarted: this.props.auctionStarted,
-      leagueId: this.props.leagueId
+      leagueId: this.props.leagueId,
+      teamCodes: []
     }
 
     // bind functions
+    this.fetchTeamCodes = this.fetchTeamCodes.bind(this);
     this.startAuction = this.startAuction.bind(this);
     this.nextItem = this.nextItem.bind(this);
+    this.logResults = this.logResults.bind(this);
+    this.loadNewItem = this.loadNewItem.bind(this);
     this.restartClcok = this.restartClcok.bind(this);
     this.undoLastBid = this.undoLastBid.bind(this);
     this.endAuction = this.endAuction.bind(this);
@@ -29,6 +33,8 @@ class AuctionAdmin extends Component {
   }
 
   componentDidMount() {
+    this.fetchTeamCodes();
+
     var self = this;
     ds.getDataSnapshot('/auctions/' + this.state.leagueId + '/in-progress').then(function(auctionStarted) {
       self.setState({auctionStarted: auctionStarted});
@@ -41,13 +47,51 @@ class AuctionAdmin extends Component {
     ns.removeObserver(this, NOTIF_AUCTION_ITEM_COMPLETE);
   }
 
+  fetchTeamCodes() {
+    var self = this;
+    ds.getTeamCodes(this.state.leagueId).then(function(teams) {
+      var codes = Object.keys(teams);
+      self.setState({teamCodes: codes});
+    });
+  }
+
   startAuction() {
     
   }
 
   nextItem() {
     // Test
-    ns.postNotification(NOTIF_AUCTION_START_CLOCK, null);
+    // ns.postNotification(NOTIF_AUCTION_START_CLOCK, null);
+    this.logResults();
+
+    if (this.state.teamCodes.length >= 1) {
+
+    }
+  }
+
+  logResults() {
+    var self = this;
+    ds.logAuctionItemResult(this.state.leagueId).then((oldCode) => {
+      self.loadNewItem(oldCode);
+    });
+  }
+
+  loadNewItem(oldCode) {
+    var self = this;
+    var codes = this.state.teamCodes;
+
+    if (codes.length > 1) {
+      for (var x = 0; x < codes.length; x++) {
+        if (codes[x] === oldCode) {
+          codes.splice(x, 1);
+          var newCode = codes[0];
+          ds.loadNextItem(newCode, this.state.leagueId).then(() => {
+            self.setState({teamCodes: codes});
+          });
+          break;
+        }
+      }
+    }
   }
 
   restartClcok() {
