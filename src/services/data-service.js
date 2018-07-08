@@ -37,7 +37,7 @@ class DataService {
 
   // Needs to be called when league creator chooses the sport
   populateLeagueTeams(leagueId, sport) {
-    if (leagueId != null && sport == 'mlb-2018') {
+    if (leagueId != null && sport == 'mlb') {
       this.getDataSnapshot('/sports/mlb').then(function(snapshot) {
         var mlbTeams = snapshot.val();
         database.ref('/leagues/' + leagueId + '/teams').set(mlbTeams);
@@ -269,6 +269,36 @@ class DataService {
     });
   }
 
+  getUserTeams = (leagueId, uid) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
+        var teams = snapshot.val();
+        var userTeams = {};
+
+        for (var team in teams) {
+          var userTeam = {
+            name: '',
+            price: 0,
+            payout: 0,
+            netReturn: 0
+          }
+
+          if (teams[team].owner === uid) {
+            userTeam.name = teams[team].name;
+            userTeam.price = teams[team].price;
+            userTeam.payout = teams[team].return;
+            userTeam.netReturn = Number(userTeam.payout) - Number(userTeam.price);
+
+            userTeams[team] = userTeam;
+          }
+        }
+
+        resolve(userTeams);
+      });
+    });
+    
+  }
+
   joinLeague(key, uid) {
     database.ref('/leagues/' + key + '/members/' + uid).set(true);
     ns.postNotification(NOTIF_LEAGUE_JOINED, null);
@@ -278,6 +308,19 @@ class DataService {
     database.ref('/leagues').push(league);
     ns.postNotification(NOTIF_LEAGUE_CREATED, null);
     // Redirect to league setup page (react router)
+  }
+
+  formatMoney = (value) => {
+    var currencyString = '';
+
+    var s = '';
+    var sym = '$';
+    
+    if (value < 0) {
+      s = '-';
+    }
+    currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
+    return (currencyString);
   }
 }
 

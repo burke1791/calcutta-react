@@ -99,6 +99,7 @@ class LeagueTable extends Component {
   }
 
   formatMoney = (value) => {
+    // TODO: move to DataService
     var currencyString = '';
 
     var s = '';
@@ -136,7 +137,7 @@ class LeagueTable extends Component {
         </tr>
       );
     }
-  }
+  } 
   
   render() {
     return(

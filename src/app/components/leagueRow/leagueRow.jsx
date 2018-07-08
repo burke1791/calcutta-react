@@ -18,7 +18,7 @@ class LeagueRow extends Component {
   handleClick(event) {
     event.preventDefault();
     this.props.history.push('/league-home/' + this.props.id);
-    // this.setState({toLeagueHome: true});
+    // this.setState({toLeagueHome: true}); 
   }
 
   render() { 

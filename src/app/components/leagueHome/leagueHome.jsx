@@ -50,7 +50,7 @@ class LeagueHome extends Component {
 
   // TEST
   goToAuction() {
-    this.props.history.push('/league-home/' + this.props.match.params.id + '/auction/test');
+    this.props.history.push('/league-home/' + this.props.match.params.id + '/auction/');
   }
 
   render() {

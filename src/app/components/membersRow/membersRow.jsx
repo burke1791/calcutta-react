@@ -11,6 +11,8 @@ class MembersRow extends Component {
 
   handleClick(event) {
     event.preventDefault();
+
+    this.props.history.push('/league-home/' + this.props.match.params.id + '/member/' + this.props.id);
   }
 
   render() {
