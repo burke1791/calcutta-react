@@ -225,8 +225,8 @@ class DataService {
           if (members[mem]) {
             for (var team in teams) {
               if (teams[team].owner === mem) {
-                buyIn += teams[team].price;
-                payout += teams[team].return;
+                buyIn += Number(teams[team].price);
+                payout += Number(teams[team].return);
               }
             }
             member.buyIn = buyIn;
