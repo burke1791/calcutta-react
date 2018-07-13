@@ -65,7 +65,7 @@ class AuctionAdmin extends Component {
     this.logResults();
 
     if (this.state.teamCodes.length >= 1) {
-
+      
     }
   }
 
