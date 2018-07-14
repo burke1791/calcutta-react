@@ -14,7 +14,7 @@ class AuctionAdmin extends Component {
     super(props);
 
     this.state = {
-      auctionStarted: this.props.auctionStarted,
+      auctionStarted: false,
       leagueId: this.props.leagueId,
       teamCodes: []
     }
@@ -37,7 +37,7 @@ class AuctionAdmin extends Component {
 
     var self = this;
     ds.getDataSnapshot('/auctions/' + this.state.leagueId + '/in-progress').then(function(auctionStarted) {
-      self.setState({auctionStarted: auctionStarted});
+      self.setState({auctionStarted: auctionStarted.val()});
     });
 
     ns.addObserver(NOTIF_AUCTION_ITEM_COMPLETE, this, this.itemComplete);
@@ -56,17 +56,14 @@ class AuctionAdmin extends Component {
   }
 
   startAuction() {
-    
+    this.loadNewItem();
+    this.setState({auctionStarted: true});
   }
 
   nextItem() {
     // Test
     // ns.postNotification(NOTIF_AUCTION_START_CLOCK, null);
     this.logResults();
-
-    if (this.state.teamCodes.length >= 1) {
-      
-    }
   }
 
   logResults() {
@@ -80,15 +77,20 @@ class AuctionAdmin extends Component {
     var self = this;
     var codes = this.state.teamCodes;
 
-    if (codes.length > 1) {
-      for (var x = 0; x < codes.length; x++) {
-        if (codes[x] === oldCode) {
-          codes.splice(x, 1);
-          var newCode = codes[0];
-          ds.loadNextItem(newCode, this.state.leagueId).then(() => {
-            self.setState({teamCodes: codes});
-          });
-          break;
+    if (!oldCode) {
+      var newCode = codes[0];
+      ds.loadNextItem(newCode, this.state.leagueId);
+    } else {
+      if (codes.length > 1) {
+        for (var x = 0; x < codes.length; x++) {
+          if (codes[x] === oldCode) {
+            codes.splice(x, 1);
+            var newCode = codes[0];
+            ds.loadNextItem(newCode, this.state.leagueId).then(() => {
+              self.setState({teamCodes: codes});
+            });
+            break;
+          }
         }
       }
     }
