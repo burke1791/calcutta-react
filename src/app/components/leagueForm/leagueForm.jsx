@@ -19,7 +19,7 @@ class LeagueForm extends Component {
       submitBtnText: props.leagueType === 'join' ? 'Join' : 'Create',
       leagueNameVal: '',
       leaguePassVal: '',
-      leagueSportVal: 'ncaa-mens'
+      leagueSportVal: ''
     };
 
     this.leagueSubmission = this.leagueSubmission.bind(this);
@@ -69,6 +69,7 @@ class LeagueForm extends Component {
         });
       });
     } else if (this.state.leagueType === 'create') {
+      // TODO: move this to data service
       var league = {
         'status' : 'pending',
         'creator' : uid,
@@ -130,12 +131,14 @@ class LeagueForm extends Component {
         </div>
       );
     } else {
+      // TODO: populate the select tag with options from the database
       return (
         <div className='create-form'>
           <div className='form-group'>
             <label><strong>League Sport</strong></label>
             <select className='custom-select' value={this.state.leagueSportVal} onChange={this.onLeagueSportChange}>
               <option value='ncaa-mens'>NCAA Men's Basketball</option>
+              <option value='mlb-hrderby-2018'>Home Run Derby 2018</option>
             </select>
           </div>
           <div className='form-group'>

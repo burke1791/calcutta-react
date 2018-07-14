@@ -265,9 +265,35 @@ class DataService {
   }
 
   createLeague(league) {
-    database.ref('/leagues').push(league);
-    ns.postNotification(NOTIF_LEAGUE_CREATED, null);
-    // Redirect to league setup page (react router)
+    const sportCode = league['sport'];
+
+    var auction = {
+      'current-item': {
+        'code': "",
+        'complete': true,
+        'current-bid': 0,
+        'current-winner': "",
+        'end-time': "",
+        'name': "",
+        'winner-uid': ""
+      },
+      'in-progress': false
+    };
+
+    // temporary until I move creation of the league object to this function
+    var newLeague = league;
+
+    database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
+      var teams = snapshot.val();
+      newLeague['teams'] = teams;
+
+      database.ref('/leagues').push(league).then(function(snapshot) {
+        const pushId = snapshot.key;
+        database.ref('/auctions').child(pushId).set(auction);
+        // TODO: Redirect to league setup page (react router)
+        ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+      });
+    });
   }
 }
 
