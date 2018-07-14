@@ -12,7 +12,7 @@ class BidRow extends Component {
         <td className='col col-md-1'>{this.props.num}</td>
         <td className='col col-md-2'>{this.props.time}</td>
         <td className='col col-md-2'>{this.props.bidder}</td>
-        <td className='col col-md-2'>{this.props.amount}</td>
+        <td className='col col-md-2'>{'$ ' + this.props.amount}</td>
       </tr>
     );
   }
