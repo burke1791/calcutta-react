@@ -108,8 +108,17 @@ class DataService {
 
   getTeamCodes = (leagueId) => {
     return new Promise((resolve, reject) => {
+      var teams = {};
       database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
-        var teams = snapshot.val();
+        snapshot.forEach(function(childSnapshot) {
+          var key = childSnapshot.key;
+          var owner = childSnapshot.child('owner').val();
+
+          if (owner === '') {
+            teams[key] = childSnapshot.val();
+            console.log('team: ' + teams[key]['name']);
+          }
+        });
         resolve(teams);
       });
     });
