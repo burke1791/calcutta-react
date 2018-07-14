@@ -58,11 +58,13 @@ class AuctionBid extends Component {
     var uid = authService.getUser().uid;
     var self = this;
 
-    ds.getDisplayName(uid).then(function(username) {
-      if (self.state.bid > self.state.currentBid) {
-        ds.placeBid(self.state.leagueId, uid, username, self.state.bid);
-      }
-    });
+    var bid = Math.ceil(this.state.bid);
+
+    if (bid >= this.state.minBid) {
+      ds.getDisplayName(uid).then(function(username) {
+        ds.placeBid(self.state.leagueId, uid, username, bid);
+      });
+    }
   }
 
   onBidChange(event) {
@@ -111,7 +113,7 @@ class AuctionBid extends Component {
     var bidBtnDisabled = false;
     var disabled = false;
 
-    if (this.state.bid < this.state.minBid) {
+    if (parseInt(Math.ceil(this.state.bid)) < parseInt(this.state.minBid)) {
       bidBtnClass = 'btn btn-danger';
       bidBtnDisabled = true;
     }
@@ -126,7 +128,7 @@ class AuctionBid extends Component {
     return (
       <div className='card bid-actions'>
         <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
-        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid: $' + this.state.bid} onClick={this.placeBid} disabled={bidBtnDisabled} />
+        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid'} onClick={this.placeBid} disabled={bidBtnDisabled} />
         <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} disabled={disabled} />
         <input type='number' value={this.state.bid} onChange={this.onBidChange} disabled={disabled} />
         <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} disabled={disabled} />

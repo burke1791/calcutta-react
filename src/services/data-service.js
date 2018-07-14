@@ -148,14 +148,17 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
         name = snapshot.child('name').val();
-        database.ref('/auctions/' + leagueId + '/current-item').set({
-          'code': teamCode,
-          'complete': false,
-          'current-bid': 0,
-          'current-winner': '',
-          'end-time': '',
-          'name': name,
-          'winner-uid': ''
+        database.ref('/auctions/' + leagueId).set({
+          'current-item': {
+            'code': teamCode,
+            'complete': false,
+            'current-bid': 0,
+            'current-winner': '',
+            'end-time': '',
+            'name': name,
+            'winner-uid': ''
+          },
+          'in-progress': true
         }, function(error) {
           if (error) {
             console.log('loadNextItem failed');
