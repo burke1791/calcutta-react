@@ -81,7 +81,6 @@ class AuctionAdmin extends Component {
       var newCode = codes[0];
       ds.loadNextItem(newCode, this.state.leagueId);
     } else {
-      console.log('codes.length: ' + codes.length);
       if (codes.length > 1) {
         for (var x = 0; x < codes.length; x++) {
           if (codes[x] === oldCode) {

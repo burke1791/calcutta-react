@@ -15,17 +15,21 @@ class AuctionBid extends Component {
   constructor(props) {
     super(props);
 
+    this.enableBidding = null;
+
     this.state = {
       minBid: 1,
       bid: 1,
       leagueId: this.props.leagueId,
       currentBid: 0,
-      itemComplete: true
+      itemComplete: true,
+      biddingDisabled: false
     }
 
     // Bind functions
     this.placeBid = this.placeBid.bind(this);
     this.placeMinBid = this.placeMinBid.bind(this);
+    this.disableBidding = this.disableBidding.bind(this);
     this.onBidChange = this.onBidChange.bind(this);
     this.incrementBid = this.incrementBid.bind(this);
     this.decrementBid = this.decrementBid.bind(this);
@@ -38,12 +42,24 @@ class AuctionBid extends Component {
 
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
+
+    clearTimeout(this.enableBidding);
+  }
+
+  componentDidUpdate(nextProps, nextState) {
+    if (nextState.biddingDisabled) {
+      this.enableBidding = setTimeout(() => {
+        this.setState(() => ({biddingDisabled: false}))
+      }, 1000);
+    }
   }
 
   placeMinBid() {
     //push bid amount to firebase
     var uid = authService.getUser().uid;
     var self = this;
+
+    this.setState({biddingDisabled: true});
     
     ds.getDisplayName(uid).then(function(username) {
       if (self.state.minBid > self.state.currentBid) {
@@ -58,6 +74,8 @@ class AuctionBid extends Component {
     var uid = authService.getUser().uid;
     var self = this;
 
+    this.setState({biddingDisabled: true});
+
     var bid = Math.ceil(this.state.bid);
 
     if (bid >= this.state.minBid) {
@@ -65,6 +83,11 @@ class AuctionBid extends Component {
         ds.placeBid(self.state.leagueId, uid, username, bid);
       });
     }
+  }
+
+  disableBidding() {
+    this.setState({biddingDisabled: false});
+
   }
 
   onBidChange(event) {
@@ -119,6 +142,11 @@ class AuctionBid extends Component {
     }
 
     if (this.state.itemComplete) {
+      disabled = true;
+      bidBtnDisabled = true;
+    }
+
+    if (this.state.biddingDisabled) {
       disabled = true;
       bidBtnDisabled = true;
     }
