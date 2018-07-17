@@ -8,11 +8,11 @@ class BidRow extends Component {
 
   render() {
     return (
-      <tr className='d-flex tr-hover' key={this.props.id}>
-        <td className='col col-md-1'>{this.props.num}</td>
-        <td className='col col-md-2'>{this.props.time}</td>
-        <td className='col col-md-2'>{this.props.bidder}</td>
-        <td className='col col-md-2'>{'$ ' + this.props.amount}</td>
+      <tr key={this.props.id}>
+        <td>{this.props.num}</td>
+        <td>{this.props.time}</td>
+        <td>{this.props.bidder}</td>
+        <td>{'$ ' + this.props.amount}</td>
       </tr>
     );
   }

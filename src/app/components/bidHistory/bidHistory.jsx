@@ -61,14 +61,14 @@ class BidHistory extends Component {
 
   render() {
     return (
-      <div className='justify-content-md-center'>
+      <div className='row justify-content-md-center'>
         <table className={this.props.className}>
           <thead>
-            <tr className='d-flex'>
-              <th className='col col-md-1'>#</th>
-              <th className='col col-md-2'>Time</th>
-              <th className='col col-md-2'>Bidder</th>
-              <th className='col col-md-2'>Amount</th>
+            <tr className='d-flex'> 
+              <th className='col-md-1'>#</th>
+              <th className='col-md-2'>Time</th>
+              <th className='col-md-2'>Bidder</th>
+              <th className='col-md-2'>Amount</th>
             </tr>
           </thead>
           <tbody>
