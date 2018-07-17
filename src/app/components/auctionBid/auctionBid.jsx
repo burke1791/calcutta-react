@@ -154,12 +154,12 @@ class AuctionBid extends Component {
     console.log('disabled: ' + disabled == true);
 
     return (
-      <div className='card bid-actions'>
-        <Button btnType='button' btnClass='btn btn-primary' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
-        <Button btnType='button' btnClass={bidBtnClass} btnValue={'Bid'} onClick={this.placeBid} disabled={bidBtnDisabled} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='+' onClick={this.incrementBid} disabled={disabled} />
-        <input type='number' value={this.state.bid} onChange={this.onBidChange} disabled={disabled} />
-        <Button btnType='button' btnClass='btn btn-secondary' btnValue='-' onClick={this.decrementBid} disabled={disabled} />
+      <div className='card bid-actions p-2'>
+        <Button btnType='button' btnClass='btn btn-primary my-1' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
+        <Button btnType='button' btnClass={bidBtnClass + ' my-1'} btnValue={'Bid'} onClick={this.placeBid} disabled={bidBtnDisabled} />
+        <Button btnType='button' btnClass='btn btn-secondary my-1' btnValue='+' onClick={this.incrementBid} disabled={disabled} />
+        <input type='number' className='my-1' value={this.state.bid} onChange={this.onBidChange} disabled={disabled} />
+        <Button btnType='button' btnClass='btn btn-secondary my-1' btnValue='-' onClick={this.decrementBid} disabled={disabled} />
       </div>
     );
   }

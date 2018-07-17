@@ -92,14 +92,16 @@ class AuctionMain extends Component {
     return (
       <div className='container'>
         <div className='container auction-header'>
-          {this.generateAuctionHeader()}
+          <div className='row justify-content-md-center'>
+            {this.generateAuctionHeader()}
+          </div>
         </div>
         <div className='container auction-main'>
-          <div className='row'>
+          <div className='row justify-content-md-center'>
             <AuctionTeam currentItem={this.state.currentItem} leagueId={this.state.leagueId} /> 
             <AuctionBid leagueId={this.state.leagueId} />
           </div>
-          <div className='row'>
+          <div className='row my-2'>
             <AuctionItemHistory leagueId={this.state.leagueId} />
           </div>
         </div>

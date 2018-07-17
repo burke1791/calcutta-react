@@ -10,9 +10,12 @@ class AuctionItemHistory extends Component {
 
   render() {
     return (
-      <div className='card col item-history'>
-        <BidHistory className='table table-striped table-hover' leagueId={this.props.leagueId} />
+      <div className='col'>
+        <div className='card item-history'>
+          <BidHistory className='table table-striped table-hover' leagueId={this.props.leagueId} />
+        </div>
       </div>
+      
     );
   }
 }
