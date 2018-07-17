@@ -102,8 +102,12 @@ class AuctionMain extends Component {
             <AuctionBid leagueId={this.state.leagueId} />
           </div>
         </div>
-        <div className='card my-2'>
-            <AuctionItemHistory className='table table-striped table-hover' leagueId={this.state.leagueId} />
+        <div className='row justify-content-md-center'>
+          <div className='col col-md-8'>
+            <div className='card my-2'>
+              <AuctionItemHistory className='table table-striped table-hover table-scrollable' leagueId={this.state.leagueId} />
+            </div>
+          </div>
         </div>
       </div>
       

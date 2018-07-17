@@ -1,0 +1,5 @@
+.bid-history-table {
+  max-height: 300px;
+  overflow-y: scroll;
+  display: block;
+}

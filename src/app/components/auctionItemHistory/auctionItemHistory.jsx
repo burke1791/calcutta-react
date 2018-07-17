@@ -70,7 +70,7 @@ class AuctionItemHistory extends Component {
               <th>Time</th>
               <th>Bidder</th>
               <th>Amount</th>
-            </tr>
+            </tr> 
           </thead>
           <tbody>
             {this.bidList()}
