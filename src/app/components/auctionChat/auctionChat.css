@@ -1,3 +1,5 @@
 .auction-chat {
   height: 300px;
+  overflow-y: scroll;
+  display: block;
 }

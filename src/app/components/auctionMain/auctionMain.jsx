@@ -106,7 +106,7 @@ class AuctionMain extends Component {
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              <AuctionChat />
+              <AuctionChat leagueId={this.state.leagueId} />
             </div>
           </div>
           <div className='col col-md-6'>

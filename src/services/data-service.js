@@ -1,4 +1,4 @@
-import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED, NOTIF_AUCTION_CHANGE } from './notification-service';
+import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED, NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_NEW_MESSAGE } from './notification-service';
 import { database } from './fire';
 
 let ns = new NotificationService();
@@ -214,6 +214,32 @@ class DataService {
     database.ref('/auctions/' + leagueId + '/current-item').update({
       'complete': true
     });
+  }
+
+  attachAuctionMessagesListener = (leagueId) => {
+    database.ref('/messages-auction/' + leagueId).on('value', function(snapshot) {
+      ns.postNotification(NOTIF_AUCTION_NEW_MESSAGE, snapshot.val());
+    }, function(errorObject) {
+      console.log('auction messages read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchAuctionMessagesListener = (leagueId) => {
+    database.ref('/messages-auction/' + leagueId).off('value');
+  }
+
+  postAuctionChatMessage = (leagueId, message, user, uid) => {
+    var messageDate = new Date();
+    var messageTime = messageDate.toLocaleTimeString();
+    
+    var message = {
+      'author': user,
+      'body': message,
+      'time': messageTime,
+      'uid': uid
+    }
+
+    database.ref('/messages-auction/' + leagueId).push(message);
   }
 
   getLeagueOwner = (leagueId) => {
