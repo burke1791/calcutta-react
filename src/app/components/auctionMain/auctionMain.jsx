@@ -4,6 +4,7 @@ import AuctionTeam from '../auctionTeam/auctionTeam';
 import AuctionBid from '../auctionBid/auctionBid';
 import AuctionItemHistory from '../auctionItemHistory/auctionItemHistory';
 import AuctionAdmin from '../auctionAdmin/auctionAdmin';
+import AuctionChat from '../auctionChat/auctionChat';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
@@ -95,7 +96,7 @@ class AuctionMain extends Component {
           <div className='row justify-content-md-center'>
             {this.generateAuctionHeader()}
           </div>
-        </div>
+        </div> 
         <div className='auction-main'>
           <div className='row justify-content-md-center'>
             <AuctionTeam currentItem={this.state.currentItem} leagueId={this.state.leagueId} /> 
@@ -105,7 +106,7 @@ class AuctionMain extends Component {
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              
+              <AuctionChat />
             </div>
           </div>
           <div className='col col-md-6'>
