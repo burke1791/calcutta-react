@@ -139,6 +139,7 @@ class LeagueForm extends Component {
             <select className='custom-select' value={this.state.leagueSportVal} onChange={this.onLeagueSportChange}>
               <option value='ncaa-mens'>NCAA Men's Basketball</option>
               <option value='mlb-hrderby-2018'>Home Run Derby 2018</option>
+              <option value='nfl-2018'>NFL 2018/19</option>
             </select>
           </div>
           <div className='form-group'>

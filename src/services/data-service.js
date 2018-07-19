@@ -421,6 +421,207 @@ class DataService {
     currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
   }
+
+  addSportToDatabase() {
+    var nfl = {
+      'nfl-2018': {
+        'afc-e-01': {
+          'name': 'New England Patriots',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-e-02': {
+          'name': 'Miami Dolphins',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-e-03': {
+          'name': 'New York Jets',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-e-04': {
+          'name': 'Buffalo Bills',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-n-01': {
+          'name': 'Pittsburgh Steelers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-n-02': {
+          'name': 'Cleveland Browns',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-n-03': {
+          'name': 'Baltimore Ravens',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-n-04': {
+          'name': 'Cincinnati Bengals',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-s-01': {
+          'name': 'Indianapolis Colts',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-s-02': {
+          'name': 'Houston Texans',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-s-03': {
+          'name': 'Tennessee Titans',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-s-04': {
+          'name': 'Jacksonville Jaguars',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-w-01': {
+          'name': 'Oakland Raiders',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-w-02': {
+          'name': 'Denver Broncos',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-w-03': {
+          'name': 'Kansas City Chiefs',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'afc-w-04': {
+          'name': 'Los Angeles Chargers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-e-01': {
+          'name': 'New York Giants',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-e-02': {
+          'name': 'Dallas Cowboys',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-e-03': {
+          'name': 'Washington Redskins',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-e-04': {
+          'name': 'Philadelphia Eagles',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-n-01': {
+          'name': 'Green Bay Packers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-n-02': {
+          'name': 'Chicago Bears',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-n-03': {
+          'name': 'Detroit Lions',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-n-04': {
+          'name': 'Minnesota Vikings',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-s-01': {
+          'name': 'Tampa Bay Buccaneers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-s-02': {
+          'name': 'Atlanta Falcons',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-s-03': {
+          'name': 'New Orleans Saints',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-s-04': {
+          'name': 'Carolina Panthers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-w-01': {
+          'name': 'San Francisco 49ers',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-w-02': {
+          'name': 'Los Angeles Rams',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-w-03': {
+          'name': 'Arizona Cardinals',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'nfc-w-04': {
+          'name': 'Seattle Seahawks',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        }
+      }
+    };
+
+    database.ref('/sports/').update(nfl);
+  }
 }
 
 export default DataService;
