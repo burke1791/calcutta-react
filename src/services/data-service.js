@@ -192,22 +192,57 @@ class DataService {
   }
 
   placeBid(leagueId, uid, name, bid) {
-    var bidDate = new Date();
+    var bidRef = database.ref('/auctions/' + leagueId + '/current-item');
+    var bidHistoryRef = database.ref('/auctions/' + leagueId + '/bid-history');
 
+    var bidDate = new Date();
     var bidTime = bidDate.toLocaleTimeString();
 
-    var bidObj = {
+    var bidHistoryObj = {
       amount: bid,
       bidder: name,
-      time: bidTime
-    }
+      time: bidTime,
+      uid: uid
+    };
 
+    bidRef.transaction(function(currentData) {
+      var currentBid = currentData['current-bid'];
+      if (currentData === null || currentBid < bid) {
+        var bidObj = {
+          'code': currentData['code'],
+          'complete': false,
+          'current-bid': bid,
+          'current-winner': name,
+          'end-time': currentData['end-time'],
+          'name': currentData['name'],
+          'winner-uid': uid
+        };
+
+        bidHistoryRef.child(currentData['code']).push(bidHistoryObj);
+        
+        return bidObj; // update the current bid
+      } else if (currentBid > bid) {
+        return; // abort the transaction
+      }
+    }, function(error, committed, snapshot) {
+      if (error) {
+        console.log('Transaction failed abnormally: ' + error);
+      } else if (!committed) {
+        console.log('Aborted transaction because bid was too low');
+      } else {
+        console.log('Bid succeeded');
+      }
+    });
+
+    // keeping the below in case the transaction paradigm (above) ends up failing miserably
+    /*
     database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
     database.ref('/auctions/' + leagueId + '/current-item').update({
       'current-bid': bid,
       'current-winner': name,
       'winner-uid': uid
     });
+    */
   }
 
   auctionItemComplete(leagueId) {

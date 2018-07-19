@@ -66,7 +66,7 @@ class AuctionBid extends Component {
         ds.placeBid(self.state.leagueId, uid, username, self.state.minBid);
       }
     });
-    
+      
   }
 
   placeBid() {
@@ -154,7 +154,7 @@ class AuctionBid extends Component {
     console.log('disabled: ' + disabled == true);
 
     return (
-      <div className='card bid-actions mx-2'>
+      <div className='card justify-content-center bid-actions mx-2'>
         <Button btnType='button' btnClass='btn btn-primary my-1' btnValue={'Minimum Bid ($' + this.state.minBid + ')'} onClick={this.placeMinBid} disabled={disabled} />
         <div className='btn-group'>
           <Button btnType='button' btnClass='btn btn-secondary m-1' btnValue='-' onClick={this.decrementBid} disabled={disabled} />

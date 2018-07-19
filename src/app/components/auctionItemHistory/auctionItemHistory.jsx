@@ -29,7 +29,8 @@ class AuctionItemHistory extends Component {
   }
 
   newAuctionData(newData) {
-    var bids = newData['current-item']['bids'];
+    var code = newData['current-item']['code'];
+    var bids = newData['bid-history'][code];
     var keys = [];
     if (bids != null && typeof(bids) != 'undefined') {
       keys = Object.keys(bids);

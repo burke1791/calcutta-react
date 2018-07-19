@@ -57,7 +57,7 @@ class AuctionTeam extends Component {
       );
     } else {
       return (
-        <div className='card auction-team mx-2'>
+        <div className='card auction-team p-2 mx-2'>
           <h3>{this.props.currentItem['name']}</h3>
           <h5>{'Bid: $' + this.props.currentItem['current-bid']}</h5>
           <div className='auction-clock'>
