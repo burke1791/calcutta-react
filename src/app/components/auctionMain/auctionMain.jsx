@@ -117,10 +117,10 @@ class AuctionMain extends Component {
             </div>
           </div>
         </div>
-        <div className='row justify-content-md-center'>
+        <div className='container card my-4'>
           <ResultsTable leagueId={this.state.leagueId} />
         </div>
-        <div className='row justify-content-md-center'>
+        <div className='card my-4'>
           <TotalsTable leagueId={this.state.leagueId} />
         </div>
       </div>

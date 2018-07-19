@@ -11,6 +11,7 @@ export const NOTIF_AUCTION_START_CLOCK = 'notif_auction_start_clock';
 export const NOTIF_AUCTION_RESTART_CLOCK = 'notif_auction_restart_clock';
 export const NOTIF_AUCTION_ITEM_COMPLETE = 'notif_auction_item_complete';
 export const NOTIF_AUCTION_NEW_MESSAGE = 'notif_auction_new_message';
+export const NOTIF_AUCTION_ITEM_SOLD = 'notif_auction_item_sold';
 
 var observers = {};
 let instance = null;

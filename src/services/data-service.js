@@ -1,4 +1,10 @@
-import NotificationService, { NOTIF_LEAGUE_JOINED, NOTIF_LEAGUE_CREATED, NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_NEW_MESSAGE } from './notification-service';
+import NotificationService, { 
+  NOTIF_LEAGUE_JOINED, 
+  NOTIF_LEAGUE_CREATED, 
+  NOTIF_AUCTION_CHANGE, 
+  NOTIF_AUCTION_NEW_MESSAGE,
+  NOTIF_AUCTION_ITEM_SOLD 
+} from './notification-service';
 import { database } from './fire';
 
 let ns = new NotificationService();
@@ -93,6 +99,23 @@ class DataService {
     });
   }
 
+  getLeagueParticipants = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/members').once('value').then(function(snapshot) {
+        var members = snapshot.val();
+        var uids = Object.keys(members);
+        var participants = {};
+
+        for (var uid in uids) {
+          if (members[uid]) {
+            participants[uid] = null;
+          }
+        }
+        resolve(participants);
+      });
+    });
+  }
+
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       console.log('auction snapshot: ' + snapshot.child('current-bid').val());
@@ -104,6 +127,18 @@ class DataService {
 
   detatchAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).off('value');
+  }
+
+  attachLeagueBiddingListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/teams').on('value', function(snapshot) {
+      ns.postNotification(NOTIF_AUCTION_ITEM_SOLD, snapshot.val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchLeagueBiddingListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/teams').off('value');
   }
 
   getTeamCodes = (leagueId) => {
