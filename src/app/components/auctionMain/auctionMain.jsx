@@ -5,6 +5,8 @@ import AuctionBid from '../auctionBid/auctionBid';
 import AuctionItemHistory from '../auctionItemHistory/auctionItemHistory';
 import AuctionAdmin from '../auctionAdmin/auctionAdmin';
 import AuctionChat from '../auctionChat/auctionChat';
+import ResultsTable from '../resultsTable/resultsTable';
+import TotalsTable from '../totalsTable/totalsTable';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
@@ -114,6 +116,12 @@ class AuctionMain extends Component {
               <AuctionItemHistory className='table table-striped table-hover' leagueId={this.state.leagueId} />
             </div>
           </div>
+        </div>
+        <div className='row justify-content-md-center'>
+          <ResultsTable leagueId={this.state.leagueId} />
+        </div>
+        <div className='row justify-content-md-center'>
+          <TotalsTable leagueId={this.state.leagueId} />
         </div>
       </div>
       
