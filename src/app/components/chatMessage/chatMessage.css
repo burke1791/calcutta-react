@@ -10,3 +10,7 @@
 #time {
   color: gray;
 }
+
+.message {
+  display: block;
+}

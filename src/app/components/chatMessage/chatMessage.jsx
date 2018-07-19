@@ -9,9 +9,9 @@ class ChatMessage extends Component {
 
   render() {
     return (
-      <div className='d-flex flex-row'>
+      <div className='d-flex flex-row mx-1 message'>
         <div className='' id='author'>{this.props.author + ':'}</div>
-        <div className='ml-2' id='content'>{this.props.content}</div>
+        <div className='ml-2 text-left' id='content'>{this.props.content}</div>
         <div className='ml-auto' id='time'>{this.props.time}</div>
       </div>
     );
