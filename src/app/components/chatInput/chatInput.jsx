@@ -35,10 +35,12 @@ class ChatInput extends Component {
       console.log('uid: ' + this.state.uid);
     }
     
-    ds.getDisplayName(this.state.uid).then(function(username) {
-      ds.postAuctionChatMessage(self.props.leagueId, self.state.message, username, self.state.uid)
-      self.setState({message: ''});
-    });
+    if (this.state.uid !== '') {
+      ds.getDisplayName(this.state.uid).then(function(username) {
+        ds.postAuctionChatMessage(self.props.leagueId, self.state.message, username, self.state.uid)
+        self.setState({message: ''});
+      });
+    }
   }
 
   onMessageChange(event) {
