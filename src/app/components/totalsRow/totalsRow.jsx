@@ -9,7 +9,7 @@ class TotalsRow extends Component {
   render() {
     return (
       <div className="totals-row">
-      
+        
       </div>
     );
   }

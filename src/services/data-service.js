@@ -57,7 +57,6 @@ class DataService {
         var displayName = 'didn\'t work'
         database.ref('/users/' + uid).once('value').then(function(snapshot) {
           displayName = snapshot.child('username').val();
-          console.log('display snapshot: ' + displayName);
           resolve(displayName);
         });
       })
@@ -92,7 +91,6 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
         var leagueName = snapshot.child('name').val();
-        console.log('leagueName: ' + leagueName);
         // need some sort of conditional check
         resolve(leagueName);
       });
@@ -104,6 +102,10 @@ class DataService {
       database.ref('/leagues/' + leagueId + '/members').once('value').then(function(snapshot) {
         var members = snapshot.val();
         var uids = Object.keys(members);
+
+        resolve(uids);
+
+        /*
         var participants = {};
 
         for (var uid in uids) {
@@ -112,13 +114,13 @@ class DataService {
           }
         }
         resolve(participants);
+        */
       });
     });
   }
 
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
-      console.log('auction snapshot: ' + snapshot.child('current-bid').val());
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
     }, function(errorObject) {
       console.log('the read failed: ' + errorObject.code);
@@ -151,7 +153,6 @@ class DataService {
 
           if (owner === '') {
             teams[key] = childSnapshot.val();
-            console.log('team: ' + teams[key]['name']);
           }
         });
         resolve(teams);
@@ -178,7 +179,6 @@ class DataService {
             console.log('logAuctionItemResult failed');
             reject();
           } else {
-            console.log('logAuctionItemResult succeeded');
             resolve(itemCode);
           }
         });
@@ -208,7 +208,6 @@ class DataService {
             console.log('loadNextItem failed');
             reject();
           } else {
-            console.log('loadNextItem succeeded');
             resolve();
           }
         });

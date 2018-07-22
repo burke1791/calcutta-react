@@ -32,6 +32,7 @@ class ResultsTable extends Component {
     ns.addObserver(NOTIF_AUCTION_ITEM_SOLD, this, this.newItemSold);
 
     this.fetchUsers();
+    this.fetchParticipants();
   }
 
   componentWillUnmount() {
@@ -61,7 +62,7 @@ class ResultsTable extends Component {
     var self = this;
 
     ds.getLeagueParticipants(this.props.leagueId).then(function(participants) {
-      var uids = Object.keys(participants);
+      var uids = participants;
       self.setState({
         participants: uids
       });
@@ -80,38 +81,78 @@ class ResultsTable extends Component {
     }
   }
 
-  generateResultsRows = () => {
-    var numTeams = this.state.teamKeys.length;
-    if (numTeams > 0) {
-      const list = this.state.teamKeys.map((key, index) => {
-        var num = index + 1;
-        var uid = this.state.teams[key]['owner'];
-        var winner = this.state.users[uid] !== null ? this.state.users[uid] : ' '
-        var teamName = this.state.teams[key]['name'];
-        var sellingPrice = this.state.teams[key]['price'] > 0 ? '$ ' + this.state.teams[key]['price'] : ' '
+  generateResultsHeader = (resultType) => {
+    if (resultType === 'team') {
+      return (
+        <tr className='d-flex'>
+          <th className='col col-md-1'>#</th>
+          <th className='col col-md-4'>Name</th>
+          <th className='col col-md-4'>Winner</th>
+          <th className='col col-md-3'>Selling Price</th>
+        </tr>
+      );
+    } else if (resultType === 'user') {
+      return (
+        <tr className='d-flex'>
+          <th className='col col-md-6'>Name</th>
+          <th className='col col-md-6'>Total</th>
+        </tr>
+      );
+    }
+  }
 
-        return (
-          <ResultsRow num={num} name={teamName} winner={winner} sellingPrice={sellingPrice} id={key} key={key} />
-        );
-      });
-      return (list);
+  generateResultsRows = (resultType) => {
+    var numTeams = this.state.teamKeys.length;
+    if (resultType === 'team') {
+      if (numTeams > 0) {
+        const list = this.state.teamKeys.map((key, index) => {
+          var num = index + 1;
+          var uid = this.state.teams[key]['owner'];
+          var winner = this.state.users[uid] !== null ? this.state.users[uid] : ' '
+          var teamName = this.state.teams[key]['name'];
+          var sellingPrice = this.state.teams[key]['price'] > 0 ? '$ ' + this.state.teams[key]['price'] : ' ';
+
+          var colored = sellingPrice !== ' ' ? true : false;
+  
+          return (
+            <ResultsRow resultType={this.props.resultType} colored={colored} num={num} name={teamName} winner={winner} sellingPrice={sellingPrice} id={key} key={key} />
+          );
+        });
+        return (list);
+      }
+    } else if (resultType === 'user') {
+      if (numTeams > 0) {
+        const list = this.state.participants.map((key, index) => {
+          var num = index + 1;
+          var username = this.state.users[key];
+          var total = 0;
+
+          for (var team in this.state.teams) {
+            if (key === this.state.teams[team]['owner']) {
+              total += this.state.teams[team]['price'];
+            }
+          }
+
+          var totalSpent = ds.formatMoney(total);
+
+          return (
+            <ResultsRow resultType={this.props.resultType} num={num} username={username} total={totalSpent} id={key} key={key} />
+          )
+        });
+        return (list);
+      }
     }
   }
 
   render() {
     return (
       <div className='row justify-content-md-center'>
-        <table className='table table-striped table-hover'>
+        <table className='table'>
           <thead>
-            <tr className='d-flex'>
-              <th className='col col-md-1'>#</th>
-              <th className='col col-md-4'>Name</th>
-              <th className='col col-md-4'>Winner</th>
-              <th className='col col-md-3'>Selling Price</th>
-            </tr>
+            {this.generateResultsHeader(this.props.resultType)}
           </thead>
           <tbody>
-            {this.generateResultsRows()}
+            {this.generateResultsRows(this.props.resultType)}
           </tbody>
         </table>
       </div>

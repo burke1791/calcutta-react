@@ -56,9 +56,6 @@ class AuctionMain extends Component {
       currentItem: newData['current-item'],
       auctionStarted: newData['in-progress']
     });
-
-    console.log('in-progress: ' + this.state.auctionStarted);
-    console.log('current Item: ' + this.state.currentItem['current-bid']);
   }
 
   fetchTeams() {
@@ -118,10 +115,10 @@ class AuctionMain extends Component {
           </div>
         </div>
         <div className='container card my-4'>
-          <ResultsTable leagueId={this.state.leagueId} />
+          <ResultsTable leagueId={this.state.leagueId} resultType='team' />
         </div>
-        <div className='card my-4'>
-          <TotalsTable leagueId={this.state.leagueId} />
+        <div className='container card my-4'>
+          <ResultsTable leagueId={this.state.leagueId} resultType='user' />
         </div>
       </div>
       
