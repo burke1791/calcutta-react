@@ -84,7 +84,7 @@ class ResultsTable extends Component {
   generateResultsHeader = (resultType) => {
     if (resultType === 'team') {
       return (
-        <tr className='d-flex'>
+        <tr className='d-flex orange'>
           <th className='col col-md-1'>#</th>
           <th className='col col-md-4'>Name</th>
           <th className='col col-md-4'>Winner</th>
@@ -93,7 +93,7 @@ class ResultsTable extends Component {
       );
     } else if (resultType === 'user') {
       return (
-        <tr className='d-flex'>
+        <tr className='d-flex orange'>
           <th className='col col-md-6'>Name</th>
           <th className='col col-md-6'>Total</th>
         </tr>

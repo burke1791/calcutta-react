@@ -16,7 +16,8 @@ class AuctionAdmin extends Component {
     this.state = {
       auctionStarted: false,
       leagueId: this.props.leagueId,
-      teamCodes: []
+      teamCodes: [],
+      randomize: true
     }
 
     // bind functions
@@ -29,6 +30,7 @@ class AuctionAdmin extends Component {
     this.undoLastBid = this.undoLastBid.bind(this);
     this.endAuction = this.endAuction.bind(this);
     this.itemComplete = this.itemComplete.bind(this);
+    this.randomCheckboxChanged = this.randomCheckboxChanged.bind(this);
     this.generateAdminHeader = this.generateAdminHeader.bind(this);
   }
 
@@ -85,7 +87,13 @@ class AuctionAdmin extends Component {
         for (var x = 0; x < codes.length; x++) {
           if (codes[x] === oldCode) {
             codes.splice(x, 1);
-            var newCode = codes[Math.floor(Math.random() * codes.length)];
+
+            if (this.state.randomize) {
+              var newCode = codes[Math.floor(Math.random() * codes.length)];
+            } else {
+              var newCode = codes[0];
+            }
+            
             ds.loadNextItem(newCode, this.state.leagueId).then(() => {
               self.setState({teamCodes: codes});
             });
@@ -94,6 +102,10 @@ class AuctionAdmin extends Component {
         }
       }
     }
+  }
+
+  randomCheckboxChanged(event) {
+    this.setState({randomize: event.target.checked});
   }
 
   restartClcok() {
@@ -115,6 +127,7 @@ class AuctionAdmin extends Component {
   generateAdminHeader = () => {
     if (this.state.auctionStarted) {
       return (
+        <div className='auction-controls'>
           <div className='btn-toolbar'>
             <div className='btn-group m-2'>
               <Button btnType='button' btnClass='btn btn-secondary' btnValue='Start Next Item' onClick={this.nextItem} />
@@ -129,6 +142,12 @@ class AuctionAdmin extends Component {
               <Button btnType='button' btnClass='btn btn-secondary' btnValue='End Auction' onClick={this.endAuction} />
             </div>
           </div>
+          <div className='form-check'>
+            <input className='form-check-input' type='checkbox' checked={this.state.randomize} onChange={this.randomCheckboxChanged} />
+            <label className='form-check-label'>Randomize?</label>
+          </div>
+        </div>
+          
       );
     } else {
       return (
