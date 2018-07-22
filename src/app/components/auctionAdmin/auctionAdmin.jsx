@@ -85,7 +85,7 @@ class AuctionAdmin extends Component {
         for (var x = 0; x < codes.length; x++) {
           if (codes[x] === oldCode) {
             codes.splice(x, 1);
-            var newCode = codes[0];
+            var newCode = codes[Math.floor(Math.random() * codes.length)];
             ds.loadNextItem(newCode, this.state.leagueId).then(() => {
               self.setState({teamCodes: codes});
             });
