@@ -17,6 +17,10 @@ class Leagues extends Component {
     this.onJoinLeagueBtnClicked = this.onJoinLeagueBtnClicked.bind(this);
     this.onCreateLeagueBtnClicked = this.onCreateLeagueBtnClicked.bind(this);
   }
+
+  componentDidMount() {
+    alert('This website is still under development.  Please note that there are several known bugs and missing features');
+  }
   
   onJoinLeagueBtnClicked() {
     var user = authService.getUser();

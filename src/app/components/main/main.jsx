@@ -8,7 +8,6 @@ import MemberPage from '../memberPage/memberPage';
 
 class Main extends Component {
 
-
   render() {
     return (
       <Switch>
