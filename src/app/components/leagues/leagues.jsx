@@ -19,7 +19,7 @@ class Leagues extends Component {
   }
 
   componentDidMount() {
-    alert('This website is still under development.  Please note that there are several known bugs and missing features');
+    
   }
   
   onJoinLeagueBtnClicked() {
