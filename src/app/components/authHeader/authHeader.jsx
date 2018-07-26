@@ -68,7 +68,7 @@ class AuthHeader extends Component {
           </button>
           <div className='dropdown-menu' aria-labelledby='dropdownMenu'>
             <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
-            <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
           </div>

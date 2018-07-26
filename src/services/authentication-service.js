@@ -61,6 +61,8 @@ class AuthenticationService {
   }
 
   updatePassword = (newPassword) => {
+    // need to check reauthentication
+    //auth.currentUser.reauthenticateWithCredential()
     auth.currentUser.updatePassword(newPassword);
   }
 
