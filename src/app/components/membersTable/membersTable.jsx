@@ -19,6 +19,7 @@ class MembersTable extends Component {
     super(props);
 
     this.state = {
+      memberRanks: [],
       members: {},
       users: {},
       isAuthenticated: this.props.isAuthenticated,
@@ -86,11 +87,27 @@ class MembersTable extends Component {
       var uid = authService.getUser() != null ? authService.getUser().uid : null;
       var self = this;
       var thisMembers = {};
+      var memberRanks = [];
 
-      if (uid != null) {
+      if (uid != null) { 
         ds.getLeagueUserInfo(this.state.leagueId, uid).then(function(members) {
-          self.setState({members: members});
-        })
+          thisMembers = members;
+          var uids = Object.keys(thisMembers);
+          console.log('loadMembers() num UIDs: ' + uids.length);
+
+          for (var i = 0; i < uids.length; i++) {
+            for (var mem in thisMembers) {
+              if (thisMembers[mem]['rank'] === i + 1) {
+                memberRanks.push(mem);
+              }
+            }
+          }
+
+          self.setState({
+            members: thisMembers,
+            memberRanks: memberRanks
+          });
+        });
       }
     }
   }
@@ -114,6 +131,23 @@ class MembersTable extends Component {
 
   membersList = () => {
     // TODO: write logic to display them in order of rank
+    var numMembers = this.state.memberRanks.length;
+    if (numMembers > 0) {
+      const list = this.state.memberRanks.map((mem, index) => {
+        var buyIn = this.formatMoney(this.state.members[mem].buyIn);
+        var payout = this.formatMoney(this.state.members[mem].payout);
+        var netReturn = this.formatMoney(this.state.members[mem].netReturn);
+
+        var netReturnNegativeClass = this.state.members[mem].netReturn < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
+
+        return (
+          // TODO: Create a MemberRow component that has a "rank" column
+          <MembersRow key={mem} id={mem} rank={this.state.members[mem].rank} name={this.state.users[mem]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+        );
+      });
+      return (list);
+    }
+    /*
     if (Object.keys(this.state.members).length > 0) {
       const list = Object.keys(this.state.members).map((member) => {
         var buyIn = this.formatMoney(this.state.members[member].buyIn);
@@ -129,6 +163,7 @@ class MembersTable extends Component {
       });
       return (list);
     }
+    */
   }
 
   render() {

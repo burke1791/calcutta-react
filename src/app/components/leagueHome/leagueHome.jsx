@@ -48,7 +48,7 @@ class LeagueHome extends Component {
     });
   }
 
-  // TEST
+  // TEST 
   goToAuction() {
     this.props.history.push('/league-home/' + this.props.match.params.id + '/auction/');
   }
