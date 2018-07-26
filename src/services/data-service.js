@@ -41,6 +41,12 @@ class DataService {
     }
   }
 
+  updateUsername(uid, newUsername) {
+    database.ref('/users').child(uid).update({
+      'username': newUsername
+    });
+  }
+
   // Needs to be called when league creator chooses the sport
   populateLeagueTeams(leagueId, sport) {
     if (leagueId != null && sport == 'mlb') {

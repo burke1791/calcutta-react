@@ -31,7 +31,7 @@ class LeagueForm extends Component {
     this.generateFormContents = this.generateFormContents.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     ns.addObserver(NOTIF_LEAGUE_SUBMIT, this, this.leagueSubmission);
   }
 

@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import NotificationService, {NOTIF_MODAL_TOGGLE, NOTIF_MODAL_TYPE_CHANGE} from '../../../services/notification-service';
 import LoginForm from '../loginForm/loginForm';
 import LeagueForm from '../leagueForm/leagueForm';
+import UpdateProfileForm from '../updateProfileForm/updateProfileForm';
 
 import './generalModal.css';
 
@@ -63,6 +64,10 @@ class GeneralModal extends Component {
       return 'Join a League';
     } else if (this.state.modalType === 'create') {
       return 'Create a League';
+    } else if (this.state.modalType === 'newUsername') {
+      return 'Change Username';
+    } else if (this.state.modalType === 'newPassword') {
+      return 'Change Password';
     }
   }
 
@@ -82,6 +87,14 @@ class GeneralModal extends Component {
     } else if (this.state.modalType === 'create') {
       return (
         <LeagueForm submitHandler={this.toggleModal} leagueType={this.state.modalType} />
+      );
+    } else if (this.state.modalType === 'newUsername') {
+      return (
+        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='username' />
+      );
+    } else if (this.state.modalType === 'newPassword') {
+      return (
+        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='password' />
       );
     }
   }

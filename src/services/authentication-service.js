@@ -50,6 +50,20 @@ class AuthenticationService {
     ns.postNotification(NOTIF_SIGNOUT, null);
   }
 
+  updateUsername = (newUsername) => {
+    var uid = auth.currentUser.uid;
+    
+    auth.currentUser.updateProfile({
+      displayName: newUsername
+    });
+
+    ds.updateUsername(uid, newUsername);
+  }
+
+  updatePassword = (newPassword) => {
+    auth.currentUser.updatePassword(newPassword);
+  }
+
   addAuthListener(thisApp) {
     auth.onAuthStateChanged(function(user) {
       if (user) {

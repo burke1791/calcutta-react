@@ -42,6 +42,15 @@ class AuthHeader extends Component {
     authService.signOutUser();
   }
 
+  onChangePasswordClicked() {
+    // Password change requires recent authentication
+    // ns.postNotification(NOTIF_MODAL_TOGGLE, 'newPassword');
+  }
+
+  onChangeUsernameClicked() {
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'newUsername');
+  }
+
   onSignIn() {
     this.setState({authenticated: true});
   }
@@ -58,8 +67,8 @@ class AuthHeader extends Component {
             {'Signed in as: '  + this.props.username}
           </button>
           <div className='dropdown-menu' aria-labelledby='dropdownMenu'>
-            <button className='dropdown-item' type='button'>Change Password (not working yet)</button>
-            <button className='dropdown-item' type='button'>Change Username (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username (not working yet)</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
           </div>
