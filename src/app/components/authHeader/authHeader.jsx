@@ -62,11 +62,11 @@ class AuthHeader extends Component {
   generateAuthBtn = () => {
     if (this.state.authenticated) {
       return (
-        <div className='dropdown'>
-          <button type='button' className='btn btn-link dropdown-toggle' id='dropdownMenu' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+        <div className='nav-item dropdown'>
+          <button type='button' className='nav-link dropdown-toggle btn btn-link dropdown-toggle' id='dropdownMenu' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
             {'Signed in as: '  + this.props.username}
           </button>
-          <div className='dropdown-menu' aria-labelledby='dropdownMenu'>
+          <div className='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenu'>
             <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
             <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
