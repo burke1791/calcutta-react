@@ -62,7 +62,7 @@ class LeagueHome extends Component {
               <h1>{this.state.leagueName}</h1>
             </div>
             <div className='row justify-content-md-center'>
-              <button type='button' onClick={this.goToAuction} className='btn btn-primary'>Go To Auction</button>
+              <button type='button' onClick={this.goToAuction} className='btn btn-primary mb-2'>Go To Auction</button>
             </div>
           </div>
           <div className='container card'>
