@@ -30,7 +30,7 @@ class MemberPage extends Component {
       return (
         <div className='member-page'>
           <div className='container'>
-            <div className='row justify-content-md-center'>
+            <div className='row justify-content-md-left'>
               <h1>{this.state.username}</h1>
             </div>
           </div>

@@ -42,7 +42,7 @@ class League extends Component {
 
     return (
       <div className='league'>
-        <div className='league-header justify-content-md-left'>
+        <div className='league-header mr-auto'>
           <LeagueHeader leagueId={this.props.match.params.id} />
         </div>
         <div className='league-nav'>
