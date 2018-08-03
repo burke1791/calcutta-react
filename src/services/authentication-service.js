@@ -10,7 +10,7 @@ class AuthenticationService {
   constructor() {
     if (!instance) {
       instance = this;
-    }
+    } 
 
     return instance;
   }
