@@ -113,11 +113,11 @@ class AuctionAdmin extends Component {
   }
 
   undoLastBid() {
-
+    
   }
 
   endAuction() {
-
+    ds.endAuction(this.state.leagueId);
   }
 
   itemComplete() {

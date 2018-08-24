@@ -291,6 +291,12 @@ class DataService {
     });
   }
 
+  endAuction(leagueId) {
+    database.ref('/auctions/' + leagueId).update({
+      'in-progress': false
+    });
+  }
+
   attachAuctionMessagesListener = (leagueId) => {
     database.ref('/messages-auction/' + leagueId).on('value', function(snapshot) {
       ns.postNotification(NOTIF_AUCTION_NEW_MESSAGE, snapshot.val());

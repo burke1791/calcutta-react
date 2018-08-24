@@ -48,6 +48,8 @@ class AuctionClock extends Component {
     var code = newData['current-item']['code'];
     var currentBid = newData['current-item']['current-bid'];
 
+    console.log('interval: ' + this.props.interval);
+
     if (this.state.currentTeam !== code && !itemComplete) {
       clearInterval(this.timerID);
       this.setState({

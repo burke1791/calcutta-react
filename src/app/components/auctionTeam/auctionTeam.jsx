@@ -46,7 +46,7 @@ class AuctionTeam extends Component {
           <h3>...</h3>
           <h5>Bid:</h5>
           <div className='auction-clock'>
-            <AuctionClock  interval={20} currentBid={this.state.currentBid} />
+            <AuctionClock  interval={10} currentBid={this.state.currentBid} />
           </div>
           <h5>Current Winner:</h5>
           <hr />
@@ -61,7 +61,7 @@ class AuctionTeam extends Component {
           <h3>{this.props.currentItem['name']}</h3>
           <h5>{'Bid: $' + this.props.currentItem['current-bid']}</h5>
           <div className='auction-clock'>
-            <AuctionClock  interval={20} currentBid={this.state.currentBid} />
+            <AuctionClock  interval={10} currentBid={this.state.currentBid} />
           </div>
           <h5>{'High Bid: ' + this.props.currentItem['current-winner']}</h5>
           <hr />
