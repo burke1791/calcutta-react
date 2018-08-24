@@ -2,3 +2,8 @@
   background-color: navy;
   color: white;
 }
+
+.unclaimed {
+  background-color: gray;
+  color: white;
+}

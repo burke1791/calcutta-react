@@ -108,15 +108,22 @@ class ResultsTable extends Component {
         const list = this.state.teamKeys.map((key, index) => {
           var num = index + 1;
           var uid = this.state.teams[key]['owner'];
-          var winner = this.state.users[uid] !== null ? this.state.users[uid] : ' '
+          
+          if (uid === '(unclaimed)') {
+            var winner = '(unclaimed)';
+          } else {
+            var winner = this.state.users[uid] !== null ? this.state.users[uid] : ' '
+          }
+          
           var teamName = this.state.teams[key]['name'];
           var sellingPrice = this.state.teams[key]['price'] > 0 ? '$ ' + this.state.teams[key]['price'] : ' ';
 
           var colored = sellingPrice !== ' ' ? true : false;
+          var unclaimed = winner === '(unclaimed)' ? true : false;
   
           return (
-            <ResultsRow resultType={this.props.resultType} colored={colored} num={num} name={teamName} winner={winner} sellingPrice={sellingPrice} id={key} key={key} />
-          );
+            <ResultsRow resultType={this.props.resultType} colored={colored} unclaimed={unclaimed} num={num} name={teamName} winner={winner} sellingPrice={sellingPrice} id={key} key={key} />
+          ); 
         });
         return (list);
       }

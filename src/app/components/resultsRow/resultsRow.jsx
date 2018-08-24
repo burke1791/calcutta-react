@@ -9,6 +9,8 @@ class ResultsRow extends Component {
   render() {
     if (this.props.colored) {
       var rowClass = 'd-flex colored';
+    } else if (this.props.unclaimed) {
+      var rowClass = 'd-flex unclaimed';
     } else {
       var rowClass = 'd-flex';
     }
@@ -19,7 +21,7 @@ class ResultsRow extends Component {
           <td className='col col-md-1'>{this.props.num}</td>
           <td className='col col-md-4'>{this.props.name}</td>
           <td className='col col-md-4'>{this.props.winner}</td>
-          <td className='col col-md-3'>{this.props.sellingPrice}</td>
+          <td className='col col-md-3'>{this.props.sellingPrice}</td> 
         </tr>
       );
     } else if (this.props.resultType === 'user') {

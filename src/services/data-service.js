@@ -176,6 +176,10 @@ class DataService {
         itemCode = snapshot.child('code').val();
         winnerUID = snapshot.child('winner-uid').val();
         winningBid = snapshot.child('current-bid').val();
+
+        if (winnerUID === '') {
+          winnerUID = '(unclaimed)';
+        }
   
         database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
           'owner': winnerUID,

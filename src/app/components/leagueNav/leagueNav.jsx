@@ -22,6 +22,8 @@ class LeagueNav extends Component {
 
   componentDidMount() {
     ns.addObserver(NOTIF_SIGNIN, this, this.getCurrentUserId);
+
+    this.getCurrentUserId();
   }
 
   componentWillUnmount() {
