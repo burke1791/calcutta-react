@@ -91,7 +91,7 @@ class DataService {
         }
       });
     })
-  }
+  } 
 
   getLeagueName = (leagueId) => {
     return new Promise((resolve, reject) => {
@@ -202,7 +202,7 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
         name = snapshot.child('name').val();
-        database.ref('/auctions/' + leagueId).set({
+        database.ref('/auctions/' + leagueId).update({
           'current-item': {
             'code': teamCode,
             'complete': false,
