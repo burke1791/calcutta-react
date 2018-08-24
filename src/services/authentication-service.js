@@ -74,7 +74,7 @@ class AuthenticationService {
         ds.getDisplayName(thisApp.state.authenticatedUser.uid).then(function(res) {
           thisApp.setState({authenticatedUsername: res});
         });
-        ns.postNotification(NOTIF_SIGNIN, null);
+        ns.postNotification(NOTIF_SIGNIN, user.uid);
       } else {
         console.log('user is signed out');
         ns.postNotification(NOTIF_SIGNOUT);
