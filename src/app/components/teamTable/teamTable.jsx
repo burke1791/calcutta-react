@@ -13,9 +13,7 @@ class TeamTable extends Component {
 
     this.state = {
       teams: {},
-      teamKeys: [],
-      leagueId: this.props.match.params.id,
-      uid: this.props.match.params.uid
+      teamKeys: []
     }
 
     // bind functions
@@ -28,14 +26,19 @@ class TeamTable extends Component {
     this.loadTeams();
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.match.params.uid !== prevProps.match.params.uid) {
+      console.log('team table updated');
+      this.loadTeams();
+    }
+  }
+
   loadTeams() {
     var self = this;
 
-    ds.getUserTeams(this.state.leagueId, this.state.uid).then(function(userTeams) {
+    ds.getUserTeams(this.props.match.params.id, this.props.match.params.uid).then(function(userTeams) {
       var teamKeys = [];
       var teams = {};
-
-      console.log('userTeams: ' + userTeams);
 
       if (userTeams != null) {
         teamKeys = Object.keys(userTeams);

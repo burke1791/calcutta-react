@@ -36,10 +36,7 @@ class LeagueHome extends Component {
   }
 
   onSignOut() {
-    // Neither of the below work as is
-    
-    // this.props.history.push('/');
-    // this.setState({isAuthenticated: false});
+    this.setState({isAuthenticated: false});
   }
 
   getLeagueName() {

@@ -31,7 +31,8 @@ class LeagueNav extends Component {
   }
 
   getCurrentUserId() {
-    var uid = authService.getUser().uid;
+    var user = authService.getUser();
+    var uid = user !== null ? user.uid : '';
 
     this.setState({
       currentUserId: uid

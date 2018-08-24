@@ -15,6 +15,8 @@ class LeagueTable extends Component {
     super(props);
 
     this.state = {
+      isAuthenticated: true,
+      uid: '',
       leagues: [],
       tableDataSource: this.props.tableSource // Can be one of three values: 'in-progress', 'complete', or 'pending'
     }
@@ -22,22 +24,26 @@ class LeagueTable extends Component {
     // Bind functions
     this.loadLeagues = this.loadLeagues.bind(this);
     this.leagueList = this.leagueList.bind(this);
+    this.onSignIn = this.onSignIn.bind(this);
+    this.onSignOut = this.onSignOut.bind(this);
     this.clearTables = this.clearTables.bind(this);
     this.getUserLeagueSummary = this.getUserLeagueSummary.bind(this);
     this.formatMoney = this.formatMoney.bind(this);
   }
 
   componentDidMount() {
-    ns.addObserver(NOTIF_SIGNIN, this, this.loadLeagues);
-    ns.addObserver(NOTIF_SIGNOUT, this, this.clearTables);
+    ns.addObserver(NOTIF_SIGNIN, this, this.onSignIn);
+    ns.addObserver(NOTIF_SIGNOUT, this, this.onSignOut);
     ns.addObserver(NOTIF_LEAGUE_CREATED, this, this.loadLeagues);
     ns.addObserver(NOTIF_LEAGUE_JOINED, this, this.loadLeagues);
 
     // TODO: figure out how to call loadLeagues() upon rerender without a notification
-    // The below works only because on the first load, the auth service is slower in loggin in
-    if (authService.getUser() != null) {
+    // The below works only on the first load, the auth service is slower in logging in
+    /*
+    if (this.state.isAuthenticated) {
       this.loadLeagues(); 
     }
+    */
   }
 
   componentWillUnmount() {
@@ -45,31 +51,52 @@ class LeagueTable extends Component {
     ns.removeObserver(this, NOTIF_SIGNOUT);
     ns.removeObserver(this, NOTIF_LEAGUE_CREATED);
     ns.removeObserver(this, NOTIF_LEAGUE_JOINED);
+
+    console.log('leagueTable unmounted');
   }
 
-  loadLeagues() {
+  loadLeagues(uid) {
     // TODO: move this to DataService (maybe)
 
-    var self = this;
-    var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
-    var user = authService.getUser();
-    var uid = user.uid;
-    var leagues = [];
+    if (uid !== null) {
+      var self = this;
+      var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
+      var leagues = [];
 
-    ds.getDataSnapshot('/leagues').then(function(snapshot) {
-      snapshot.forEach(function(childSnapshot) {
-        var id = childSnapshot.key;
-        var league = childSnapshot.val();
-        league['key'] = id;
-        var members = childSnapshot.child('members').val();
-        var leagueStatus = childSnapshot.child('status').val();
+      ds.getDataSnapshot('/leagues').then(function(snapshot) {
+        snapshot.forEach(function(childSnapshot) {
+          var id = childSnapshot.key;
+          var league = childSnapshot.val();
+          league['key'] = id;
+          var members = childSnapshot.child('members').val();
+          var leagueStatus = childSnapshot.child('status').val();
 
-        if (members[uid] && leagueStatus === sourceData) {
-          leagues.push(league);
-        }
+          if (members[uid] && leagueStatus === sourceData) {
+            leagues.push(league);
+          }
+        });
+        self.setState({leagues: leagues});
+        console.log('loadLeagues updated state');
       });
-      self.setState({leagues: leagues});
-      console.log('loadLeagues updated state');
+    }
+  }
+
+  onSignIn(newUser) {
+    var uid = newUser !== null ? newUser : null;
+    console.log('notif user: ' + newUser);
+
+    this.setState({
+      isAuthenticated: true,
+      uid: uid
+    });
+
+    this.loadLeagues(uid);
+  }
+
+  onSignOut() {
+    this.setState({
+      isAuthenticated: false,
+      leagues: []
     });
   }
 
@@ -78,8 +105,6 @@ class LeagueTable extends Component {
   }
 
   getUserLeagueSummary = (league) => {
-    var user = authService.getUser();
-    var uid = user.uid;
     var buyIn = 0;
     var payout = 0;
     var netReturn = 0;
@@ -87,7 +112,7 @@ class LeagueTable extends Component {
     var teams = (league.teams != null ? league.teams : []);
 
     for (const [key, value] of Object.entries(teams)) {
-      if (value.owner === uid) {
+      if (value.owner === this.state.uid) {
         buyIn += Number(value.price);
         payout += Number(value.return);
       }
