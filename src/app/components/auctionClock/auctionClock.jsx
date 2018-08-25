@@ -40,7 +40,7 @@ class AuctionClock extends Component {
     } else {
       var newRemainingTime = this.state.timeRemaining - 1;
       this.setState({timeRemaining: newRemainingTime});
-    }
+    } 
   }
 
   newAuctionData(newData) {
@@ -60,8 +60,10 @@ class AuctionClock extends Component {
       this.startClock();
     } else {
       if (itemComplete) {
+        clearInterval(this.timerID);
         this.setState({
-          currentBid: newData['current-item']['current-bid']
+          currentBid: newData['current-item']['current-bid'],
+          timeRemaining: 0
         });
       } else {
         this.setState({

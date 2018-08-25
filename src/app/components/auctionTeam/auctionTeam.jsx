@@ -45,7 +45,7 @@ class AuctionTeam extends Component {
         <div className='card auction-team mx-2'>
           <h3>...</h3>
           <h5>Bid:</h5>
-          <div className='auction-clock'>
+          <div className='auction-clock'> 
             <AuctionClock  interval={10} currentBid={this.state.currentBid} />
           </div>
           <h5>Current Winner:</h5>
