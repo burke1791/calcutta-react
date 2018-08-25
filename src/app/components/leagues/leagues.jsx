@@ -4,9 +4,11 @@ import Button from '../button/button';
 import LeagueTable from '../leagueTable/leagueTable';
 import AuthenticationService from '../../../services/authentication-service';
 import NotificationService, { NOTIF_MODAL_TOGGLE } from '../../../services/notification-service';
+import DataService from '../../../services/data-service';
 
 let authService = new AuthenticationService();
 let ns = new NotificationService();
+let ds = new DataService();
 
 class Leagues extends Component {
   
@@ -16,6 +18,7 @@ class Leagues extends Component {
     // Bind functions
     this.onJoinLeagueBtnClicked = this.onJoinLeagueBtnClicked.bind(this);
     this.onCreateLeagueBtnClicked = this.onCreateLeagueBtnClicked.bind(this);
+    this.onAddSportToDB = this.onAddSportToDB.bind(this);
   }
 
   componentDidMount() {
@@ -41,6 +44,10 @@ class Leagues extends Component {
     }
   }
 
+  onAddSportToDB() {
+    // ds.addSportToDatabase();
+  }
+
   render() {
     return (
       <div className='leagues'>
@@ -52,7 +59,7 @@ class Leagues extends Component {
             <Button btnType='button' btnClass='btn btn-primary' btnValue="Join" onClick={this.onJoinLeagueBtnClicked} />
           </div>
           <div className='btn-group m-2'>
-            <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" onClick={this.onCreateLeagueBtnClicked}/>
+            <Button btnType='button' btnClass='btn btn-primary' btnValue="Create" onClick={this.onCreateLeagueBtnClicked} />
           </div>
         </div>
         <div className='container card my-4'>
