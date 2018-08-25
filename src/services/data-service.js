@@ -473,204 +473,510 @@ class DataService {
   }
 
   addSportToDatabase() {
-    var nfl = {
-      'nfl-2018': {
-        'afc-e-01': {
-          'name': 'New England Patriots',
+    var cfb_2018 = {
+      'cfb-2018': {
+        'acc-01': {
+          'name': '(ACC) Clemson',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-e-02': {
-          'name': 'Miami Dolphins',
+        'acc-02': {
+          'name': '(ACC) Florida St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-e-03': {
-          'name': 'New York Jets',
+        'acc-03': {
+          'name': '(ACC) NC State',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-e-04': {
-          'name': 'Buffalo Bills',
+        'acc-04': {
+          'name': '(ACC) Wake Forest',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-n-01': {
-          'name': 'Pittsburgh Steelers',
+        'acc-05': {
+          'name': '(ACC) Boston College',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-n-02': {
-          'name': 'Cleveland Browns',
+        'acc-06': {
+          'name': '(ACC) Louisville',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-n-03': {
-          'name': 'Baltimore Ravens',
+        'acc-07': {
+          'name': '(ACC) Miami',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-n-04': {
-          'name': 'Cincinnati Bengals',
+        'acc-08': {
+          'name': '(ACC) Virginia Tech',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-s-01': {
-          'name': 'Indianapolis Colts',
+        'acc-09': {
+          'name': '(ACC) Georgia Tech',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-s-02': {
-          'name': 'Houston Texans',
+        'acc-10': {
+          'name': '(ACC) Pittsburgh',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-s-03': {
-          'name': 'Tennessee Titans',
+        'acc-11': {
+          'name': '(ACC) Duke',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-s-04': {
-          'name': 'Jacksonville Jaguars',
+        'acc-12': {
+          'name': '(ACC) North Carolina',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-w-01': {
-          'name': 'Oakland Raiders',
+        'acc-13': {
+          'name': '(ACC) Virginia',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-w-02': {
-          'name': 'Denver Broncos',
+        'b12-01': {
+          'name': '(B12) Oklahoma',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-w-03': {
-          'name': 'Kansas City Chiefs',
+        'b12-02': {
+          'name': '(B12) Texas',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'afc-w-04': {
-          'name': 'Los Angeles Chargers',
+        'b12-03': {
+          'name': '(B12) West Virginia',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-e-01': {
-          'name': 'New York Giants',
+        'b12-04': {
+          'name': '(B12) TCU',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-e-02': {
-          'name': 'Dallas Cowboys',
+        'b12-05': {
+          'name': '(B12) Oklahoma St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-e-03': {
-          'name': 'Washington Redskins',
+        'b12-06': {
+          'name': '(B12) Iowa St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-e-04': {
-          'name': 'Philadelphia Eagles',
+        'b12-07': {
+          'name': '(B12) Kansas St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-n-01': {
-          'name': 'Green Bay Packers',
+        'b12-08': {
+          'name': '(B12) Baylor',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-n-02': {
-          'name': 'Chicago Bears',
+        'b12-09': {
+          'name': '(B12) Texas Tech',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-n-03': {
-          'name': 'Detroit Lions',
+        'b10-01': {
+          'name': '(B1G) Ohio St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-n-04': {
-          'name': 'Minnesota Vikings',
+        'b10-02': {
+          'name': '(B1G) Michigan',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-s-01': {
-          'name': 'Tampa Bay Buccaneers',
+        'b10-03': {
+          'name': '(B1G) Penn St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-s-02': {
-          'name': 'Atlanta Falcons',
+        'b10-04': {
+          'name': '(B1G) Michigan St',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-s-03': {
-          'name': 'New Orleans Saints',
+        'b10-05': {
+          'name': '(B1G) Maryland',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-s-04': {
-          'name': 'Carolina Panthers',
+        'b10-06': {
+          'name': '(B1G) Indiana',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-w-01': {
-          'name': 'San Francisco 49ers',
+        'b10-07': {
+          'name': '(B1G) Rutgers',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-w-02': {
-          'name': 'Los Angeles Rams',
+        'b10-08': {
+          'name': '(B1G) Wisconsin',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-w-03': {
-          'name': 'Arizona Cardinals',
+        'b10-09': {
+          'name': '(B1G) Iowa',
           'owner': '',
           'price': 0,
           'return': 0
         },
-        'nfc-w-04': {
-          'name': 'Seattle Seahawks',
+        'b10-10': {
+          'name': '(B1G) Purdue',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'b10-11': {
+          'name': '(B1G) Northwestern',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'b10-12': {
+          'name': '(B1G) Nebraska',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'b10-13': {
+          'name': '(B1G) Minnesota',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'b10-14': {
+          'name': '(B1G) Illinois',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-01': {
+          'name': '(Pac-12) Washington',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-02': {
+          'name': '(Pac-12) Stanford',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-03': {
+          'name': '(Pac-12) Oregon',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-04': {
+          'name': '(Pac-12) California',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-05': {
+          'name': '(Pac-12) Washington St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-06': {
+          'name': '(Pac-12) Oregon St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-07': {
+          'name': '(Pac-12) USC',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-08': {
+          'name': '(Pac-12) Utah',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-09': {
+          'name': '(Pac-12) Arizona',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-10': {
+          'name': '(Pac-12) UCLA',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-11': {
+          'name': '(Pac-12) Colorado',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'p12-12': {
+          'name': '(Pac-12) Arizona St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-01': {
+          'name': '(SEC) Georgia',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-02': {
+          'name': '(SEC) Florida',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-03': {
+          'name': '(SEC) South Carolina',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-04': {
+          'name': '(SEC) Missouri',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-05': {
+          'name': '(SEC) Kentucky',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-06': {
+          'name': '(SEC) Tennessee',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-07': {
+          'name': '(SEC) Vanderbilt',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-08': {
+          'name': '(SEC) Alabama',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-09': {
+          'name': '(SEC) Auburn',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-10': {
+          'name': '(SEC) Mississippi',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-11': {
+          'name': '(SEC) Texas A&M',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-12': {
+          'name': '(SEC) LSU',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-13': {
+          'name': '(SEC) Ole Miss',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sec-14': {
+          'name': '(SEC) Arkansas',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'ind-01': {
+          'name': '(Indep) Notre Dame',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'ind-02': {
+          'name': '(Indep) Army',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mwc-01': {
+          'name': '(MWC) Boise St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mwc-02': {
+          'name': '(MWC) San Diego St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mwc-03': {
+          'name': '(MWC) Fresno St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'cusa-01': {
+          'name': '(C-USA) FAU',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'cusa-02': {
+          'name': '(C-USA) Marshall',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'cusa-03': {
+          'name': '(C-USA) North Texas',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'cusa-04': {
+          'name': '(C-USA) Louisiana Tech',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-01': {
+          'name': '(American) UCF',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-02': {
+          'name': '(American) Memphis',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-03': {
+          'name': '(American) Navy',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-04': {
+          'name': '(American) Houston',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-05': {
+          'name': '(American) Temple',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'am-06': {
+          'name': '(American) USF',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mac-01': {
+          'name': '(MAC) Ohio',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mac-02': {
+          'name': '(MAC) NIU',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'mac-03': {
+          'name': '(MAC) Toledo',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sb-01': {
+          'name': '(Sun Belt) Arkansas St',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sb-02': {
+          'name': '(Sun Belt) Troy',
+          'owner': '',
+          'price': 0,
+          'return': 0
+        },
+        'sb-03': {
+          'name': '(Sun Belt) Appalachian St',
           'owner': '',
           'price': 0,
           'return': 0
         }
       }
-    };
+    }
 
-    database.ref('/sports/').update(nfl);
+    database.ref('/sports/').update(cfb_2018);
   }
 }
 
