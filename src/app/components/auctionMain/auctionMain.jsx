@@ -80,7 +80,7 @@ class AuctionMain extends Component {
     } else {
       return (
         <div className='normal-header' >
-          <h4>**NEED STANDARD HEADER**</h4>
+          <h4>Auction Room</h4>
         </div>
       );
     }
