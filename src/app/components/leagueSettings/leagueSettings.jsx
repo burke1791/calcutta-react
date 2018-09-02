@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './leagueSettings.css';
+import { Redirect } from 'react-router-dom';
 import Button from '../button/button';
 
 import DataService from '../../../services/data-service';
@@ -13,7 +14,8 @@ class LeagueSettings extends Component {
     super(props);
 
     this.state = {
-      owner: ''
+      owner: '',
+      member: true
     }
 
     //bind functions
@@ -37,6 +39,16 @@ class LeagueSettings extends Component {
   leaveLeague = () => {
     // eventually generate a modal to do a check
 
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+    var self = this;
+
+    if (uid) {
+      ds.leaveLeague(uid, this.props.leagueId).then(function() {
+        self.setState({member: false});
+      });
+    } else {
+      alert('could not leave league, please try again');
+    }
     
   }
 
@@ -59,11 +71,17 @@ class LeagueSettings extends Component {
   }
 
   render() {
-    return (
-      <div className='league-settings'>
-        {this.generateSettingsPage()}
-      </div>
-    );
+    if (this.state.member) {
+      return (
+        <div className='league-settings'>
+          {this.generateSettingsPage()}
+        </div>
+      );
+    } else {
+      return (
+        <Redirect to='/' />
+      )
+    }
   }
 }
 

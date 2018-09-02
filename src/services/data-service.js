@@ -459,6 +459,22 @@ class DataService {
     });
   }
 
+  leaveLeague = (uid, leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/members/' + uid).set(false, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
+    
+
+    // should I also remove the users uid from the teams he or she owns?
+  }
+
   formatMoney = (value) => {
     var currencyString = '';
 
