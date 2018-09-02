@@ -1,6 +1,26 @@
 {
   "rules": {
-    ".read": true,
-    ".write": true
+    "auctions": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "leagues": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "messages-auction": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "sports": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
+    "users": {
+      ".read": "auth.uid !== null",
+      "$uid": {
+        ".write": "$uid === auth.uid"
+      }
+    }
   }
 }
