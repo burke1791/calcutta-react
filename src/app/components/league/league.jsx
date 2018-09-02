@@ -53,7 +53,7 @@ class League extends Component {
           <Route exact path='/league-home/:id' component={LeagueHome}></Route>
           <Route exact path='/league-home/:id/auction/' component={AuctionMain}></Route>
           <Route exact path='/league-home/:id/member/:uid' component={MemberPage}></Route>
-          <Route exact path='/league-home/:id/settings' component={LeagueSettings}></Route>
+          <Route exact path='/league-home/:id/settings' render={routeProps => <LeagueSettings leagueId={this.props.match.params.id}/>}></Route>
         </Switch>
       </div>
     );
