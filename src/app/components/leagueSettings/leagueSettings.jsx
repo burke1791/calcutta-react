@@ -52,6 +52,21 @@ class LeagueSettings extends Component {
     
   }
 
+  deleteLeague = () => {
+    // eventually generate a modal to do a check
+
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+    var self = this;
+
+    if (uid) {
+      ds.deleteLeague(this.props.leagueId).then(function() {
+        self.setState({member: false});
+      });
+    } else {
+      alert('could not delete league, please try again');
+    }
+  }
+
   generateSettingsPage = () => {
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
 
@@ -59,6 +74,7 @@ class LeagueSettings extends Component {
       return (
         <div className='owner-settings'>
           <h1>You are the league owner</h1>
+          <Button btnClass='btn btn-danger' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
         </div>
       );
     } else if (uid !== null) {

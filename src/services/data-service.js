@@ -475,6 +475,21 @@ class DataService {
     // should I also remove the users uid from the teams he or she owns?
   }
 
+  deleteLeague = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId).update({
+        'status': 'deleted'
+      }, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else { 
+          resolve();
+        }
+      });
+    })
+  }
+
   formatMoney = (value) => {
     var currencyString = '';
 
