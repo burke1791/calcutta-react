@@ -43,19 +43,6 @@ class Header extends Component {
           </nav>
         </div>
       </div>
-      
-
-      /*
-      <header className="container-fluid App-header">
-        <div className='auth-header col-sm-2'>
-          <AuthHeader username={this.state.authenticatedUsername}/>
-        </div>
-        <img src='https://upload.wikimedia.org/wikipedia/commons/7/72/Basketball_Clipart.svg' className="App-logo" alt="logo" />
-        <h1 className="App-title">
-          <Link exact='true' to='/'>March Madness Calcutta</Link>
-        </h1>
-      </header>
-      */
     );
   }
 }

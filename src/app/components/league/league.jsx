@@ -6,6 +6,7 @@ import AuctionMain from '../auctionMain/auctionMain';
 import MemberPage from '../memberPage/memberPage';
 import LeagueHeader from '../leagueHeader/leagueHeader';
 import LeagueNav from '../leagueNav/leagueNav';
+import LeagueSettings from '../leagueSettings/leagueSettings';
 
 import DataService from '../../../services/data-service';
 
@@ -52,6 +53,7 @@ class League extends Component {
           <Route exact path='/league-home/:id' component={LeagueHome}></Route>
           <Route exact path='/league-home/:id/auction/' component={AuctionMain}></Route>
           <Route exact path='/league-home/:id/member/:uid' component={MemberPage}></Route>
+          <Route exact path='/league-home/:id/settings' component={LeagueSettings}></Route>
         </Switch>
       </div>
     );
