@@ -475,6 +475,19 @@ class DataService {
     // should I also remove the users uid from the teams he or she owns?
   }
 
+  resetAuction = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/sport').once('value').then(function(snapshot) {
+        var sportCode = snapshot.val();
+        database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
+          var teams = snapshot.val();
+          database.ref('/leagues/' + leagueId + '/teams').set(teams);
+          resolve();
+        });
+      });
+    });
+  }
+
   deleteLeague = (leagueId) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId).update({

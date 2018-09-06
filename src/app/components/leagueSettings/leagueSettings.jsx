@@ -21,6 +21,8 @@ class LeagueSettings extends Component {
     //bind functions
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
     this.leaveLeague = this.leaveLeague.bind(this);
+    this.resetAuction = this.resetAuction.bind(this);
+    this.deleteLeague = this.deleteLeague.bind(this);
     this.generateSettingsPage = this.generateSettingsPage.bind(this);
   }
 
@@ -52,6 +54,21 @@ class LeagueSettings extends Component {
     
   }
 
+  resetAuction = () => {
+    // eventually generate a modal to do a check
+
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+    var self = this;
+
+    if (uid) {
+      ds.resetAuction(this.props.leagueId).then(function() {
+        alert('Auction Reset');
+      });
+    } else {
+      alert('Unable to reset auction, please try again');
+    }
+  }
+
   deleteLeague = () => {
     // eventually generate a modal to do a check
 
@@ -74,7 +91,8 @@ class LeagueSettings extends Component {
       return (
         <div className='owner-settings'>
           <h1>You are the league owner</h1>
-          <Button btnClass='btn btn-danger' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
+          <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
+          <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Reset Auction' onClick={this.resetAuction} />
         </div>
       );
     } else if (uid !== null) {
