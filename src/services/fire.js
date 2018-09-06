@@ -9,7 +9,16 @@ var config = {
   messagingSenderId: "682470596189"
 };
 
-firebase.initializeApp(config);
+var config_test = {
+  apiKey: "AIzaSyC4mDFylNBH9fkLNEqZz4IUcgym4xKtWSs",
+  authDomain: "calcutta-test.firebaseapp.com",
+  databaseURL: "https://calcutta-test.firebaseio.com",
+  projectId: "calcutta-test",
+  storageBucket: "",
+  messagingSenderId: "387342798330"
+};
+
+firebase.initializeApp(config_test);
 
 const auth = firebase.auth();
 const database = firebase.database();
