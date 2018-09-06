@@ -296,9 +296,20 @@ class DataService {
   }
 
   endAuction(leagueId) {
-    database.ref('/auctions/' + leagueId).update({
+    var freshAuction = {
+      'current-item': {
+        'code': '',
+        'complete': true,
+        'current-bid': 0,
+        'current-winner': '',
+        'end-time': '',
+        'name': '',
+        'winner-uid': ''
+      },
       'in-progress': false
-    });
+    }
+
+    database.ref('/auctions/' + leagueId).set(freshAuction);
   }
 
   attachAuctionMessagesListener = (leagueId) => {
@@ -476,12 +487,15 @@ class DataService {
   }
 
   resetAuction = (leagueId) => {
+    var self = this;
+
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/sport').once('value').then(function(snapshot) {
         var sportCode = snapshot.val();
         database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
           var teams = snapshot.val();
           database.ref('/leagues/' + leagueId + '/teams').set(teams);
+          self.endAuction(leagueId);
           resolve();
         });
       });
