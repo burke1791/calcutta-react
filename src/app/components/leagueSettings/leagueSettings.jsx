@@ -15,19 +15,24 @@ class LeagueSettings extends Component {
 
     this.state = {
       owner: '',
-      member: true
+      member: true,
+      unclaimed: false
     }
 
     //bind functions
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
+    this.fetchSettings = this.fetchSettings.bind(this);
     this.leaveLeague = this.leaveLeague.bind(this);
+    this.onUnclaimedChange = this.onUnclaimedChange.bind(this);
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
+    this.saveSettings = this.saveSettings.bind(this);
     this.generateSettingsPage = this.generateSettingsPage.bind(this);
   }
 
   componentDidMount() {
     this.getLeagueOwner();
+    this.fetchSettings();
   }
 
   getLeagueOwner() {
@@ -35,6 +40,16 @@ class LeagueSettings extends Component {
 
     ds.getLeagueOwner(this.props.leagueId).then(function(leagueOwner) {
       self.setState({owner: leagueOwner});
+    });
+  }
+
+  fetchSettings() {
+    var self = this;
+
+    ds.fetchSettings(this.props.leagueId).then(function(settings) {
+      self.setState({
+        unclaimed: settings['unclaimed']
+      });
     });
   }
 
@@ -51,7 +66,10 @@ class LeagueSettings extends Component {
     } else {
       alert('could not leave league, please try again');
     }
-    
+  }
+
+  onUnclaimedChange(event) {
+    this.setState({unclaimed: event.target.checked});
   }
 
   resetAuction = () => {
@@ -84,15 +102,38 @@ class LeagueSettings extends Component {
     }
   }
 
+  saveSettings = () => {
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+    var self = this;
+
+    var newSettings = {
+      'unclaimed': this.state.unclaimed
+    };
+
+    if (uid) {
+      ds.saveSettings(this.props.leagueId, newSettings).then(function() {
+        alert('Settings Successfully Saved');
+      });
+    } else {
+      alert('Could not save settings please try again');
+    }
+  }
+
   generateSettingsPage = () => {
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
 
     if (uid !== null && uid === this.state.owner) {
       return (
         <div className='owner-settings'>
-          <h1>You are the league owner</h1>
+          <h2>League Settings</h2>
+          <div className='form-check'>
+            <input className='form-check-input' type='checkbox' checked={this.state.unclaimed} onChange={this.onUnclaimedChange} />
+            <label className='form-check-label'>Allow Unclaimed Teams?</label>
+          </div>
           <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
           <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Reset Auction' onClick={this.resetAuction} />
+          <hr />
+          <Button btnClass='btn btn-primary my-1' btnType='button' btnValue='Save Settings' onClick={this.saveSettings} />
         </div>
       );
     } else if (uid !== null) {

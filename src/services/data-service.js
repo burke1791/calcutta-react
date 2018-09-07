@@ -470,6 +470,19 @@ class DataService {
     });
   }
 
+  fetchSettings = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/settings').once('value').then(function(settings) {
+        var currentSettings = settings.val();
+        if (settings) {
+          resolve(currentSettings);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
   leaveLeague = (uid, leagueId) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/members/' + uid).set(false, function(error) {
@@ -515,6 +528,19 @@ class DataService {
         }
       });
     })
+  }
+
+  saveSettings = (leagueId, newSettings) => {
+    return new Promise((resolve, reject) => {
+      database.ref('leagues/' + leagueId + '/settings').update(newSettings, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
   }
 
   formatMoney = (value) => {
