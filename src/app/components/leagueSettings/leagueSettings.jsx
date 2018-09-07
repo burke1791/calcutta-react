@@ -55,24 +55,32 @@ class LeagueSettings extends Component {
 
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
       self.setState({
-        unclaimed: settings['unclaimed']
+        unclaimed: settings['unclaimed'],
+        minBid: settings['minBid'],
+        minBuyIn: settings['minBuyIn']
       });
     });
   }
 
   onMinBidChange(event) {
+    event.preventDefault();
+
     var minBid = event.target.value;
 
-
+    this.setState({minBid: minBid});
   }
 
   onMinBuyInChange(event) {
+    event.preventDefault();
+
     var minBuyIn = event.target.value;
 
-
+    this.setState({minBuyIn: minBuyIn});
   }
 
   onUnclaimedChange(event) {
+    event.preventDefault();
+
     this.setState({unclaimed: event.target.checked});
   }
 
@@ -126,7 +134,9 @@ class LeagueSettings extends Component {
     var self = this;
 
     var newSettings = {
-      'unclaimed': this.state.unclaimed
+      'unclaimed': this.state.unclaimed,
+      'minBid': this.state.minBid,
+      'minBuyIn': this.state.minBuyIn
     };
 
     if (uid) {
