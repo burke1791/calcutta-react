@@ -18,6 +18,7 @@ class AuctionBid extends Component {
     this.enableBidding = null;
 
     this.state = {
+      minBidAllowed: 1,
       minBid: 1,
       bid: 1,
       leagueId: this.props.leagueId,
@@ -27,6 +28,7 @@ class AuctionBid extends Component {
     }
 
     // Bind functions
+    this.fetchLeagueSettings = this.fetchLeagueSettings.bind(this);
     this.placeBid = this.placeBid.bind(this);
     this.placeMinBid = this.placeMinBid.bind(this);
     this.disableBidding = this.disableBidding.bind(this);
@@ -38,6 +40,8 @@ class AuctionBid extends Component {
 
   componentDidMount() {
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
+
+    this.fetchLeagueSettings();
   }
 
   componentWillUnmount() {
@@ -52,6 +56,17 @@ class AuctionBid extends Component {
         this.setState(() => ({biddingDisabled: false}))
       }, 1000);
     }
+  }
+
+  fetchLeagueSettings() {
+    var self = this;
+
+    ds.fetchSettings(this.props.leagueId).then(function(settings) {
+      self.setState({
+        minBidAllowed: settings['minBid'],
+        minBid: settings['minBid']
+      });
+    });
   }
 
   placeMinBid() {
@@ -124,8 +139,11 @@ class AuctionBid extends Component {
     var currentBid = newData['current-item']['current-bid'];
     var itemComplete = newData['current-item']['complete'];
     console.log('item complete: ' + itemComplete);
+
+    var minBid = Number(currentBid) <= this.state.minBidAllowed ? this.state.minBidAllowed : Number(currentBid) + 1;
+
     this.setState({
-      minBid: Number(currentBid) + 1,
+      minBid: minBid,
       currentBid: currentBid,
       itemComplete: itemComplete
     });

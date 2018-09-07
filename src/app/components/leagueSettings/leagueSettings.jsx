@@ -21,7 +21,8 @@ class LeagueSettings extends Component {
       member: true,
       unclaimed: false,
       minBid: 1,
-      minBuyIn: 0
+      minBuyIn: 0,
+      maxBuyIn: 0
     }
 
     //bind functions
@@ -30,6 +31,7 @@ class LeagueSettings extends Component {
     this.onUnclaimedChange = this.onUnclaimedChange.bind(this);
     this.onMinBidChange = this.onMinBidChange.bind(this);
     this.onMinBuyInChange = this.onMinBuyInChange.bind(this);
+    this.onMaxBuyInChange = this.onMaxBuyInChange.bind(this);
     this.leaveLeague = this.leaveLeague.bind(this);
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
@@ -57,7 +59,8 @@ class LeagueSettings extends Component {
       self.setState({
         unclaimed: settings['unclaimed'],
         minBid: settings['minBid'],
-        minBuyIn: settings['minBuyIn']
+        minBuyIn: settings['minBuyIn'],
+        maxBuyIn: settings['maxBuyIn']
       });
     });
   }
@@ -76,6 +79,14 @@ class LeagueSettings extends Component {
     var minBuyIn = event.target.value;
 
     this.setState({minBuyIn: minBuyIn});
+  }
+
+  onMaxBuyInChange(event) {
+    event.preventDefault();
+
+    var maxBuyIn = event.target.value;
+
+    this.setState({maxBuyIn: maxBuyIn});
   }
 
   onUnclaimedChange(event) {
@@ -136,7 +147,8 @@ class LeagueSettings extends Component {
     var newSettings = {
       'unclaimed': this.state.unclaimed,
       'minBid': this.state.minBid,
-      'minBuyIn': this.state.minBuyIn
+      'minBuyIn': this.state.minBuyIn,
+      'maxBuyIn': this.state.maxBuyIn
     };
 
     if (uid) {
@@ -177,6 +189,15 @@ class LeagueSettings extends Component {
                     <span className='input-group-text'>$</span>
                   </div>
                   <input type='number' className='form-control' value={this.state.minBuyIn} onChange={this.onMinBuyInChange} />
+                </div>
+              </div>
+              <div className='my-1'>
+                <label><strong>Maximum Buy In</strong></label>
+                <div className='input-group'>
+                  <div className='input-group-prepend'>
+                    <span className='input-group-text'>$</span>
+                  </div>
+                  <input type='number' className='form-control' value={this.state.maxBuyIn} onChange={this.onMaxBuyInChange} />
                 </div>
               </div>
             </div>
