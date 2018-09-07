@@ -9,6 +9,7 @@ var config = {
   messagingSenderId: "682470596189"
 };
 
+// Used to connect to the "test" database
 var config_test = {
   apiKey: "AIzaSyC4mDFylNBH9fkLNEqZz4IUcgym4xKtWSs",
   authDomain: "calcutta-test.firebaseapp.com",
@@ -18,7 +19,7 @@ var config_test = {
   messagingSenderId: "387342798330"
 };
 
-firebase.initializeApp(config_test);
+firebase.initializeApp(config);
 
 const auth = firebase.auth();
 const database = firebase.database();
