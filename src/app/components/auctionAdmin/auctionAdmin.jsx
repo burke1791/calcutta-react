@@ -17,10 +17,12 @@ class AuctionAdmin extends Component {
       auctionStarted: false,
       leagueId: this.props.leagueId,
       teamCodes: [],
-      randomize: true
+      randomize: true,
+      unclaimed: false
     }
 
     // bind functions
+    this.fetchLeagueSettings = this.fetchLeagueSettings.bind(this);
     this.fetchTeamCodes = this.fetchTeamCodes.bind(this);
     this.startAuction = this.startAuction.bind(this);
     this.nextItem = this.nextItem.bind(this);
@@ -36,6 +38,7 @@ class AuctionAdmin extends Component {
 
   componentDidMount() {
     this.fetchTeamCodes();
+    this.fetchLeagueSettings();
 
     var self = this;
     ds.getDataSnapshot('/auctions/' + this.state.leagueId + '/in-progress').then(function(auctionStarted) {
@@ -47,6 +50,15 @@ class AuctionAdmin extends Component {
 
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_AUCTION_ITEM_COMPLETE);
+  }
+
+  fetchLeagueSettings() {
+    var self = this;
+    ds.fetchSettings(this.props.leagueId).then(function(settings) {
+      self.setState({
+        unclaimed: settings['unclaimed']
+      });
+    });
   }
 
   fetchTeamCodes() {
@@ -70,7 +82,7 @@ class AuctionAdmin extends Component {
 
   logResults() {
     var self = this;
-    ds.logAuctionItemResult(this.state.leagueId).then((oldCode) => {
+    ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
       self.loadNewItem(oldCode);
     });
   }
@@ -80,7 +92,12 @@ class AuctionAdmin extends Component {
     var codes = this.state.teamCodes;
 
     if (!oldCode) {
-      var newCode = codes[0];
+      if (this.state.randomize) {
+        var newCode = codes[Math.floor(Math.random() * codes.length)];
+      } else {
+        var newCode = codes[0];
+      }
+      
       ds.loadNextItem(newCode, this.state.leagueId);
     } else {
       if (codes.length > 1) {

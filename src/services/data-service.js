@@ -166,7 +166,7 @@ class DataService {
     });
   }
 
-  logAuctionItemResult = (leagueId) => {
+  logAuctionItemResult = (leagueId, unclaimed = false) => {
     var itemCode = '';
     var winnerUID = '';
     var winningBid = 0;
@@ -181,17 +181,22 @@ class DataService {
           winnerUID = '(unclaimed)';
         }
   
-        database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
-          'owner': winnerUID,
-          'price': winningBid
-        }, function(error) {
-          if (error) {
-            console.log('logAuctionItemResult failed');
-            reject();
-          } else {
-            resolve(itemCode);
-          }
-        });
+        if (unclaimed || winnerUID !== '(unclaimed)') {
+          database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
+            'owner': winnerUID,
+            'price': winningBid
+          }, function(error) {
+            if (error) {
+              console.log('logAuctionItemResult failed');
+              reject();
+            } else {
+              resolve(itemCode);
+            }
+          });
+        } else {
+          resolve();
+        }
+        
       });
     });
   }
@@ -277,16 +282,6 @@ class DataService {
         console.log('Bid succeeded');
       }
     });
-
-    // keeping the below in case the transaction paradigm (above) ends up failing miserably
-    /*
-    database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
-    database.ref('/auctions/' + leagueId + '/current-item').update({
-      'current-bid': bid,
-      'current-winner': name,
-      'winner-uid': uid
-    });
-    */
   }
 
   auctionItemComplete(leagueId) {

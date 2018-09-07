@@ -78,6 +78,9 @@ class LeagueForm extends Component {
         },
         'name' : this.state.leagueNameVal,
         'password' : this.state.leaguePassVal,
+        'settings' : {
+          'unclaimed': false
+        },
         'sport' : this.state.leagueSportVal
       };
 
