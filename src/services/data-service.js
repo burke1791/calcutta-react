@@ -290,7 +290,8 @@ class DataService {
     });
   }
 
-  endAuction(leagueId) {
+  endAuction(leagueId, reset = false) {
+
     var freshAuction = {
       'current-item': {
         'code': '',
@@ -304,7 +305,11 @@ class DataService {
       'in-progress': false
     }
 
-    database.ref('/auctions/' + leagueId).set(freshAuction);
+    if (reset) {
+      database.ref('/auctions/' + leagueId).set(freshAuction);
+    } else {
+      database.ref('/auctions/' + leagueId).update(freshAuction);
+    }
   }
 
   attachAuctionMessagesListener = (leagueId) => {
@@ -503,7 +508,7 @@ class DataService {
         database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
           var teams = snapshot.val();
           database.ref('/leagues/' + leagueId + '/teams').set(teams);
-          self.endAuction(leagueId);
+          self.endAuction(leagueId, true);
           resolve();
         });
       });
