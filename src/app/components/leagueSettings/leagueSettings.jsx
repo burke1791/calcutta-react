@@ -10,20 +10,27 @@ let ds = new DataService();
 let authService = new AuthenticationService();
 
 class LeagueSettings extends Component {
+
+  // TODO: Break this component up into "AuctionSettings", etc.
+
   constructor(props) {
     super(props);
 
     this.state = {
       owner: '',
       member: true,
-      unclaimed: false
+      unclaimed: false,
+      minBid: 1,
+      minBuyIn: 0
     }
 
     //bind functions
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
     this.fetchSettings = this.fetchSettings.bind(this);
-    this.leaveLeague = this.leaveLeague.bind(this);
     this.onUnclaimedChange = this.onUnclaimedChange.bind(this);
+    this.onMinBidChange = this.onMinBidChange.bind(this);
+    this.onMinBuyInChange = this.onMinBuyInChange.bind(this);
+    this.leaveLeague = this.leaveLeague.bind(this);
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
     this.saveSettings = this.saveSettings.bind(this);
@@ -53,6 +60,22 @@ class LeagueSettings extends Component {
     });
   }
 
+  onMinBidChange(event) {
+    var minBid = event.target.value;
+
+
+  }
+
+  onMinBuyInChange(event) {
+    var minBuyIn = event.target.value;
+
+
+  }
+
+  onUnclaimedChange(event) {
+    this.setState({unclaimed: event.target.checked});
+  }
+
   leaveLeague = () => {
     // eventually generate a modal to do a check
 
@@ -66,10 +89,6 @@ class LeagueSettings extends Component {
     } else {
       alert('could not leave league, please try again');
     }
-  }
-
-  onUnclaimedChange(event) {
-    this.setState({unclaimed: event.target.checked});
   }
 
   resetAuction = () => {
@@ -124,16 +143,54 @@ class LeagueSettings extends Component {
 
     if (uid !== null && uid === this.state.owner) {
       return (
-        <div className='owner-settings'>
-          <h2>League Settings</h2>
-          <div className='form-check'>
-            <input className='form-check-input' type='checkbox' checked={this.state.unclaimed} onChange={this.onUnclaimedChange} />
-            <label className='form-check-label'>Allow Unclaimed Teams?</label>
+        <div className='container owner-settings'>
+          <div className='row'>
+            <div className='col'>
+              <h2>League Settings</h2>
+            </div>
           </div>
-          <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
-          <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Reset Auction' onClick={this.resetAuction} />
+          <div className='row justify-content-center'>
+            <div className='col-6'>
+              <div className='my-1'>
+                <label><strong>Minimum Bid Amount</strong></label>
+                <div className='input-group'>
+                  <div className='input-group-prepend'>
+                    <span className='input-group-text'>$</span>
+                  </div>
+                  <input type='number' className='form-control' value={this.state.minBid} onChange={this.onMinBidChange} />
+                </div>
+              </div>
+              <div className='my-1'>
+                <label><strong>Minimum Buy In</strong></label>
+                <div className='input-group'>
+                  <div className='input-group-prepend'>
+                    <span className='input-group-text'>$</span>
+                  </div>
+                  <input type='number' className='form-control' value={this.state.minBuyIn} onChange={this.onMinBuyInChange} />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className='row justify-content-center'>
+            <div className='col input-group my-1'>
+              <div className='form-check'>
+                <input className='form-check-input' type='checkbox' checked={this.state.unclaimed} onChange={this.onUnclaimedChange} />
+                <label className='form-check-label'>Allow Unclaimed Teams?</label>
+              </div>
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col'>
+              <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Delete League' onClick={this.deleteLeague} />
+              <Button btnClass='btn btn-danger my-1' btnType='button' btnValue='Reset Auction' onClick={this.resetAuction} />
+            </div>
+          </div>  
           <hr />
-          <Button btnClass='btn btn-primary my-1' btnType='button' btnValue='Save Settings' onClick={this.saveSettings} />
+          <div className='row'>
+            <div className='col'>
+              <Button btnClass='btn btn-primary my-1' btnType='button' btnValue='Save Settings' onClick={this.saveSettings} />
+            </div>
+          </div>
         </div>
       );
     } else if (uid !== null) {
