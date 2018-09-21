@@ -474,7 +474,7 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/settings').once('value').then(function(settings) {
         var currentSettings = settings.val();
-        if (settings) {
+        if (currentSettings) {
           resolve(currentSettings);
         } else {
           reject();
