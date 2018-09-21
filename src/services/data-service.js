@@ -166,7 +166,7 @@ class DataService {
     });
   }
 
-  logAuctionItemResult = (leagueId) => {
+  logAuctionItemResult = (leagueId, unclaimed = false) => {
     var itemCode = '';
     var winnerUID = '';
     var winningBid = 0;
@@ -181,17 +181,22 @@ class DataService {
           winnerUID = '(unclaimed)';
         }
   
-        database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
-          'owner': winnerUID,
-          'price': winningBid
-        }, function(error) {
-          if (error) {
-            console.log('logAuctionItemResult failed');
-            reject();
-          } else {
-            resolve(itemCode);
-          }
-        });
+        if (unclaimed || winnerUID !== '(unclaimed)') {
+          database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
+            'owner': winnerUID,
+            'price': winningBid
+          }, function(error) {
+            if (error) {
+              console.log('logAuctionItemResult failed');
+              reject();
+            } else {
+              resolve(itemCode);
+            }
+          });
+        } else {
+          resolve();
+        }
+        
       });
     });
   }
@@ -277,16 +282,6 @@ class DataService {
         console.log('Bid succeeded');
       }
     });
-
-    // keeping the below in case the transaction paradigm (above) ends up failing miserably
-    /*
-    database.ref('/auctions/' + leagueId + '/current-item/bids').push(bidObj);
-    database.ref('/auctions/' + leagueId + '/current-item').update({
-      'current-bid': bid,
-      'current-winner': name,
-      'winner-uid': uid
-    });
-    */
   }
 
   auctionItemComplete(leagueId) {
@@ -295,10 +290,26 @@ class DataService {
     });
   }
 
-  endAuction(leagueId) {
-    database.ref('/auctions/' + leagueId).update({
+  endAuction(leagueId, reset = false) {
+
+    var freshAuction = {
+      'current-item': {
+        'code': '',
+        'complete': true,
+        'current-bid': 0,
+        'current-winner': '',
+        'end-time': '',
+        'name': '',
+        'winner-uid': ''
+      },
       'in-progress': false
-    });
+    }
+
+    if (reset) {
+      database.ref('/auctions/' + leagueId).set(freshAuction);
+    } else {
+      database.ref('/auctions/' + leagueId).update(freshAuction);
+    }
   }
 
   attachAuctionMessagesListener = (leagueId) => {
@@ -423,8 +434,16 @@ class DataService {
   }
 
   joinLeague(key, uid) {
-    database.ref('/leagues/' + key + '/members/' + uid).set(true);
-    ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+    database.ref('/leagues/' + key + '/members').update({
+      [uid]: true
+    }, function(error) {
+      if (error) {
+        console.log('joinLeague error: ' + error);
+      } else {
+        console.log('league joined notification posted');
+        ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
+      }
+    });
   }
 
   createLeague(league) {
@@ -455,6 +474,79 @@ class DataService {
         database.ref('/auctions').child(pushId).set(auction);
         // TODO: Redirect to league setup page (react router)
         ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+      });
+    });
+  }
+
+  fetchSettings = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/settings').once('value').then(function(settings) {
+        var currentSettings = settings.val();
+        if (settings) {
+          resolve(currentSettings);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
+  leaveLeague = (uid, leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/members/' + uid).set(false, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
+    
+
+    // should I also remove the users uid from the teams he or she owns?
+  }
+
+  resetAuction = (leagueId) => {
+    var self = this;
+
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/sport').once('value').then(function(snapshot) {
+        var sportCode = snapshot.val();
+        database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
+          var teams = snapshot.val();
+          database.ref('/leagues/' + leagueId + '/teams').set(teams);
+          self.endAuction(leagueId, true);
+          resolve();
+        });
+      });
+    });
+  }
+
+  deleteLeague = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId).update({
+        'status': 'deleted'
+      }, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else { 
+          resolve();
+        }
+      });
+    })
+  }
+
+  saveSettings = (leagueId, newSettings) => {
+    return new Promise((resolve, reject) => {
+      database.ref('leagues/' + leagueId + '/settings').update(newSettings, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
       });
     });
   }

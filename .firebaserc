@@ -1,7 +1,12 @@
 {
   "projects": {
     "default": "calcutta-eb6eb",
+<<<<<<< HEAD
     "calcutta-dev": "calcutta-test",
     "calcutta-prod": "calcutta-eb6eb"
+=======
+    "calcutta-prod": "calcutta-eb6eb",
+    "calcutta-dev": "calcutta-test"
+>>>>>>> 190246874734b81acacf2a57acfe9de998e1cc60
   }
 }

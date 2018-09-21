@@ -71,13 +71,19 @@ class LeagueForm extends Component {
     } else if (this.state.leagueType === 'create') {
       // TODO: move this to data service
       var league = {
-        'status' : 'pending',
+        'status' : 'in-progress',
         'creator' : uid,
         'members' : {
           [uid] : true
         },
         'name' : this.state.leagueNameVal,
         'password' : this.state.leaguePassVal,
+        'settings' : {
+          'unclaimed': false,
+          'minBid': 1,
+          'minBuyIn': 0,
+          'maxBuyIn': 0
+        },
         'sport' : this.state.leagueSportVal
       };
 

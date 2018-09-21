@@ -80,7 +80,6 @@ class LeagueTable extends Component {
           }
         });
         self.setState({leagues: leagues});
-        console.log('loadLeagues updated state');
       });
     }
   }
