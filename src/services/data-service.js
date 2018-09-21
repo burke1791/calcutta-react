@@ -434,8 +434,16 @@ class DataService {
   }
 
   joinLeague(key, uid) {
-    database.ref('/leagues/' + key + '/members/' + uid).set(true);
-    ns.postNotification(NOTIF_LEAGUE_JOINED, null);
+    database.ref('/leagues/' + key + '/members').update({
+      [uid]: true
+    }, function(error) {
+      if (error) {
+        console.log('joinLeague error: ' + error);
+      } else {
+        console.log('league joined notification posted');
+        ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
+      }
+    });
   }
 
   createLeague(league) {
