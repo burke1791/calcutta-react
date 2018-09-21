@@ -193,6 +193,7 @@ class LeagueSettings extends Component {
               </div>
               <div className='my-1'>
                 <label><strong>Maximum Buy In</strong></label>
+                <p>(Enter $0 for unlimited)</p>
                 <div className='input-group'>
                   <div className='input-group-prepend'>
                     <span className='input-group-text'>$</span>
