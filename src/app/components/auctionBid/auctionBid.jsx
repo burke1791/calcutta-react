@@ -62,10 +62,17 @@ class AuctionBid extends Component {
     var self = this;
 
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
-      self.setState({
-        minBidAllowed: settings['minBid'],
-        minBid: settings['minBid']
-      });
+      if (settings) {
+        self.setState({
+          minBidAllowed: settings['minBid'],
+          minBid: settings['minBid']
+        });
+      } else {
+        self.setState({
+          minBidAllowed: 0,
+          minBid: 0
+        });
+      }
     });
   }
 

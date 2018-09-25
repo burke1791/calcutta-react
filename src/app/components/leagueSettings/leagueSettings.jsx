@@ -56,12 +56,21 @@ class LeagueSettings extends Component {
     var self = this;
 
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
-      self.setState({
-        unclaimed: settings['unclaimed'],
-        minBid: settings['minBid'],
-        minBuyIn: settings['minBuyIn'],
-        maxBuyIn: settings['maxBuyIn']
-      });
+      if (settings) {
+        self.setState({
+          unclaimed: settings['unclaimed'],
+          minBid: settings['minBid'],
+          minBuyIn: settings['minBuyIn'],
+          maxBuyIn: settings['maxBuyIn']
+        });
+      } else {
+        self.setState({
+          unclaimed: true,
+          minBid: 0,
+          minBuyIn: 0,
+          maxBuyIn: 0
+        });
+      }
     });
   }
 
