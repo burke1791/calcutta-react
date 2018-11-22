@@ -163,6 +163,8 @@ class LeagueSettings extends Component {
     if (uid) {
       ds.saveSettings(this.props.leagueId, newSettings).then(function() {
         alert('Settings Successfully Saved');
+      }, function(error) {
+        alert('Error in settings values');
       });
     } else {
       alert('Could not save settings please try again');
