@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "calcutta-eb6eb"
+    "default": "calcutta-eb6eb",
+    "production": "calcutta-eb6eb"
   }
 }
