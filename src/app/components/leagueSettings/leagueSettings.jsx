@@ -155,9 +155,9 @@ class LeagueSettings extends Component {
 
     var newSettings = {
       'unclaimed': this.state.unclaimed,
-      'minBid': this.state.minBid,
-      'minBuyIn': this.state.minBuyIn,
-      'maxBuyIn': this.state.maxBuyIn
+      'minBid': Number(this.state.minBid),
+      'minBuyIn': Number(this.state.minBuyIn),
+      'maxBuyIn': Number(this.state.maxBuyIn)
     };
 
     if (uid) {
