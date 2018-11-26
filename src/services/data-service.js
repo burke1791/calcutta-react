@@ -532,14 +532,28 @@ class DataService {
 
   saveSettings = (leagueId, newSettings) => {
     return new Promise((resolve, reject) => {
-      database.ref('leagues/' + leagueId + '/settings').update(newSettings, function(error) {
-        if (error) {
-          console.log(error);
-          reject();
-        } else {
-          resolve();
+      let dataError = false;
+
+      if (newSettings['maxBuyIn'] != 0) {
+        if (newSettings['minBid'] > newSettings['maxBuyIn']) {
+          dataError = true;
+        } else if (newSettings['minBuyIn'] > newSettings['maxBuyIn']) {
+          dataError = true;
         }
-      });
+      } 
+      
+      if (!dataError) {
+        database.ref('leagues/' + leagueId + '/settings').update(newSettings, function(error) {
+          if (error) {
+            console.log(error);
+            reject();
+          } else {
+            resolve();
+          }
+        });
+      } else {
+        reject();
+      }
     });
   }
 

@@ -16,6 +16,7 @@ let ds = new DataService();
 let ns = new NotificationService();
 let authService = new AuthenticationService();
 
+// don't need this variable
 let auctionListener = null;
 
 class AuctionMain extends Component {
