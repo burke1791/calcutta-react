@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './auctionAdmin.css';
 import Button from '../button/button';
 
-import NotificationService, { NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
@@ -55,9 +55,15 @@ class AuctionAdmin extends Component {
   fetchLeagueSettings() {
     var self = this;
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
-      self.setState({
-        unclaimed: settings['unclaimed']
-      });
+      if (settings) {
+        self.setState({
+          unclaimed: settings['unclaimed']
+        });
+      } else {
+        self.setState({
+          unclaimed: true
+        });
+      }
     });
   }
 
@@ -75,8 +81,6 @@ class AuctionAdmin extends Component {
   }
 
   nextItem() {
-    // Test
-    // ns.postNotification(NOTIF_AUCTION_START_CLOCK, null);
     this.logResults();
   }
 
