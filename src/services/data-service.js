@@ -41,6 +41,18 @@ class DataService {
     }
   }
 
+  isAdmin = (uid) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/admins/' + uid).once('value').then(function(snapshot) {
+        if (snapshot.val()) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      });
+    });
+  }
+
   updateUsername(uid, newUsername) {
     database.ref('/users').child(uid).update({
       'username': newUsername

@@ -13,7 +13,8 @@ class Header extends Component {
     this.state = {
       loading: true,
       authenticatedUser: {},
-      authenticatedUsername: ''
+      authenticatedUsername: '',
+      authenticatedUid: ''
     };
   }
   
@@ -38,7 +39,7 @@ class Header extends Component {
               </Link>
             </div>
             <div className='auth'>
-              <AuthHeader username={this.state.authenticatedUsername} />
+              <AuthHeader username={this.state.authenticatedUsername} uid={this.state.authenticatedUid} /> 
             </div>
           </nav>
         </div>
