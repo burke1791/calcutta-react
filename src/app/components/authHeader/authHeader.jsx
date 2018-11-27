@@ -62,15 +62,15 @@ class AuthHeader extends Component {
   }
 
   onSignIn() {
-    // var self = this;
+    var self = this;
     this.checkAdmin().then(function(admin) {
       if (admin) {
-        this.setState({
+        self.setState({
           authenticated: true,
           admin: true
         });
       } else {
-        this.setState({
+        self.setState({
           authenticated: true
         });
       }
@@ -103,7 +103,8 @@ class AuthHeader extends Component {
 
   generateAuthBtn = () => {
     if (this.state.admin) {
-      <div className='nav-item dropdown'>
+      return (
+        <div className='nav-item dropdown'>
           <button type='button' className='nav-link dropdown-toggle btn btn-link dropdown-toggle' id='dropdownMenu' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
             {'Signed in as: '  + this.props.username}
           </button>
@@ -113,9 +114,10 @@ class AuthHeader extends Component {
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
             <div className='dropdown-divider'></div>
-            <button className='dropdown-item' type='button' onClick={this.godModeClicked}>Enter God Mode</button>
+            <button className='dropdown-item' type='button' onClick={this.onGodModeClicked}>Enter God Mode</button>
           </div>
         </div>
+      );
     } else if (this.state.authenticated) {
       return (
         <div className='nav-item dropdown'>
