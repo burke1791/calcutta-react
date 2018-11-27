@@ -129,7 +129,6 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/team-info/' + leagueId + '/' + teamId).once('value').then(function(teamInfo) {
         var teamInfo = teamInfo.val();
-        console.log('team name: ' + teamInfo['name']);
         if (teamInfo) {
           resolve(teamInfo);
         } else {
