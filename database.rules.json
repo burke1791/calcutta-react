@@ -2,7 +2,9 @@
   "rules": {
     "admins": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2"
+      "$uid": {
+        ".write": "auth.uid === tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2"
+      }
     },
     "auctions": {
       ".read": "auth.uid !== null",
