@@ -15,10 +15,12 @@ class MemberPage extends Component {
 
     this.state = {
       isAuthenticated: true,
-      username: ''
+      username: '',
+      sportId: ''
     }
 
     this.getDisplayName = this.getDisplayName.bind(this);
+    this.getLeagueSport = this.getLeagueSport.bind(this);
     this.userSignedOut = this.userSignedOut.bind(this);
   }
 
@@ -27,6 +29,8 @@ class MemberPage extends Component {
     this.getDisplayName();
 
     ns.addObserver(NOTIF_SIGNOUT, this, this.userSignedOut);
+
+    this.getLeagueSport();
   }
 
   componentWillUnmount() {
@@ -46,6 +50,14 @@ class MemberPage extends Component {
     });
   }
 
+  getLeagueSport() {
+    var self = this;
+    ds.getDataSnapshot('/leagues/' + this.props.match.params.id + '/sport').then(function(snapshot) {
+      var sportId = snapshot.val();
+      self.setState({sportId: sportId});
+    });
+  }
+
   userSignedOut() {
     this.setState({isAuthenticated: false});
   }
@@ -60,7 +72,7 @@ class MemberPage extends Component {
             </div>
           </div>
           <div className='container card'>
-            <TeamTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
+            <TeamTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} sportId={this.state.sportId} />
           </div>
         </div>
       );

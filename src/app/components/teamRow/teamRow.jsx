@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './teamRow.css';
+import { withRouter } from 'react-router-dom';
 import ReactGA from 'react-ga';
 
 class TeamRow extends Component {
@@ -15,6 +16,9 @@ class TeamRow extends Component {
       category: 'Navigation',
       action: 'Clicked Team Row'
     });
+
+    // navigate to TeamPage
+    this.props.history.push('/teams/' + this.props.sportId + '/' + this.props.id);
   }
 
   render() { 
@@ -31,4 +35,4 @@ class TeamRow extends Component {
   }
 }
 
-export default TeamRow;
+export default withRouter(TeamRow);

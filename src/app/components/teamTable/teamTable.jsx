@@ -18,7 +18,7 @@ class TeamTable extends Component {
 
     // bind functions
     this.loadTeams = this.loadTeams.bind(this);
-    this.teamList = this.teamList.bind(this);
+    this.teamList = this.teamList.bind(this); 
   }
 
   componentDidMount() {
@@ -64,7 +64,7 @@ class TeamTable extends Component {
         var netReturnNegativeClass = this.state.teams[team].netReturn < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
 
         return (
-          <TeamRow key={team} id={team} name={name} price={price} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+          <TeamRow key={team} id={team} sportId={this.props.sportId} name={name} price={price} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
       });
 
