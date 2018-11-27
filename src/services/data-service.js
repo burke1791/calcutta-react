@@ -125,6 +125,20 @@ class DataService {
     });
   }
 
+  getTeamInfo = (leagueId, teamId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/team-info/' + leagueId + '/' + teamId).once('value').then(function(teamInfo) {
+        var teamInfo = teamInfo.val();
+        console.log('team name: ' + teamInfo['name']);
+        if (teamInfo) {
+          resolve(teamInfo);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());

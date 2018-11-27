@@ -17,8 +17,10 @@ class TeamRow extends Component {
       action: 'Clicked Team Row'
     });
 
-    // navigate to TeamPage
-    this.props.history.push('/teams/' + this.props.sportId + '/' + this.props.id);
+    // navigate to TeamPage if the league is a march madness pool
+    if (this.props.sportId.includes('ncaa-mens')) {
+      this.props.history.push('/teams/' + this.props.sportId + '/' + this.props.id);
+    }
   }
 
   render() { 

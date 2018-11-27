@@ -3,6 +3,10 @@ import './teamPage.css';
 
 import TeamTable from '../teamTable/teamTable';
 
+import DataService from '../../../services/data-service';
+
+let ds = new DataService();
+
 class TeamPage extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +16,22 @@ class TeamPage extends Component {
     }
 
     // bind functions
+    this.getTeamInfo = this.getTeamInfo.bind(this);
+  }
+
+  componentDidMount() {
+    this.getTeamInfo();
+  }
+
+  componentWillUnmount() {
+
+  }
+
+  getTeamInfo() {
+    var self = this;
+    ds.getTeamInfo(this.props.match.params.leagueId, this.props.match.params.teamId).then(function(teamInfo) {
+      console.log('Team info resolved');
+    });
   }
 
   render() {
