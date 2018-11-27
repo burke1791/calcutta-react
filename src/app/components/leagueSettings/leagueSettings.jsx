@@ -56,12 +56,21 @@ class LeagueSettings extends Component {
     var self = this;
 
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
-      self.setState({
-        unclaimed: settings['unclaimed'],
-        minBid: settings['minBid'],
-        minBuyIn: settings['minBuyIn'],
-        maxBuyIn: settings['maxBuyIn']
-      });
+      if (settings) {
+        self.setState({
+          unclaimed: settings['unclaimed'],
+          minBid: settings['minBid'],
+          minBuyIn: settings['minBuyIn'],
+          maxBuyIn: settings['maxBuyIn']
+        });
+      } else {
+        self.setState({
+          unclaimed: true,
+          minBid: 0,
+          minBuyIn: 0,
+          maxBuyIn: 0
+        });
+      }
     });
   }
 
@@ -146,14 +155,16 @@ class LeagueSettings extends Component {
 
     var newSettings = {
       'unclaimed': this.state.unclaimed,
-      'minBid': this.state.minBid,
-      'minBuyIn': this.state.minBuyIn,
-      'maxBuyIn': this.state.maxBuyIn
+      'minBid': Number(this.state.minBid),
+      'minBuyIn': Number(this.state.minBuyIn),
+      'maxBuyIn': Number(this.state.maxBuyIn)
     };
 
     if (uid) {
       ds.saveSettings(this.props.leagueId, newSettings).then(function() {
         alert('Settings Successfully Saved');
+      }, function(error) {
+        alert('Error in settings values');
       });
     } else {
       alert('Could not save settings please try again');
