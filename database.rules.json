@@ -12,6 +12,10 @@
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
     },
+    "march-madness": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
     "messages-auction": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
