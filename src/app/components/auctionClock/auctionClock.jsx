@@ -58,6 +58,7 @@ class AuctionClock extends Component {
         currentTeam: code
       });
       this.startClock();
+      console.log('clock should start ticking');
     } else {
       if (itemComplete) {
         clearInterval(this.timerID);
@@ -66,10 +67,12 @@ class AuctionClock extends Component {
           timeRemaining: 0
         });
       } else {
+        clearInterval(this.timerID);
         this.setState({
           currentBid: newData['current-item']['current-bid'],
           timeRemaining: this.props.interval
         });
+        this.startClock();
       }
     }
   }
