@@ -83,6 +83,7 @@ class AuctionBid extends Component {
 
     this.setState({biddingDisabled: true});
     
+    // make the username a state value
     ds.getDisplayName(uid).then(function(username) {
       if (self.state.minBid > self.state.currentBid) {
         ds.placeBid(self.state.leagueId, uid, username, self.state.minBid);
@@ -147,7 +148,8 @@ class AuctionBid extends Component {
     var itemComplete = newData['current-item']['complete'];
     console.log('item complete: ' + itemComplete);
 
-    var minBid = Number(currentBid) <= this.state.minBidAllowed ? this.state.minBidAllowed : Number(currentBid) + 1;
+    // var minBid = Number(currentBid) <= Number(this.state.minBidAllowed) ? this.state.minBidAllowed : Number(currentBid) + 1;
+    var minBid = Number(currentBid) + 1;
 
     this.setState({
       minBid: minBid,
