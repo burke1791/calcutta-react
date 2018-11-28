@@ -261,9 +261,9 @@ class DataService {
           'name': currentData['name'],
           'winner-uid': uid
         };
-
-        bidHistoryRef.child(currentData['code']).push(bidHistoryObj);
         
+        // bidHistoryRef.child(currentData['code']).push(bidHistoryObj);
+
         return bidObj; // update the current bid
       } else if (currentBid > bid) {
         return; // abort the transaction
@@ -273,8 +273,19 @@ class DataService {
         console.log('Transaction failed abnormally: ' + error);
       } else if (!committed) {
         console.log('Aborted transaction because bid was too low');
-      } else {
-        console.log('Bid succeeded');
+      } else if (committed) {
+        console.log('committed true - Bid succeeded');
+
+        var bidDate = new Date();
+        var bidTime = bidDate.toLocaleTimeString();
+
+        var bidHistoryObj = {
+          amount: snapshot.child('current-bid').val(),
+          bidder: snapshot.child('current-winner').val(),
+          time: bidTime,
+          uid: snapshot.child('winner-uid').val()
+        };
+        bidHistoryRef.child(snapshot.child('code').val()).push(bidHistoryObj);
       }
     });
 
