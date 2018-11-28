@@ -1,5 +1,10 @@
 {
   "projects": {
+<<<<<<< HEAD
     "calcutta-dev": "calcutta-test"
+=======
+    "default": "calcutta-eb6eb",
+    "production": "calcutta-eb6eb"
+>>>>>>> auction-transaction
   }
 }
