@@ -68,8 +68,10 @@ class AuthenticationService {
   addAuthListener(thisApp) {
     auth.onAuthStateChanged(function(user) {
       if (user) {
-        console.log('user signed in');
-        thisApp.setState({authenticatedUser: user});
+        thisApp.setState({
+          authenticatedUser: user,
+          authenticatedUid: user.uid
+        });
 
         ds.getDisplayName(thisApp.state.authenticatedUser.uid).then(function(res) {
           thisApp.setState({authenticatedUsername: res});

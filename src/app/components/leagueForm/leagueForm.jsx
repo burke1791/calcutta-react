@@ -19,7 +19,7 @@ class LeagueForm extends Component {
       submitBtnText: props.leagueType === 'join' ? 'Join' : 'Create',
       leagueNameVal: '',
       leaguePassVal: '',
-      leagueSportVal: ''
+      leagueSportVal: 'march-madness-2018' // temporary
     };
 
     this.leagueSubmission = this.leagueSubmission.bind(this);
@@ -104,6 +104,8 @@ class LeagueForm extends Component {
 
   onLeagueSportChange(event) {
     this.setState({leagueSportVal: event.target.value});
+
+    console.log(event.target.value);
   }
 
   joinRadioClicked(event) {
@@ -143,7 +145,7 @@ class LeagueForm extends Component {
           <div className='form-group'>
             <label><strong>League Sport</strong></label>
             <select className='custom-select' value={this.state.leagueSportVal} onChange={this.onLeagueSportChange}>
-              <option value='ncaa-mens'>NCAA Men's Basketball</option>
+              <option value='march-madness-2018'>March Madness 2018</option>
               <option value='mlb-hrderby-2018'>Home Run Derby 2018</option>
               <option value='nfl-2018'>NFL 2018/19</option>
               <option value='cfb-2018'>NCAA Football 2018/19</option>
