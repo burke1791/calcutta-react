@@ -23,5 +23,5 @@ exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((sna
     }
   };
 
-  return snapshot.ref.child('teams').update(newSeed);
+  return null;
 });
