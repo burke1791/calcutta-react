@@ -49,6 +49,8 @@ class AuthHeader extends Component {
   onGodModeClicked() {
     alert('Feature is still in development');
 
+    // TEMP
+    ds.addSportToDatabase();
     // Develop God Mode
   }
 
