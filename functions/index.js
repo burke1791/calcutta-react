@@ -9,3 +9,19 @@ admin.initializeApp();
 //  response.send("Hello from Firebase!");
 // });
 
+exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
+  const original = snapshot.val();
+  var sport = original['sport'];
+  console.log('New League Sport Code: ' + sport);
+
+  var newSeed = {
+    's-09': {
+      'name': 'test function',
+      'owner': 'nobody',
+      'price': 0,
+      'return': 0
+    }
+  };
+
+  return snapshot.ref.child('teams').update(newSeed);
+});
