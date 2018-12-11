@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import './authHeader.css'
 import Button from '../button/button';
 import GeneralModal from '../modals/generalModal';
@@ -24,6 +25,7 @@ class AuthHeader extends Component {
     this.onSignInClicked = this.onSignInClicked.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.onSignOut = this.onSignOut.bind(this);
+    this.onGodModeClicked = this.onGodModeClicked.bind(this);
     this.checkAdmin = this.checkAdmin.bind(this);
     this.generateAuthBtn = this.generateAuthBtn.bind(this);
   }
@@ -49,8 +51,9 @@ class AuthHeader extends Component {
   onGodModeClicked() {
     alert('Feature is still in development');
 
+    this.props.history.push('/god-mode/' + this.props.uid);
     // TEMP
-    ds.addSportToDatabase();
+    // ds.addSportToDatabase();
     // Develop God Mode
   }
 
@@ -156,4 +159,4 @@ class AuthHeader extends Component {
   }
 }
 
-export default AuthHeader;
+export default withRouter(AuthHeader);

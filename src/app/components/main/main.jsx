@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import './main.css';
 import Leagues from '../leagues/leagues';
 import League from '../league/league';
+import GodMode from '../godMode/godMode';
 /*
 import LeagueHome from '../leagueHome/leagueHome';
 import AuctionMain from '../auctionMain/auctionMain';
@@ -20,6 +21,7 @@ class Main extends Component {
       <Switch>
         <Route exact path='/' component={Leagues}></Route>
         <Route path='/league-home/:id' component={League}></Route>
+        <Route path='/god-mode/:uid' component={GodMode}></Route>
       </Switch>
     );
   }
