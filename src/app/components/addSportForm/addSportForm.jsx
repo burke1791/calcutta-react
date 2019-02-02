@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './addSportForm.css';
 
+import Button from '../button/button';
 import AddSportTeam from '../addSportTeam/addSportTeam';
 
 class AddSportForm extends Component {
@@ -17,6 +18,7 @@ class AddSportForm extends Component {
     // bind functions
     this.onNodeIdChange = this.onNodeIdChange.bind(this);
     this.onPropertiesChange = this.onPropertiesChange.bind(this);
+    this.newTeam = this.newTeam.bind(this);
     this.getTeamObjs = this.getTeamObjs.bind(this);
   
   }
@@ -36,8 +38,35 @@ class AddSportForm extends Component {
     this.setState({properties: result});
   }
 
+  newTeam() {
+    var teams = this.state.teams;
+    var length = teams.length;
+
+    console.log('teams: ' + teams);
+    console.log('length: ' + length);
+
+    teams.push('team' + length);
+
+    this.setState({teams: teams});
+  }
+
   getTeamObjs = () => {
-    return null;
+    if (this.state.teams.length && this.state.properties.length) {
+      const list = this.state.teams.map((team, i) => {
+        var properties = this.state.properties;
+        var numProps = properties.length;
+
+        console.log('team: ' + team);
+
+        return (
+          <AddSportTeam id={team.key} key={i} properties={properties} />
+        );
+      });
+
+      return (list);
+    } else {
+      return null;
+    }
   }
 
   render() {
@@ -62,6 +91,7 @@ class AddSportForm extends Component {
           </div>
           <hr />
           {this.getTeamObjs()}
+          <Button btnType='button' btnClass='btn btn-primary my-2' onClick={this.newTeam} btnValue='New Team' />
         </form>
       </div>
     );
