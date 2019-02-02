@@ -51,7 +51,7 @@ class AuthHeader extends Component {
   onGodModeClicked() {
     alert('Feature is still in development');
 
-    this.props.history.push('/god-mode/' + this.props.uid);
+    this.props.history.push('/god-mode/');
     // TEMP
     // ds.addSportToDatabase();
     // Develop God Mode

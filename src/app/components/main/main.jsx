@@ -21,7 +21,7 @@ class Main extends Component {
       <Switch>
         <Route exact path='/' component={Leagues}></Route>
         <Route path='/league-home/:id' component={League}></Route>
-        <Route path='/god-mode/:uid' component={GodMode}></Route>
+        <Route path='/god-mode/' component={GodMode}></Route>
       </Switch>
     );
   }
