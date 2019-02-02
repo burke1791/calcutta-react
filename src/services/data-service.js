@@ -608,7 +608,7 @@ class DataService {
     return (currencyString);
   }
 
-  addSportToDatabase() {
+  addSportToDatabase(node_id, sportObj) {
     var march_madness_2018 = {
       "march-madness-regions": {
         "2018": {
@@ -2401,7 +2401,9 @@ class DataService {
       }
     }
 
-    database.ref('/').update(march_madness_2018);
+    // database.ref('/').update(march_madness_2018);
+
+    database.ref('/sports/' + node_id + '/').update(sportObj);
   }
 }
 
