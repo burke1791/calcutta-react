@@ -29,11 +29,13 @@ class GodModeNav extends Component {
   render() {
     var godModeRoot = '/god-mode/';
 
+    // add a god mode "Home" that shows a table of recent updates and who submitted them
+
     return (
       <div className='god-mode-nav container my-2'>
         <nav className='navbar navbar-expand-lg'>
           <div className='mr-auto'>
-            <Link className='to-add-sport mx-2' exact='true' to={godModeRoot + 'add-sport'}>Add Sport</Link>
+            <Link className='assign-seeds mx-2' exact='true' to={godModeRoot + 'assign-seeds'}>Assign Seeds</Link>
             <Link className='update-scores mx-2' exact='true' to={godModeRoot + 'update-scores'}>Update Scores</Link>
           </div>
         </nav>
