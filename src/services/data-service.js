@@ -618,7 +618,7 @@ class DataService {
             availableTeams.push(team);
           }
         }
-        console.log(availableTeams);
+
         resolve(availableTeams);
       });
     });
@@ -630,6 +630,49 @@ class DataService {
         var teamName = snapshot.val()['name'];
         
         resolve(teamName);
+      });
+    });
+  }
+
+  getTournamentSeeds = (sportId, year, teamId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + sportId + '/' + year).once('value').then(function(snapshot) {
+        var tournamentSeeds = snapshot.val();
+
+        for (var key in tournamentSeeds) {
+          if (tournamentSeeds[key] == teamId) {
+            resolve(key);
+          }
+        }
+
+        reject();
+      });
+    });
+  }
+
+  assignSeedByTeamId = (teamId, sportId, year, seed, region = null) => {
+    if (region == null) {
+      if (seed < 10) {
+        var seedId = 'S0' + seed;
+      } else {
+        var seedId = 'S' + seed;
+      }
+    } else {
+      if (seed < 10) {
+        var seedId = String(region) + '0' + String(seed);
+      } else {
+        var seedId = String(region) + String(seed);
+      }
+    }
+
+    var obj = {};
+    obj[seedId] = teamId;
+
+    return new Promise((resolve, reject) => {
+      database.ref('/' + sportId + '/' + year + '/').update(obj).then(function() {
+        resolve();
+      }).catch(function(error) {
+        reject(error);
       });
     });
   }
@@ -2796,7 +2839,7 @@ class DataService {
       }
     }
 
-    database.ref('/').update(march_madness_2018);
+    database.ref('/').update(btt_2019);
 
     // database.ref('/sports/' + node_id + '/').update(sportObj);
   }
