@@ -11,6 +11,10 @@ class AddSportForm extends Component {
     this.getTeamObjs = this.getTeamObjs.bind(this);
   }
 
+  getTeamObjs = () => {
+    return null;
+  }
+
   render() {
     return (
       <div className='add-sport-form container'>
