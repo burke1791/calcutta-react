@@ -4,6 +4,7 @@ import './godMode.css';
 
 import GodModeNav from '../godModeNav/godModeNav';
 import GodModeAddSport from '../godModeAddSport/godModeAddSport';
+import GodModeAssignSeeds from '../godModeAssignSeeds/godModeAssignSeeds';
 import GodModeUpdateScores from '../godModeUpdateScores/godModeUpdateScores';
 
 class GodMode extends Component {
@@ -26,6 +27,7 @@ class GodMode extends Component {
         </div>
         <Switch>
           <Route exact path={godModeRoot + 'add-sport'} component={GodModeAddSport}></Route>
+          <Route exact path={godModeRoot + 'assign-seeds'} component={GodModeAssignSeeds}></Route>
           <Route exact path={godModeRoot + 'update-scores'} component={GodModeUpdateScores}></Route>
         </Switch>
       </div>

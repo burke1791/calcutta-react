@@ -8,11 +8,43 @@
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
     },
+    "btt-seeds": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "btt-structure": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "cbb-mens-team-ids": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "cbb-mens-team-info": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
     "leagues": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
     },
     "march-madness": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "march-madness-regions": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "march-madness-seeds": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "march-madness-tourney": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "march-madness-tourney-structure": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },
@@ -25,6 +57,10 @@
       ".write": "auth.uid !== null"
     },
     "team-info": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "tournaments": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },

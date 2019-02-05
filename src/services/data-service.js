@@ -608,6 +608,75 @@ class DataService {
     return (currencyString);
   }
 
+  getTourneyTeamsFromTourneyId = (tourneyId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/tournaments/' + tourneyId).once('value').then(function(snapshot) {
+        var teamIds = snapshot.val();
+        var availableTeams = [];
+        for (var team in teamIds) {
+          if (teamIds[team] === true) {
+            availableTeams.push(team);
+          }
+        }
+
+        resolve(availableTeams);
+      });
+    });
+  }
+
+  getTeamNameFromId = (teamId, teamInfoNode) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + teamInfoNode + '/' + teamId).once('value').then(function(snapshot) {
+        var teamName = snapshot.val()['name'];
+        
+        resolve(teamName);
+      });
+    });
+  }
+
+  getTournamentSeeds = (sportId, year, teamId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + sportId + '/' + year).once('value').then(function(snapshot) {
+        var tournamentSeeds = snapshot.val();
+
+        for (var key in tournamentSeeds) {
+          if (tournamentSeeds[key] == teamId) {
+            resolve(key);
+          }
+        }
+
+        reject();
+      });
+    });
+  }
+
+  assignSeedByTeamId = (teamId, sportId, year, seed, region = null) => {
+    if (region == null) {
+      if (seed < 10) {
+        var seedId = 'S0' + seed;
+      } else {
+        var seedId = 'S' + seed;
+      }
+    } else {
+      if (seed < 10) {
+        var seedId = String(region) + '0' + String(seed);
+      } else {
+        var seedId = String(region) + String(seed);
+      }
+    }
+
+    var obj = {};
+    obj[seedId] = teamId;
+
+    return new Promise((resolve, reject) => {
+      database.ref('/' + sportId + '/' + year + '/').update(obj).then(function() {
+        resolve();
+      }).catch(function(error) {
+        reject(error);
+      });
+    });
+  }
+
   addSportToDatabase(node_id, sportObj) {
     var march_madness_2018 = {
       "march-madness-regions": {
@@ -618,8 +687,8 @@ class DataService {
           "Z": "West"
         }
       },
-      "march-madness-tourney": {
-        "structure": {
+      "march-madness-tourney-structure": {
+        "2018": {
           "R1W1": {
             "W01": 0,
             "W16": 0,
@@ -1527,12 +1596,153 @@ class DataService {
             "2018": "30-4"
           }
         },
+        "1458": {
+          "name": "Wisconsin",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "Madison, WI",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1268": {
+          "name": "Maryland",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1278": {
+          "name": "Minnesota",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1234": {
+          "name": "Iowa",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1231": {
+          "name": "Indiana",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "Bloomington, IN",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1304": {
+          "name": "Nebraska",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "Lincoln, NE",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1228": {
+          "name": "Illinois",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "Champaign, IL",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1336": {
+          "name": "Penn St",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1353": {
+          "name": "Rutgers",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
+        "1321": {
+          "name": "Northwestern",
+          "conf": {
+            "2018": "Big Ten",
+            "2019": "Big Ten"
+          },
+          "location": "Evanston, IL",
+          "conf-record": {
+            "2019": "0-0"
+          },
+          "ovr-record": {
+            "2019": "0-0"
+          }
+        },
         "1345": {
           "name": "Purdue",
           "conf": {
-            "2018": "Big Ten"
+            "2018": "Big Ten",
+            "2019": "Big Ten"
           },
-          "location": "",
+          "location": "West Lafayette, IN",
           "conf-record": {
             "2018": "17-4"
           },
@@ -2398,12 +2608,240 @@ class DataService {
             "2018": "15-19"
           }
         }
+      },
+      "cbb-mens-team-ids": {
+        "Michigan": 1276,
+        "Michigan St": 1277,
+        "Purdue": 1345,
+        "Wisconsin": 1458,
+        "Maryland": 1268,
+        "Minnesota": 1278,
+        "Iowa": 1234,
+        "Ohio St": 1326,
+        "Indiana": 1231,
+        "Rutgers": 1353,
+        "Northwestern": 1321,
+        "Nebraska": 1304,
+        "Illinois": 1228,
+        "Penn St": 1336
+      },
+      "tournaments": {
+        "mens-btt-2019": {
+          "1276": true,
+          "1277": true,
+          "1345": true,
+          "1458": true,
+          "1268": true,
+          "1278": true,
+          "1234": true,
+          "1326": true,
+          "1231": true,
+          "1353": true,
+          "1321": true,
+          "1304": true,
+          "1228": true,
+          "1336": true
+        }
       }
     }
 
-    // database.ref('/').update(march_madness_2018);
+    var btt_2019 = {
+      "btt-structure": {
+        "2019": {
+          "G01": {
+            "S12": 0,
+            "S13": 0,
+            "date": "Wed. March 13, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G04",
+            "score": {
+              "S12": 0,
+              "S13": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G02": {
+            "S11": 0,
+            "S14": 0,
+            "date": "Wed. March 13, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G06",
+            "score": {
+              "S11": 0,
+              "S14": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G03": {
+            "S08": 0,
+            "S09": 0,
+            "date": "Thurs. March 14, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G07",
+            "score": {
+              "S08": 0,
+              "S09": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G04": {
+            "S05": 0,
+            "G01": 0,
+            "date": "Thurs. March 14, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G08",
+            "score": {
+              "S05": 0,
+              "G01": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G05": {
+            "S07": 0,
+            "S10": 0,
+            "date": "Thurs. March 14, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G09",
+            "score": {
+              "S07": 0,
+              "S10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G06": {
+            "S06": 0,
+            "G02": 0,
+            "date": "Thurs. March 14, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G10",
+            "score": {
+              "S06": 0,
+              "G02": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G07": {
+            "S01": 0,
+            "G03": 0,
+            "date": "Fri. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G11",
+            "score": {
+              "S01": 0,
+              "G03": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G08": {
+            "S04": 0,
+            "G04": 0,
+            "date": "Fri. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G11",
+            "score": {
+              "S04": 0,
+              "G04": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G09": {
+            "S02": 0,
+            "G05": 0,
+            "date": "Fri. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G12",
+            "score": {
+              "S02": 0,
+              "G05": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G10": {
+            "S03": 0,
+            "G06": 0,
+            "date": "Fri. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G12",
+            "score": {
+              "S03": 0,
+              "G06": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G11": {
+            "G07": 0,
+            "G08": 0,
+            "date": "Sat. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G13",
+            "score": {
+              "G07": 0,
+              "G08": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G12": {
+            "G09": 0,
+            "G10": 0,
+            "date": "Sat. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "G13",
+            "score": {
+              "G09": 0,
+              "G10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+          "G13": {
+            "G11": 0,
+            "G12": 0,
+            "date": "Sat. March 15, 2019",
+            "location": "United Center, Chicago, IL",
+            "next-round": "n/a",
+            "score": {
+              "G11": 0,
+              "G12": 0,
+              "num-ot": 0
+            },
+            "status": "not-started"
+          },
+        }
+      },
+      "btt-seeds": {
+        "2019": {
+          "S01": 0,
+          "S02": 0,
+          "S03": 0,
+          "S04": 0,
+          "S05": 0,
+          "S06": 0,
+          "S07": 0,
+          "S08": 0,
+          "S09": 0,
+          "S10": 0,
+          "S11": 0,
+          "S12": 0,
+          "S13": 0,
+          "S14": 0
+        }
+      }
+    }
 
-    database.ref('/sports/' + node_id + '/').update(sportObj);
+    database.ref('/').update(btt_2019);
+
+    // database.ref('/sports/' + node_id + '/').update(sportObj);
   }
 }
 

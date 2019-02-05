@@ -11,13 +11,17 @@ class GodModeAddSport extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      nodeId: ''
+    }
+
     // bind functions
     this.addSportClicked = this.addSportClicked.bind(this);
   }
 
   addSportClicked() {
     var testObj = {name: 'btt test'};
-    ds.addSportToDatabase('test-btt', testObj);
+    ds.addSportToDatabase(this.state.nodeId, testObj);
   }
 
   render() {
