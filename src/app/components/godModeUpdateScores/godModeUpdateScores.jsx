@@ -13,6 +13,8 @@ class GodModeUpdateScores extends Component {
   }
 
   render() {
+
+    // likely need to make TournamentDropdown a controlled component
     return(
       <div className='container update-scores'>
         <h1>Update Scores</h1>
