@@ -8,8 +8,25 @@ class GodModeUpdateScores extends Component {
     super(props);
 
     this.state = {
-      selectedTournament: 'n/a'
+      selectedTournament: 'n/a',
+      tournamentId: '',
+      teamInfoNode: '',
+      seedsNode: '',
+      year: ''
     }
+
+    // bind functions
+    this.handleSelection = this.handleSelection.bind(this);
+  }
+
+  handleSelection(selection, tournamentId, teamInfoNode, seedsNode, year) {
+    this.setState({
+      selectedTournament: selection,
+      tournamentId: tournamentId,
+      teamInfoNode: teamInfoNode,
+      seedsNode: seedsNode,
+      year: year
+    });
   }
 
   render() {
@@ -18,7 +35,7 @@ class GodModeUpdateScores extends Component {
     return(
       <div className='container update-scores'>
         <h1>Update Scores</h1>
-        <TournamentDropdown />
+        <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleSelection} />
       </div>
     );
   }

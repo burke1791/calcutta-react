@@ -16,6 +16,10 @@
       ".read": "auth.uid !== null",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },
+    "btt-teams": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
     "cbb-mens-team-ids": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
@@ -61,6 +65,10 @@
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },
     "tournaments": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+    },
+    "tournaments-old": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },

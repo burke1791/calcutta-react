@@ -677,6 +677,16 @@ class DataService {
     });
   }
 
+  getTournamentsList = () => {
+    return new Promise((resolve, reject) => {
+      database.ref('/tournaments/').once('value').then(function(snapshot) {
+        var tournaments = snapshot.val();
+  
+        resolve(tournaments);
+      });
+    });
+  }
+
   addSportToDatabase(node_id, sportObj) {
     var march_madness_2018 = {
       "march-madness-regions": {
@@ -2839,7 +2849,35 @@ class DataService {
       }
     }
 
-    database.ref('/').update(btt_2019);
+    var tournaments = {
+      "tournaments": {
+        "btt-2019": "2019 Men's Big Ten Tournament",
+        "mm-2019": "March Madness 2019"
+      },
+      "tournaments-old": {
+        "mm-2018": "March Madness 2018"
+      },
+      "btt-teams": {
+        "2019": {
+          "1276": true,
+          "1277": true,
+          "1345": true,
+          "1458": true,
+          "1268": true,
+          "1278": true,
+          "1234": true,
+          "1326": true,
+          "1231": true,
+          "1353": true,
+          "1321": true,
+          "1304": true,
+          "1228": true,
+          "1336": true
+        }
+      }
+    }
+
+    database.ref('/').update(tournaments);
 
     // database.ref('/sports/' + node_id + '/').update(sportObj);
   }
