@@ -669,7 +669,7 @@ class DataService {
     obj[seedId] = teamId;
 
     return new Promise((resolve, reject) => {
-      database.ref('/' + sportId + '/' + year + '/').update(obj).then(function() {
+      database.ref('/' + sportId + '-seeds/' + year + '/').update(obj).then(function() {
         resolve();
       }).catch(function(error) {
         reject(error);
@@ -682,13 +682,24 @@ class DataService {
       database.ref('/tournaments/').once('value').then(function(snapshot) {
         var tournaments = snapshot.val();
 
-        console.log(tournaments);
         resolve(tournaments);
       });
     });
   }
 
+  getTournamentGamesByTournamentId = (tournamentId, year) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + tournamentId + '-structure/' + year).once('value').then(function(snapshot) {
+        var gamesObj = snapshot.val();
+        console.log(gamesObj);
+
+        return gamesObj;
+      });
+    });
+  }
+
   addSportToDatabase(node_id, sportObj) {
+    // add winner field to each game node
     var march_madness_2018 = {
       "march-madness-regions": {
         "2018": {
@@ -2850,6 +2861,11 @@ class DataService {
       }
     }
 
+    // adds winner field to each game node
+    for (var game in btt_2019['btt-structure']['2019']) {
+      btt_2019['btt-structure']['2019'][game]['winner'] = 'n/a';
+    }
+
     var tournaments = {
       "tournaments": {
         "btt-2019": {
@@ -2887,7 +2903,7 @@ class DataService {
       }
     }
 
-    database.ref('/').update(tournaments);
+    database.ref('/').update(btt_2019);
 
     // database.ref('/sports/' + node_id + '/').update(sportObj);
   }

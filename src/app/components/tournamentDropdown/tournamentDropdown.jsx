@@ -41,8 +41,13 @@ class TournamentDropdown extends Component {
   onTournamentSelected(event) {
     var tournamentId = event.target.value;
 
-    // parameters: selection, tournamentId, teamInfoNode, seedsNode, year
-    this.props.onTournamentSelected(tournamentId, this.state.tournaments[tournamentId]['info-node-id']);
+    // parameters: tournamentId, team-info-node
+    if (tournamentId === 'n/a') {
+      this.props.onTournamentSelected(tournamentId, '');
+    } else {
+      this.props.onTournamentSelected(tournamentId, this.state.tournaments[tournamentId]['info-node-id']);
+    }
+    
   }
 
   generateDropdownItems = () => {

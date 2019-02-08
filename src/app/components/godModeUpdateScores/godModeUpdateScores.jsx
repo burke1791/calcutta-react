@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './godModeUpdateScores.css';
 
 import TournamentDropdown from '../tournamentDropdown/tournamentDropdown';
+import UpdateScoresTable from '../updateScoresTable/updateScoresTable';
 
 class GodModeUpdateScores extends Component {
   constructor(props) {
@@ -11,31 +12,35 @@ class GodModeUpdateScores extends Component {
       selectedTournament: 'n/a',
       tournamentId: '',
       teamInfoNode: '',
-      seedsNode: '',
-      year: ''
+      year: '',
+      games: ''
     }
 
     // bind functions
-    this.handleSelection = this.handleSelection.bind(this);
+    this.handleTournamentSelection = this.handleTournamentSelection.bind(this);
   }
 
-  handleSelection(selection, tournamentId, teamInfoNode, seedsNode, year) {
+  handleTournamentSelection(selection, teamInfoNode) {
+    // parse the year and tournamentId
+    var tournamentId = selection.match(/[a-z]{1,}/g);
+    var year = selection.match(/[0-9]{4}/g);
+    
     this.setState({
       selectedTournament: selection,
-      tournamentId: tournamentId,
+      tournamentId: tournamentId[0],
       teamInfoNode: teamInfoNode,
-      seedsNode: seedsNode,
-      year: year
+      year: year[0],
+      games: ''
     });
   }
 
   render() {
-
-    // likely need to make TournamentDropdown a controlled component
     return(
       <div className='container update-scores'>
         <h1>Update Scores</h1>
-        <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleSelection} />
+        <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleTournamentSelection} />
+        <hr />
+        <UpdateScoresTable tournamentId={this.state.tournamentId} year={this.state.year} />
       </div>
     );
   }

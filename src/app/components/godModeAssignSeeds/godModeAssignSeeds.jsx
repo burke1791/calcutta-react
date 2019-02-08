@@ -32,7 +32,7 @@ class GodModeAssignSeeds extends Component {
   }
 
   updateTourneyTeams(tourneyId, year) {
-    if (tourneyId !== null && year !== null) {
+    if (tourneyId !== '' && year !== '') {
       var self = this;
       ds.getTourneyTeamsFromTourneyIdAndYear(tourneyId, year).then(function(teams) {
         self.setState({teams: teams});
@@ -42,14 +42,20 @@ class GodModeAssignSeeds extends Component {
 
   handleTournamentSelection(selection, teamInfoNode) {
     // parse the year and tournamentId
-    var tournamentId = selection.match(/[a-z]{1,}/g);
-    var year = selection.match(/[0-9]{4}/g);
+    if (selection === 'n/a') {
+      var tournamentId = '';
+      var year = ''
+    } else {
+      var tournamentId = selection.match(/[a-z]{1,}/g);
+      var year = selection.match(/[0-9]{4}/g);
+    }
     
     this.setState({
       selectedTournament: selection,
       tournamentId: tournamentId[0],
       teamInfoNode: teamInfoNode,
-      year: year[0]
+      year: year[0],
+      teams: ''
     });
 
     this.updateTourneyTeams(tournamentId[0], year[0]);
