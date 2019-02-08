@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './godModeAssignSeeds.css';
 
+import TournamentDropdown from '../tournamentDropdown/tournamentDropdown';
 import AssignSeedsTeam from '../assignSeedsTeam/assignSeedsTeam';
 
 import DataService from '../../../services/data-service';
@@ -18,42 +19,40 @@ class GodModeAssignSeeds extends Component {
       tournamentId: '',
       teams: '',
       teamInfoNode: '',
-      seedsNode: '',
       year: '',
       seeds: {}
     }
 
     // bind functions
-    this.onTournamentSelected = this.onTournamentSelected.bind(this);
     this.updateTourneyTeams = this.updateTourneyTeams.bind(this);
+    this.handleTournamentSelection = this.handleTournamentSelection.bind(this);
     this.handleSeedChange = this.handleSeedChange.bind(this);
     this.assignSeeds = this.assignSeeds.bind(this);
-
     this.generateTourneyTeams = this.generateTourneyTeams.bind(this);
   }
 
-  onTournamentSelected(event) {
-    var tourneyInfo = event.target.value.split(' ');
-    var year = tourneyInfo[0].match(/[0-9]{4}/g);
-
-    this.setState({
-      selectedTournament: event.target.value,
-      tournamentId: tourneyInfo[0],
-      teamInfoNode: tourneyInfo[1],
-      seedsNode: tourneyInfo[2],
-      year: year
-    });
-
-    this.updateTourneyTeams(tourneyInfo[0]);
-  }
-
-  updateTourneyTeams(tourneyId) {
-    if (tourneyId !== 'n/a') {
+  updateTourneyTeams(tourneyId, year) {
+    if (tourneyId !== null && year !== null) {
       var self = this;
-      ds.getTourneyTeamsFromTourneyId(tourneyId).then(function(teams) {
+      ds.getTourneyTeamsFromTourneyIdAndYear(tourneyId, year).then(function(teams) {
         self.setState({teams: teams});
       });
     }
+  }
+
+  handleTournamentSelection(selection, teamInfoNode) {
+    // parse the year and tournamentId
+    var tournamentId = selection.match(/[a-z]{1,}/g);
+    var year = selection.match(/[0-9]{4}/g);
+    
+    this.setState({
+      selectedTournament: selection,
+      tournamentId: tournamentId[0],
+      teamInfoNode: teamInfoNode,
+      year: year[0]
+    });
+
+    this.updateTourneyTeams(tournamentId[0], year[0]);
   }
 
   handleSeedChange(teamId, seed) {
@@ -74,7 +73,7 @@ class GodModeAssignSeeds extends Component {
       const list = this.state.teams.map((team, i) => {
         return (
           <div className='form-group' key={i}>
-            <AssignSeedsTeam teamId={team} seed={this.state.seeds[team] || 0} onSeedChange={this.handleSeedChange} teamInfoNode={this.state.teamInfoNode} sportId={this.state.seedsNode} year={this.state.year} key={i} />
+            <AssignSeedsTeam teamId={team} seed={this.state.seeds[team] || 0} onSeedChange={this.handleSeedChange} teamInfoNode={this.state.teamInfoNode} tournamentId={this.state.tournamentId} year={this.state.year} key={i} />
           </div>
         );
       });
@@ -92,21 +91,7 @@ class GodModeAssignSeeds extends Component {
     return (
       <div className='container assign-seeds'>
         <h1>Assign Seeds</h1>
-        <div className='tournaments-dropdown'>
-          <div className='form-group'>
-            <div className='row'>
-              <div className='col-2'>
-                <label><strong>Tournament:</strong></label>
-              </div>
-              <div className='col-4'>
-                <select className='custom-select' value={this.state.selectedTournament} onChange={this.onTournamentSelected}>
-                  <option value='n/a'>Please select a tournament...</option>
-                  <option value='mens-btt-2019 cbb-mens-team-info btt-seeds'>2019 Men's Big Ten Tournament</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+        <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleTournamentSelection} />
         <form>
           {this.generateTourneyTeams()}
           <button type='submit' className={btnClass + ' my-2'} onClick={this.assignSeeds}>Assign Seeds</button>

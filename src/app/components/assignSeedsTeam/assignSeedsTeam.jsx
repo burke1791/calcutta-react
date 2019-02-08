@@ -49,7 +49,7 @@ class AssignSeedsTeam extends Component {
   getSeedValue() {
     var self = this;
     
-    ds.getTournamentSeeds(this.props.sportId, this.props.year, this.props.teamId).then(function(snapshot) {
+    ds.getTournamentSeeds(this.props.tournamentId, this.props.year, this.props.teamId).then(function(snapshot) {
       var seed = snapshot.match(/[0-9]{1,}/g);
       seed = Number(seed);
 
@@ -62,7 +62,7 @@ class AssignSeedsTeam extends Component {
 
     this.setState({assignSeedRequested: true});
 
-    ds.assignSeedByTeamId(this.props.teamId, this.props.sportId, this.props.year, this.props.seed).then(function() {
+    ds.assignSeedByTeamId(this.props.teamId, this.props.tournamentId, this.props.year, this.props.seed).then(function() {
       self.setState({assignSeedSucceeded: true});
     });
   }

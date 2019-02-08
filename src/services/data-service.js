@@ -608,9 +608,9 @@ class DataService {
     return (currencyString);
   }
 
-  getTourneyTeamsFromTourneyId = (tourneyId) => {
+  getTourneyTeamsFromTourneyIdAndYear = (tourneyId, year) => {
     return new Promise((resolve, reject) => {
-      database.ref('/tournaments/' + tourneyId).once('value').then(function(snapshot) {
+      database.ref('/' + tourneyId + '-teams/' + year).once('value').then(function(snapshot) {
         var teamIds = snapshot.val();
         var availableTeams = [];
         for (var team in teamIds) {
@@ -626,7 +626,7 @@ class DataService {
 
   getTeamNameFromId = (teamId, teamInfoNode) => {
     return new Promise((resolve, reject) => {
-      database.ref('/' + teamInfoNode + '/' + teamId).once('value').then(function(snapshot) {
+      database.ref('/' + teamInfoNode + '-team-info/' + teamId).once('value').then(function(snapshot) {
         var teamName = snapshot.val()['name'];
         
         resolve(teamName);
@@ -634,9 +634,9 @@ class DataService {
     });
   }
 
-  getTournamentSeeds = (sportId, year, teamId) => {
+  getTournamentSeeds = (tournamentId, year, teamId) => {
     return new Promise((resolve, reject) => {
-      database.ref('/' + sportId + '/' + year).once('value').then(function(snapshot) {
+      database.ref('/' + tournamentId + '-seeds/' + year).once('value').then(function(snapshot) {
         var tournamentSeeds = snapshot.val();
 
         for (var key in tournamentSeeds) {
@@ -681,7 +681,8 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/tournaments/').once('value').then(function(snapshot) {
         var tournaments = snapshot.val();
-  
+
+        console.log(tournaments);
         resolve(tournaments);
       });
     });
@@ -2851,11 +2852,20 @@ class DataService {
 
     var tournaments = {
       "tournaments": {
-        "btt-2019": "2019 Men's Big Ten Tournament",
-        "mm-2019": "March Madness 2019"
+        "btt-2019": {
+          "name": "2019 Men's Big Ten Tournament",
+          "info-node-id": "cbb-mens"
+        },
+        "mm-2019": {
+          "name": "March Madness 2019",
+          "info-node-id": "cbb-mens"
+        }
       },
       "tournaments-old": {
-        "mm-2018": "March Madness 2018"
+        "mm-2018": {
+          "name": "March Madness 2018",
+          "info-node-id": "cbb-mens"
+        }
       },
       "btt-teams": {
         "2019": {

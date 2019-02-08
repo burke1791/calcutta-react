@@ -13,7 +13,8 @@ class TournamentDropdown extends Component {
 
     this.state = {
       tournamentKeys: '',
-      tournaments: ''
+      tournaments: '',
+      infoNodes: {}
     }
 
     // bind functions
@@ -38,17 +39,16 @@ class TournamentDropdown extends Component {
   }
 
   onTournamentSelected(event) {
-    var tourneyInfo = event.target.value.split(' ');
-    var year = tourneyInfo[0].match(/[0-9]{4}/g);
+    var tournamentId = event.target.value;
 
     // parameters: selection, tournamentId, teamInfoNode, seedsNode, year
-    this.props.onTournamentSelected(event.target.value, tourneyInfo[0], tourneyInfo[1], tourneyInfo[2], year);
+    this.props.onTournamentSelected(tournamentId, this.state.tournaments[tournamentId]['info-node-id']);
   }
 
   generateDropdownItems = () => {
     if (this.state.tournamentKeys !== '') {
       const list = this.state.tournamentKeys.map((tournamentKey, i) => {
-        return <TournamentDropdownItem tournamentKey={tournamentKey} tournamentName={this.state.tournaments[tournamentKey]} key={i} />;
+        return <TournamentDropdownItem tournamentKey={tournamentKey} tournamentName={this.state.tournaments[tournamentKey]['name']} key={i} />;
       });
 
       return (list);
