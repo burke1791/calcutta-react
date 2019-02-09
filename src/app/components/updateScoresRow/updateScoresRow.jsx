@@ -29,7 +29,7 @@ class UpdateScoresRow extends Component {
   }
 
   componentDidMount() {
-    // add notification listener for updates
+    // add notification listener for mass update request
   }
 
   componentWillUnmount() {
@@ -85,14 +85,21 @@ class UpdateScoresRow extends Component {
 
   updateScores(event) {
     event.preventDefault();
+    this.setState({
+      updateRequested: true,
+      updateSucceeded: false
+    });
+
+    var self = this;
 
     var newScoreObj = this.generateNewScoreObj();
 
-    console.log(newScoreObj);
-
     if (newScoreObj !== null) {
       ds.updateScoresByTournamentIdAndYear(this.props.tournamentId, this.props.year, this.props.gameId, newScoreObj).then(function() {
-        // change the checkmarks to green
+        self.setState({
+          updateRequested: true,
+          updateSucceeded: true
+        });
       });
     }
     
@@ -111,6 +118,14 @@ class UpdateScoresRow extends Component {
     var firstTeamScore = this.props.game.score.team1;
     var secondTeamScore = this.props.game.score.team2;
     var numOT = this.props.game.score['num-ot'];
+
+    var btnClass = 'btn btn-outline-dark';
+
+    if (this.state.updateRequested && this.state.updateSucceeded) {
+      btnClass = 'btn btn-success';
+    } else if (this.state.updateRequested && !this.state.updateSucceeded) {
+      btnClass = 'btn btn-warning';
+    }
 
     return (
       <tr className='d-flex tr-hover'>
@@ -137,7 +152,7 @@ class UpdateScoresRow extends Component {
           </div>
         </td>
         <td className='col-1'>
-          <button type='button' className='btn btn-outline-dark' onClick={this.updateScores}>
+          <button type='button' className={btnClass} onClick={this.updateScores}>
             <i className="far fa-check-circle"></i>
           </button>
         </td>

@@ -715,6 +715,7 @@ class DataService {
     console.log(newScoreObj);
 
     return new Promise((resolve, reject) => {
+      // change to transaction
       database.ref(path).update(newScoreObj).then(function() {
         resolve();
       });
