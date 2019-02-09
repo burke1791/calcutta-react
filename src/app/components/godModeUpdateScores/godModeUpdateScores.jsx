@@ -24,7 +24,7 @@ class GodModeUpdateScores extends Component {
     // parse the year and tournamentId
     var tournamentId = selection.match(/[a-z]{1,}/g);
     var year = selection.match(/[0-9]{4}/g);
-    
+
     this.setState({
       selectedTournament: selection,
       tournamentId: tournamentId[0],
@@ -40,7 +40,7 @@ class GodModeUpdateScores extends Component {
         <h1>Update Scores</h1>
         <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleTournamentSelection} />
         <hr />
-        <UpdateScoresTable tournamentId={this.state.tournamentId} year={this.state.year} />
+        <UpdateScoresTable tableClass={'table table-striped table-sm'} tournamentId={this.state.tournamentId} year={this.state.year} />
       </div>
     );
   }

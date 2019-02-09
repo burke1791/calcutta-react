@@ -691,9 +691,9 @@ class DataService {
     return new Promise((resolve, reject) => {
       database.ref('/' + tournamentId + '-structure/' + year).once('value').then(function(snapshot) {
         var gamesObj = snapshot.val();
-        console.log(gamesObj);
 
-        return gamesObj;
+
+        resolve(gamesObj);
       });
     });
   }
@@ -2671,199 +2671,293 @@ class DataService {
       "btt-structure": {
         "2019": {
           "G01": {
-            "S12": 0,
-            "S13": 0,
+            "team1": {
+              "seed": "S12",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "S13",
+              "id": 0,
+              "name": ""
+            },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G04",
             "score": {
-              "S12": 0,
-              "S13": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G02": {
-            "S11": 0,
-            "S14": 0,
+            "team1": {
+              "seed": "S11",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "S14",
+              "id": 0,
+              "name": ""
+            },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G06",
             "score": {
-              "S11": 0,
-              "S14": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G03": {
-            "S08": 0,
-            "S09": 0,
+            "team1": {
+              "seed": "S08",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "S09",
+              "id": 0,
+              "name": ""
+            },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G07",
             "score": {
-              "S08": 0,
-              "S09": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G04": {
-            "S05": 0,
-            "G01": 0,
+            "team1": {
+              "seed": "S05",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G01",
+              "id": 0,
+              "name": ""
+            },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G08",
             "score": {
-              "S05": 0,
-              "G01": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G05": {
-            "S07": 0,
-            "S10": 0,
+            "team1": {
+              "seed": "S07",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "S10",
+              "id": 0,
+              "name": ""
+            },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G09",
             "score": {
-              "S07": 0,
-              "S10": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G06": {
-            "S06": 0,
-            "G02": 0,
+            "team1": {
+              "seed": "S06",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G02",
+              "id": 0,
+              "name": ""
+            },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G10",
             "score": {
-              "S06": 0,
-              "G02": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G07": {
-            "S01": 0,
-            "G03": 0,
+            "team1": {
+              "seed": "S01",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "S03",
+              "id": 0,
+              "name": ""
+            },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G11",
             "score": {
-              "S01": 0,
-              "G03": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G08": {
-            "S04": 0,
-            "G04": 0,
+            "team1": {
+              "seed": "S04",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G04",
+              "id": 0,
+              "name": ""
+            },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G11",
             "score": {
-              "S04": 0,
-              "G04": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G09": {
-            "S02": 0,
-            "G05": 0,
+            "team1": {
+              "seed": "S02",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G05",
+              "id": 0,
+              "name": ""
+            },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G12",
             "score": {
-              "S02": 0,
-              "G05": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G10": {
-            "S03": 0,
-            "G06": 0,
+            "team1": {
+              "seed": "S03",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G06",
+              "id": 0,
+              "name": ""
+            },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G12",
             "score": {
-              "S03": 0,
-              "G06": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G11": {
-            "G07": 0,
-            "G08": 0,
-            "date": "Sat. March 15, 2019",
+            "team1": {
+              "seed": "G07",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G08",
+              "id": 0,
+              "name": ""
+            },
+            "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G13",
             "score": {
-              "G07": 0,
-              "G08": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G12": {
-            "G09": 0,
-            "G10": 0,
-            "date": "Sat. March 15, 2019",
+            "team1": {
+              "seed": "G09",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G10",
+              "id": 0,
+              "name": ""
+            },
+            "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "G13",
             "score": {
-              "G09": 0,
-              "G10": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
+            "status": "not-started",
+            "winner": "n/a"
           },
           "G13": {
-            "G11": 0,
-            "G12": 0,
-            "date": "Sat. March 15, 2019",
+            "team1": {
+              "seed": "G11",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "G12",
+              "id": 0,
+              "name": ""
+            },
+            "date": "Sat. March 17, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "n/a",
             "score": {
-              "G11": 0,
-              "G12": 0,
+              "team1": 0,
+              "team2": 0,
               "num-ot": 0
             },
-            "status": "not-started"
-          },
-        }
-      },
-      "btt-seeds": {
-        "2019": {
-          "S01": 0,
-          "S02": 0,
-          "S03": 0,
-          "S04": 0,
-          "S05": 0,
-          "S06": 0,
-          "S07": 0,
-          "S08": 0,
-          "S09": 0,
-          "S10": 0,
-          "S11": 0,
-          "S12": 0,
-          "S13": 0,
-          "S14": 0
+            "status": "not-started",
+            "winner": "n/a"
+          }
         }
       }
-    }
-
-    // adds winner field to each game node
-    for (var game in btt_2019['btt-structure']['2019']) {
-      btt_2019['btt-structure']['2019'][game]['winner'] = 'n/a';
     }
 
     var tournaments = {
