@@ -65,22 +65,8 @@ class UpdateScoresTable extends Component {
   gamesList = () => {
     if (this.state.games) {
       const list = Object.keys(this.state.games).map((key, i) => {
-        var gameNum = Number(key.match(/[0-9]{1,}/g));
-        var firstTeam = this.state.games[key].team1.name ==='' ? 'TBD' : this.state.games[key].team1.name;
-        var secondTeam = this.state.games[key].team2.name === '' ? 'TBD' : this.state.games[key].team2.name;
-
-        var firstTeamScore = this.state.games[key].score.team1;
-        var secondTeamScore = this.state.games[key].score.team2;
-        var numOT = this.state.games[key].score['num-ot'];
-
-        /*
         return (
-          <UpdateScoresRow gameNum={gameNum} firstTeam={firstTeam} secondTeam={secondTeam} firstTeamScore={firstTeamScore} secondTeamScore={secondTeamScore} onScoreChange={this.onScoreChange} numOT={numOT} onNumOTChange={this.onNumOTChange} key={i} />
-        );
-        */
-
-        return (
-          <UpdateScoresRow gameId={key} game={this.state.games[key]} key={key} />
+          <UpdateScoresRow tournamentId={this.props.tournamentId} year={this.props.year} gameId={key} game={this.state.games[key]} key={key} />
         );
       });
   

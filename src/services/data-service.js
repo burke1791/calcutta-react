@@ -698,6 +698,29 @@ class DataService {
     });
   }
 
+  updateScoresByTournamentIdAndYear = (tournamentId, year, gameId, newScoreObj) => {
+    /*
+    newScoreObj = {
+      "score": {
+        "team1": *score*,
+        "team2": *score*,
+        "num-ot": *#*
+      }
+    }
+    if any of the above object properties are absent, then they will not be updated in firebase
+    */
+
+    let path = '/' + tournamentId + '-structure/' + year + '/' + gameId + '/';
+    console.log(path);
+    console.log(newScoreObj);
+
+    return new Promise((resolve, reject) => {
+      database.ref(path).update(newScoreObj).then(function() {
+        resolve();
+      });
+    });
+  }
+
   addSportToDatabase(node_id, sportObj) {
     // add winner field to each game node
     var march_madness_2018 = {

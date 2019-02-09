@@ -1,23 +1,105 @@
 import React, { Component } from 'react';
 import './updateScoresRow.css';
 
+import DataService from '../../../services/data-service';
+import NotificationService from '../../../services/notification-service';
+
+let ds = new DataService();
+let ns = new NotificationService();
+
 class UpdateScoresRow extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      valuesChanged: false,
+      updateRequested: false,
+      updateSucceeded: false,
+      firstTeamScore: this.props.game.score.team1,
+      secondTeamScore: this.props.game.score.team1,
+      numOT: this.props.game.score['num-ot']
+    }
+
     // bind functions
+    this.onFirstTeamScoreChange = this.onFirstTeamScoreChange.bind(this);
+    this.onSecondTeamScoreChange = this.onSecondTeamScoreChange.bind(this);
+    this.onNumOTChange = this.onNumOTChange.bind(this);
+    this.updateScores = this.updateScores.bind(this);
+    this.massUpdateRequested = this.massUpdateRequested.bind(this);
   }
 
-  onFirstTeamScoreChange() {
-
+  componentDidMount() {
+    // add notification listener for updates
   }
 
-  onSecondTeamScoreChange() {
-
+  componentWillUnmount() {
+    // remove notification listener
   }
 
-  onNumOTChange() {
+  onFirstTeamScoreChange(event) {
+    var newScore = event.target.value;
+
+    this.setState({
+      firstTeamScore: newScore
+    });
+  }
+
+  onSecondTeamScoreChange(event) {
+    var newScore = event.target.value;
+
+    this.setState({
+      secondTeamScore: newScore
+    });
+  }
+
+  onNumOTChange(event) {
+    var newOT = event.target.value;
+
+    this.setState({
+      numOT: newOT
+    });
+  }
+
+  generateNewScoreObj = () => {
+    let firstTeamScoreChanged = this.state.firstTeamScore == this.props.game.score.team1 ? false : true;
+    let secondTeamScoreChanged = this.state.secondTeamScore == this.props.game.score.team2 ? false : true;
+    let numOTChanged = this.state.numOT == this.props.game.score['num-ot'] ? false : true;
+
+    let newScoreObj = {"score": {}};
+
+    if (!firstTeamScoreChanged && !secondTeamScoreChanged && !numOTChanged) {
+      return null;
+    } else {
+      if (firstTeamScoreChanged) {
+        newScoreObj.score.team1 = this.state.firstTeamScore;
+      }
+      if (secondTeamScoreChanged) {
+        newScoreObj.score.team2 = this.state.secondTeamScore;
+      }
+      if (numOTChanged) {
+        newScoreObj.score['num-ot'] = this.state.numOT;
+      }
+      return newScoreObj;
+    }
+  }
+
+  updateScores(event) {
+    event.preventDefault();
+
+    var newScoreObj = this.generateNewScoreObj();
+
+    console.log(newScoreObj);
+
+    if (newScoreObj !== null) {
+      ds.updateScoresByTournamentIdAndYear(this.props.tournamentId, this.props.year, this.props.gameId, newScoreObj).then(function() {
+        // change the checkmarks to green
+      });
+    }
     
+  }
+
+  massUpdateRequested() {
+
   }
 
   render() {
@@ -38,7 +120,7 @@ class UpdateScoresRow extends Component {
             <div className='input-group-prepend'>
               <span className='input-group-text'>{firstTeam}</span>
             </div>
-            <input type='number' className='form-control' value={firstTeamScore} onChange={this.onFirstTeamScoreChange} />
+            <input type='number' className='form-control' value={this.state.firstTeamScore} onChange={this.onFirstTeamScoreChange} />
           </div>
         </td>
         <td className='col-4'>
@@ -46,40 +128,21 @@ class UpdateScoresRow extends Component {
             <div className='input-group-prepend'>
               <span className='input-group-text'>{secondTeam}</span>
             </div>
-            <input type='number' className='form-control' value={secondTeamScore} onChange={this.onSecondTeamScoreChange} />
+            <input type='number' className='form-control' value={this.state.secondTeamScore} onChange={this.onSecondTeamScoreChange} />
           </div>
         </td>
         <td className='col-2'>
           <div className='input-group'>
-            <input type='number' className='form-control' value={numOT} onChange={this.onNumOTChange} />
+            <input type='number' className='form-control' value={this.state.numOT} onChange={this.onNumOTChange} />
           </div>
         </td>
         <td className='col-1'>
-          <button className='btn btn-default'>
-            <span className='glyphicon glyphicon-ok' aria-hidden='true'></span>
+          <button type='button' className='btn btn-outline-dark' onClick={this.updateScores}>
+            <i className="far fa-check-circle"></i>
           </button>
         </td>
       </tr>
     );
-
-    /*
-    return (
-      <tr className='d-flex tr-hover'>
-        <td className='col-2'>{this.props.gameNum}</td>
-        <td className='col-2'>{this.props.firstTeam}</td>
-        <td className='col-1'>
-          <input type='number' value={this.props.firstTeamScore} onChange={this.onFirstTeamScoreChange} />
-        </td>
-        <td className='col-2'>{this.props.secondTeam}</td>
-        <td className='col-1'>
-          <input type='number' value={this.props.secondTeamScore} onChange={this.onSecondTeamScoreChange} />
-        </td>
-        <td className='col-2'>
-          <input type='number' value={this.props.numOT} onChange={this.onNumOTChange} />
-        </td>
-      </tr>
-    );
-    */
   }
 }
 
