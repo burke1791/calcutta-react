@@ -1,7 +1,7 @@
 {
   "rules": {
     "admins": {
-      ".read": "auth.uid !== null",
+      ".read": "root.child('admins').child(auth.uid).val() === true",
       ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
     },
     "auctions": {
@@ -10,23 +10,23 @@
     },
     "btt-seeds": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "btt-structure": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "btt-teams": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "cbb-mens-team-ids": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "cbb-mens-team-info": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "leagues": {
       ".read": "auth.uid !== null",
@@ -34,23 +34,23 @@
     },
     "march-madness": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "march-madness-regions": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "march-madness-seeds": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "march-madness-tourney": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "march-madness-tourney-structure": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "messages-auction": {
       ".read": "auth.uid !== null",
@@ -62,15 +62,15 @@
     },
     "team-info": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "tournaments": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "tournaments-old": {
       ".read": "auth.uid !== null",
-      ".write": "auth.uid === 'tPZ3ZQRSf7gj2zXnTRDf4gO42Ow2'"
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "users": {
       ".read": "auth.uid !== null",
