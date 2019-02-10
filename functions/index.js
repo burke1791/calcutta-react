@@ -28,8 +28,10 @@ exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((sna
 });
 */
 
-exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}').onUpdate((snapshot, context) => {
-  const original = snapshot.val();
+exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}').onUpdate((change, context) => {
+  const original = change.before.val();
+  const after = change.after.val();
   console.log(original);
+  console.log(after);
 
 });
