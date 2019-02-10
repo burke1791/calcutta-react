@@ -4,6 +4,9 @@ import './godModeUpdateScores.css';
 import TournamentDropdown from '../tournamentDropdown/tournamentDropdown';
 import UpdateScoresTable from '../updateScoresTable/updateScoresTable';
 
+// TODO:
+//    clear state when new tournament is selected
+
 class GodModeUpdateScores extends Component {
   constructor(props) {
     super(props);

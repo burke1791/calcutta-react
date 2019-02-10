@@ -1,0 +1,7 @@
+.input-group>.input-group-prepend {
+  flex: 0 0 60%;
+}
+
+.input-group .input-group-text {
+  width: 100%;
+}
