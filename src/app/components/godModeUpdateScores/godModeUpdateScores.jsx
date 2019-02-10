@@ -28,13 +28,23 @@ class GodModeUpdateScores extends Component {
     var tournamentId = selection.match(/[a-z]{1,}/g);
     var year = selection.match(/[0-9]{4}/g);
 
-    this.setState({
-      selectedTournament: selection,
-      tournamentId: tournamentId[0],
-      teamInfoNode: teamInfoNode,
-      year: year[0],
-      games: ''
-    });
+    if (selection === 'n/a') {
+      this.setState({
+        selectedTournament: selection,
+        tournamentId: '',
+        teamInfoNode: '',
+        year: '',
+        games: ''
+      });
+    } else {
+      this.setState({
+        selectedTournament: selection,
+        tournamentId: tournamentId[0],
+        teamInfoNode: teamInfoNode,
+        year: year[0],
+        games: ''
+      });
+    }
   }
 
   render() {

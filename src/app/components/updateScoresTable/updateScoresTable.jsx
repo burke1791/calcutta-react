@@ -14,7 +14,6 @@ class UpdateScoresTable extends Component {
     this.state = {
       gameKeys: [],
       games: {},
-      teams: {}
     }
 
     // bind functions
@@ -27,25 +26,29 @@ class UpdateScoresTable extends Component {
   // not sure this function is the one I'm looking for
   componentDidUpdate(prevProps) {
     if (this.props.tournamentId !== prevProps.tournamentId) {
-      this.getTournamentGames();
+      this.setState({
+        gameKeys: [],
+        games: {}
+      }, this.getTournamentGames());
     }
   }
 
   getTournamentGames() {
     var self = this;
-    ds.getTournamentGamesByTournamentId(this.props.tournamentId, this.props.year).then(function(games) {
-      var gameKeys = [];
-
-      for (var game in games) {
-        gameKeys.push(game);
-      }
-      
-      self.setState({
-        gameKeys: gameKeys,
-        games: games,
+    if (this.props.tournamentId !== '') {
+      ds.getTournamentGamesByTournamentId(this.props.tournamentId, this.props.year).then(function(games) {
+        var gameKeys = [];
+  
+        for (var game in games) {
+          gameKeys.push(game);
+        }
+        
+        self.setState({
+          gameKeys: gameKeys,
+          games: games,
+        });   
       });
-      
-    });
+    }
   }
 
   onScoreChange(gameNum, teamNum, newScore) {
@@ -54,8 +57,6 @@ class UpdateScoresTable extends Component {
     } else {
       var gameId = 'G' + gameNum;
     }
-
-
   }
 
   onNumOTChange() {
