@@ -62,9 +62,11 @@ class AssignSeedsTeam extends Component {
 
     this.setState({assignSeedRequested: true});
 
-    ds.assignSeedByTeamId(this.props.teamId, this.props.tournamentId, this.props.year, this.props.seed).then(function() {
-      self.setState({assignSeedSucceeded: true});
-    });
+    if (this.props.seed != 0) {
+      ds.assignSeedByTeamId(this.props.teamId, this.props.tournamentId, this.props.year, this.props.seed).then(function() {
+        self.setState({assignSeedSucceeded: true});
+      });
+    }
   }
 
   render() {

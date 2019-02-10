@@ -127,8 +127,16 @@ class UpdateScoresRow extends Component {
       btnClass = 'btn btn-warning';
     }
 
+    var trClass = 'd-flex tr-hover';
+    var btnDisabled = false;
+
+    if (firstTeam === 'TBD' || secondTeam === 'TBD') {
+      trClass = trClass + ' bg-danger';
+      btnDisabled = true;
+    }
+
     return (
-      <tr className='d-flex tr-hover'>
+      <tr className={trClass}>
         <td className='col-1'>{gameNum}</td>
         <td className='col-4'>
           <div className='input-group'>
@@ -152,7 +160,7 @@ class UpdateScoresRow extends Component {
           </div>
         </td>
         <td className='col-1'>
-          <button type='button' className={btnClass} onClick={this.updateScores}>
+          <button type='button' className={btnClass} disabled={btnDisabled} onClick={this.updateScores}>
             <i className="far fa-check-circle"></i>
           </button>
         </td>

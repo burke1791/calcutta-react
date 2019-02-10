@@ -28,8 +28,55 @@ exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((sna
 });
 */
 
-exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}').onUpdate((snapshot, context) => {
-  const original = snapshot.val();
-  console.log(original);
+exports.updateBTTTeamNamesInStructureNode = functions.database.ref('/btt-structure/{year}/{gameId}/{team}/id').onUpdate((change, context) => {
+  const oldTeamId = change.before.val();
+  const newTeamId = change.after.val();
 
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+  const team = context.params.team;
+
+  const teamInfoRef = admin.database().ref('/cbb-mens-team-info/' + newTeamId);
+  const bttGameRef = admin.database().ref('/btt-structure/' + year + '/' + gameId + '/' + team);
+
+  if (newTeamId === 0 || newTeamId === '0') {
+    // resets team name to an empty string
+    const newNameUpdate = {"name": ""};
+    return bttGameRef.update(newNameUpdate);
+  } else {
+    return teamInfoRef.once('value').then(snapshot => {
+      const newName = snapshot.val().name;
+      const newNameUpdate = {"name": newName};
+  
+      return bttGameRef.update(newNameUpdate);
+    });
+  }
+  
+});
+
+exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}/{seedId}').onUpdate((change, context) => {
+  const oldTeamId = change.before.val();
+  const newTeamId = change.after.val();
+
+  const year = context.params.year;
+  const seedId = context.params.seedId;
+  const btt_structureRef = admin.database().ref('/btt-structure/' + year);
+
+  return btt_structureRef.once('value').then(snapshot => {
+    const seedUpdate = {"id": newTeamId};
+    snapshot.forEach(child => {
+      
+      if (child.val().team1.seed === seedId) {
+        const childRef = admin.database().ref('/btt-structure/' + year + '/' + child.key + '/team1');
+        return childRef.update(seedUpdate);
+      }
+
+      if (child.val().team2.seed === seedId) {
+        const childRef = admin.database().ref('/btt-structure/' + year + '/' + child.key + '/team2');
+        return childRef.update(seedUpdate);
+      }
+      return null;
+    });
+    return null;
+  });
 });

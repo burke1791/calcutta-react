@@ -677,6 +677,21 @@ class DataService {
     });
   }
 
+  resetSeedsByTournamentIdAndYear(tournamentId, year) {
+    // in the future implement a completion handler.  Might require a rewrite of the components that call this function
+    database.ref('/' + tournamentId + '-seeds/' + year + '/').once('value').then(snapshot => {
+      snapshot.forEach(child => {
+        const childKey = child.key;
+        console.log('childKey: ' + childKey);
+        const seedUpdate = {};
+        seedUpdate[childKey] = 0;
+        console.log(seedUpdate);
+
+        database.ref('/' + tournamentId + '-seeds/' + year).update(seedUpdate);
+      });
+    });
+  }
+
   getTournamentsList = () => {
     return new Promise((resolve, reject) => {
       database.ref('/tournaments/').once('value').then(function(snapshot) {

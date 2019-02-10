@@ -10,6 +10,9 @@ import NotificationService, { NOTIF_ASSIGN_SEEDS } from '../../../services/notif
 let ds = new DataService();
 let ns = new NotificationService();
 
+// TODO: 
+//    model the child component pattern after UpdateScores - i.e. make it a table/row pattern
+
 class GodModeAssignSeeds extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +31,8 @@ class GodModeAssignSeeds extends Component {
     this.handleTournamentSelection = this.handleTournamentSelection.bind(this);
     this.handleSeedChange = this.handleSeedChange.bind(this);
     this.assignSeeds = this.assignSeeds.bind(this);
+    this.resetSeeds = this.resetSeeds.bind(this);
+    this.generateResetSeedsButton = this.generateResetSeedsButton.bind(this);
     this.generateTourneyTeams = this.generateTourneyTeams.bind(this);
   }
 
@@ -75,6 +80,21 @@ class GodModeAssignSeeds extends Component {
     ns.postNotification(NOTIF_ASSIGN_SEEDS, null);
   }
 
+  resetSeeds(event) {
+    if (!(this.state.tournamentId == '') || !(this.state.year == '')) {
+      console.log('calling reset seeds');
+      ds.resetSeedsByTournamentIdAndYear(this.state.tournamentId, this.state.year);
+    }
+  }
+
+  generateResetSeedsButton = () => {
+    if (this.state.tournamentId) {
+      return (
+        <button type='submit' className='btn btn-danger m-2' onClick={this.resetSeeds}>Reset Seeds</button>
+      );
+    }
+  }
+
   generateTourneyTeams = () => {
     if (this.state.teams) {
       const list = this.state.teams.map((team, i) => {
@@ -89,7 +109,6 @@ class GodModeAssignSeeds extends Component {
     } else {
       return null;
     }
-    
   }
 
   render() {
@@ -101,7 +120,8 @@ class GodModeAssignSeeds extends Component {
         <TournamentDropdown selectedTournament={this.state.selectedTournament} onTournamentSelected={this.handleTournamentSelection} />
         <form>
           {this.generateTourneyTeams()}
-          <button type='submit' className={btnClass + ' my-2'} onClick={this.assignSeeds}>Assign Seeds</button>
+          <button type='submit' className={btnClass + ' m-2'} onClick={this.assignSeeds}>Assign Seeds</button>
+          {this.generateResetSeedsButton()}
         </form>
       </div>
     );
