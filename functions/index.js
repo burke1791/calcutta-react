@@ -25,3 +25,9 @@ exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((sna
 
   return null;
 });
+
+exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}').onUpdate((snapshot, context) => {
+  const original = snapshot.val();
+  console.log(original);
+
+});

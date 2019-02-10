@@ -68,6 +68,7 @@ class GodModeAssignSeeds extends Component {
   }
 
   assignSeeds(event) {
+    // need to move the seed update to this component
     event.preventDefault();
 
     // Post notification for child components to set the seed values in firebase
