@@ -469,10 +469,27 @@ class DataService {
     });
   }
 
-  createLeague(league) {
-    const sportCode = league['sport'];
+  createLeague(uid, leagueName, leaguePassword, leagueSportCode) {
+    // TODO: add completion handler
 
-    var auction = {
+    let league = {
+      'statue': 'in-progress',
+      'creator': uid,
+      'members': {
+        [uid]: true
+      },
+      'name': leagueName,
+      'password': leaguePassword,
+      'settings': {
+        'unclaimed': false,
+        'minBid': 1,
+        'minBuyIn': 0,
+        'maxBuyIn': 0
+      },
+      'sport': leagueSportCode
+    };
+
+    let auction = {
       'current-item': {
         'code': "",
         'complete': true,
@@ -488,13 +505,9 @@ class DataService {
     // temporary until I move creation of the league object to this function
     var newLeague = league;
 
-    if (sportCode.includes('march-madness')) {
-      var season = sportCode.substring(14, 18);
-      
-      // populate league info from all source nodes
-      // TODO: create cloud function to add tourney structure
-    } else {
-      database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
+    if (leagueSportCode === 'custom') {
+      /* refactor to be compatible with new database structure
+      database.ref('/sports/' + leagueSportCode).once('value').then(function(snapshot) {
         var teams = snapshot.val();
         newLeague['teams'] = teams;
   
@@ -505,6 +518,19 @@ class DataService {
           ns.postNotification(NOTIF_LEAGUE_CREATED, null);
         });
       });
+      */
+
+      alert('Custom Leagues are not yet supported');
+    } else {
+      // TODO: write error handling
+      var season = leagueSportCode.match(/[0-9]{4,}/g);
+      season = season[0]; // four digit year
+
+      var tournamentCode = leagueSportCode.match(/[a-z]{2,}/g);
+      tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
+      
+      // populate league info from all source nodes
+      // TODO: create cloud function to add tourney structure
     }
   }
 

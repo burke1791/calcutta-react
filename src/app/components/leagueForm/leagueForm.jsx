@@ -19,6 +19,8 @@ class LeagueForm extends Component {
       submitBtnText: props.leagueType === 'join' ? 'Join' : 'Create',
       leagueNameVal: '',
       leaguePassVal: '',
+      tournamentKeys: '',
+      tournaments: '',
       leagueSportVal: 'march-madness-2018' // temporary
     };
 
@@ -29,10 +31,25 @@ class LeagueForm extends Component {
     this.joinRadioClicked = this.joinRadioClicked.bind(this);
     this.createRadioClicked = this.createRadioClicked.bind(this);
     this.generateFormContents = this.generateFormContents.bind(this);
+    this.generateLeagueOptions = this.generateLeagueOptions.bind(this);
   }
 
   componentDidMount() {
     ns.addObserver(NOTIF_LEAGUE_SUBMIT, this, this.leagueSubmission);
+
+    var self = this;
+    ds.getTournamentsList().then(function(tournaments) {
+      var tournamentKeys = [];
+
+      for (var tournament in tournaments) {
+        tournamentKeys.push(tournament);
+      }
+
+      self.setState({
+        tournamentKeys: tournamentKeys,
+        tournaments: tournaments
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -69,7 +86,7 @@ class LeagueForm extends Component {
         });
       });
     } else if (this.state.leagueType === 'create') {
-      // TODO: move this to data service
+      /* moved to dataService
       var league = {
         'status' : 'in-progress',
         'creator' : uid,
@@ -86,9 +103,10 @@ class LeagueForm extends Component {
         },
         'sport' : this.state.leagueSportVal
       };
+      */
 
-      ds.createLeague(league);
-      // redirect to new league page to complete setup information
+      ds.createLeague(uid, this.state.leagueNameVal, this.state.leaguePassVal, this.state.leagueSportVal);
+      // TODO: redirect to settings page with completion callback
     }
     // this will need to be moved - in some cases the modal will need to display an error message
     this.props.submitHandler();
@@ -104,8 +122,6 @@ class LeagueForm extends Component {
 
   onLeagueSportChange(event) {
     this.setState({leagueSportVal: event.target.value});
-
-    console.log(event.target.value);
   }
 
   joinRadioClicked(event) {
@@ -145,10 +161,8 @@ class LeagueForm extends Component {
           <div className='form-group'>
             <label><strong>League Sport</strong></label>
             <select className='custom-select' value={this.state.leagueSportVal} onChange={this.onLeagueSportChange}>
-              <option value='march-madness-2018'>March Madness 2018</option>
-              <option value='mlb-hrderby-2018'>Home Run Derby 2018</option>
-              <option value='nfl-2018'>NFL 2018/19</option>
-              <option value='cfb-2018'>NCAA Football 2018/19</option>
+              {this.generateLeagueOptions()}
+              <option value='custom'>Custom Tournament</option>
             </select>
           </div>
           <div className='form-group'>
@@ -161,6 +175,19 @@ class LeagueForm extends Component {
           </div>
         </div>
       );
+    }
+  }
+
+  generateLeagueOptions = () => {
+    if (this.state.tournamentKeys !== '') {
+      const list = this.state.tournamentKeys.map((tournamentKey, i) => {
+        return (
+          <option value={tournamentKey} key={i}>{this.state.tournaments[tournamentKey]['name']}</option>
+        );
+      });
+      return (list);
+    } else {
+      return null;
     }
   }
 
