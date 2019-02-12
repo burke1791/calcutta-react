@@ -21,7 +21,7 @@ class LeagueForm extends Component {
       leaguePassVal: '',
       tournamentKeys: '',
       tournaments: '',
-      leagueSportVal: 'march-madness-2018' // temporary
+      leagueSportVal: 'n/a' // temporary
     };
 
     this.leagueSubmission = this.leagueSubmission.bind(this);
@@ -86,25 +86,6 @@ class LeagueForm extends Component {
         });
       });
     } else if (this.state.leagueType === 'create') {
-      /* moved to dataService
-      var league = {
-        'status' : 'in-progress',
-        'creator' : uid,
-        'members' : {
-          [uid] : true
-        },
-        'name' : this.state.leagueNameVal,
-        'password' : this.state.leaguePassVal,
-        'settings' : {
-          'unclaimed': false,
-          'minBid': 1,
-          'minBuyIn': 0,
-          'maxBuyIn': 0
-        },
-        'sport' : this.state.leagueSportVal
-      };
-      */
-
       ds.createLeague(uid, this.state.leagueNameVal, this.state.leaguePassVal, this.state.leagueSportVal);
       // TODO: redirect to settings page with completion callback
     }
@@ -161,6 +142,7 @@ class LeagueForm extends Component {
           <div className='form-group'>
             <label><strong>League Sport</strong></label>
             <select className='custom-select' value={this.state.leagueSportVal} onChange={this.onLeagueSportChange}>
+              <option value='n/a'>Please Select a Tournament...</option>
               {this.generateLeagueOptions()}
               <option value='custom'>Custom Tournament</option>
             </select>

@@ -473,7 +473,7 @@ class DataService {
     // TODO: add completion handler
 
     let league = {
-      'statue': 'in-progress',
+      'status': 'in-progress',
       'creator': uid,
       'members': {
         [uid]: true
@@ -506,29 +506,34 @@ class DataService {
     var newLeague = league;
 
     if (leagueSportCode === 'custom') {
-      /* refactor to be compatible with new database structure
-      database.ref('/sports/' + leagueSportCode).once('value').then(function(snapshot) {
-        var teams = snapshot.val();
-        newLeague['teams'] = teams;
-  
-        database.ref('/leagues').push(league).then(function(snapshot) {
-          const pushId = snapshot.key;
-          database.ref('/auctions').child(pushId).set(auction);
-          // TODO: Redirect to league setup page (react router)
-          ns.postNotification(NOTIF_LEAGUE_CREATED, null);
-        });
-      });
-      */
-
       alert('Custom Leagues are not yet supported');
     } else {
-      // TODO: write error handling
+      // TODO: write error handling for any of the .matches not finding anything
       var season = leagueSportCode.match(/[0-9]{4,}/g);
       season = season[0]; // four digit year
 
       var tournamentCode = leagueSportCode.match(/[a-z]{2,}/g);
       tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
       
+      let teamsObj = {};
+
+      database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
+        seeds.forEach(child => {
+          var teamId = child.key;
+          var teamVal = child.val();
+
+          teamsObj[teamId] = {};
+          teamsObj[teamId].owner = '';
+          teamsObj[teamId].price = 0;
+          teamsObj[teamId].return = 0;
+        });
+        league['teams'] = teamsObj;
+        database.ref('/leagues').push(league).then((snapshot) => {
+          const pushId = snapshot.key;
+          database.ref('/auctions').child(pushId).set(auction);
+          ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+        });
+      });
       // populate league info from all source nodes
       // TODO: create cloud function to add tourney structure
     }
