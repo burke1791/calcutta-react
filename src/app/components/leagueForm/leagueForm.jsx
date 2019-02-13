@@ -86,7 +86,8 @@ class LeagueForm extends Component {
         });
       });
     } else if (this.state.leagueType === 'create') {
-      ds.createLeague(uid, this.state.leagueNameVal, this.state.leaguePassVal, this.state.leagueSportVal);
+      let infoNode = this.state.tournaments[this.state.leagueSportVal]['info-node-id'];
+      ds.createLeague(uid, this.state.leagueNameVal, this.state.leaguePassVal, this.state.leagueSportVal, infoNode);
       // TODO: redirect to settings page with completion callback
     }
     // this will need to be moved - in some cases the modal will need to display an error message

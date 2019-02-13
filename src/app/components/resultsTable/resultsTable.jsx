@@ -15,6 +15,8 @@ class ResultsTable extends Component {
     this.state = {
       teams: {},
       teamKeys: [],
+      teamNames: {},
+      teamNamesDownloaded: false,
       participants: [],
       users: {},
       usersDownloaded: false
@@ -23,6 +25,7 @@ class ResultsTable extends Component {
     // bind functions
     this.fetchUsers = this.fetchUsers.bind(this);
     this.fetchParticipants = this.fetchParticipants.bind(this);
+    this.fetchTeamNames = this.fetchTeamNames.bind(this);
     this.newItemSold = this.newItemSold.bind(this);
     this.generateResultsRows = this.generateResultsRows.bind(this);
   }
@@ -69,6 +72,22 @@ class ResultsTable extends Component {
     });
   }
 
+  fetchTeamNames() {
+    // Potential suggestion is to add the team name to firebase the first time they are downloaded for any user, then subsequent users would have a shorter load time...
+    if (this.props.resultType === 'team' && this.state.teamKeys.length) {
+      var self = this;
+      let teamIds = this.state.teamKeys;
+      ds.getDataSnapshot('/leagues/' + this.props.leagueId + '/sport').then(sportCode => {
+        ds.getAllTeamNamesInLeagueById(teamIds, sportCode.val()).then(teamNames => {
+          self.setState(prevState => ({
+            teamNames: teamNames,
+            teamNamesDownloaded: true
+          }));
+        });
+      });
+    }
+  }
+
   newItemSold(newData) {
     if (newData !== null) {
       var teams = newData;
@@ -77,7 +96,8 @@ class ResultsTable extends Component {
       this.setState({
         teams: teams,
         teamKeys: keys
-      });
+      } // , this.fetchTeamNames() <-- setState callback if I ever need it
+    );
     }
   }
 

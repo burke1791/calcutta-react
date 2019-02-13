@@ -469,7 +469,7 @@ class DataService {
     });
   }
 
-  createLeague(uid, leagueName, leaguePassword, leagueSportCode) {
+  createLeague(uid, leagueName, leaguePassword, leagueSportCode, infoNode = '') {
     // TODO: add completion handler
 
     let league = {
@@ -486,7 +486,8 @@ class DataService {
         'minBuyIn': 0,
         'maxBuyIn': 0
       },
-      'sport': leagueSportCode
+      'sport': leagueSportCode,
+      'info-node': infoNode
     };
 
     let auction = {
@@ -516,6 +517,7 @@ class DataService {
       tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
       
       let teamsObj = {};
+
 
       database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
         seeds.forEach(child => {
@@ -581,6 +583,22 @@ class DataService {
           resolve();
         });
       });
+    });
+  }
+
+  getAllTeamNamesInLeagueById = (teamIds, sportCode, infoNode = '') => {
+    return new Promise((resolve, reject) => {
+      if (infoNode !== '') {
+        // go straight to the info node
+      } else {
+        database.ref('/tournaments/' + sportCode + '/info-node-id').once('value').then(infoNode => {
+          for (var teamId of teamIds) {
+            database.ref('/' + infoNode.val() + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+
+            });
+          }
+        });
+      }
     });
   }
 

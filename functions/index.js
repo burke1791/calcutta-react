@@ -80,3 +80,25 @@ exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year
     return null;
   });
 });
+
+exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}/sport').onCreate((snapshot, context) => {
+  const pushId = context.params.pushId;
+  const sport = snapshot.val();
+  const newLeaguePath = admin.database().ref('/leagues/' + pushId);
+  const newLeagueTeamsPath = admin.database().ref('/leagues/' + pushId + '/teams');
+
+  return newLeaguePath.once('value').then(snapshot => {
+    const infoNode = snapshot.child('info-node').val();
+    
+    snapshot.child('teams').forEach(child => {
+      const teamId = child.key;
+      const teamRef = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
+      const infoNodePath = admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+        var teamNameUpdate = {'name': teamName};
+        return teamRef.update(teamNameUpdate);
+      });
+      // return null;
+    });
+    // return null;
+  });
+})
