@@ -81,24 +81,26 @@ exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year
   });
 });
 
-exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}/sport').onCreate((snapshot, context) => {
+exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
   const pushId = context.params.pushId;
-  const sport = snapshot.val();
+  const sport = snapshot.child('sport').val();
+  const infoNode = snapshot.child('info-node').val();
+  const teams = snapshot.child('teams');
+
   const newLeaguePath = admin.database().ref('/leagues/' + pushId);
   const newLeagueTeamsPath = admin.database().ref('/leagues/' + pushId + '/teams');
 
-  return newLeaguePath.once('value').then(snapshot => {
-    const infoNode = snapshot.child('info-node').val();
-    
-    snapshot.child('teams').forEach(child => {
-      const teamId = child.key;
-      const teamRef = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
-      const infoNodePath = admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
-        var teamNameUpdate = {'name': teamName};
-        return teamRef.update(teamNameUpdate);
-      });
-      // return null;
+  teams.forEach(child => {
+    const teamId = child.key;
+
+    return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+      var teamNameUpdate = {
+        [teamId]: {
+          'name': teamName.val()
+        }
+      };
+
+      return newLeagueTeamsPath.update(teamNameUpdate);
     });
-    // return null;
   });
-})
+});
