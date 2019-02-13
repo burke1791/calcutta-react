@@ -70,15 +70,10 @@ class UpdateScoresRow extends Component {
     if (!firstTeamScoreChanged && !secondTeamScoreChanged && !numOTChanged) {
       return null;
     } else {
-      if (firstTeamScoreChanged) {
-        newScoreObj.score.team1 = this.state.firstTeamScore;
-      }
-      if (secondTeamScoreChanged) {
-        newScoreObj.score.team2 = this.state.secondTeamScore;
-      }
-      if (numOTChanged) {
-        newScoreObj.score['num-ot'] = this.state.numOT;
-      }
+      newScoreObj.score.team1 = this.state.firstTeamScore;
+      newScoreObj.score.team2 = this.state.secondTeamScore;
+      newScoreObj.score['num-ot'] = this.state.numOT;
+
       return newScoreObj;
     }
   }
@@ -91,7 +86,6 @@ class UpdateScoresRow extends Component {
     });
 
     var self = this;
-
     var newScoreObj = this.generateNewScoreObj();
 
     if (newScoreObj !== null) {
@@ -102,7 +96,6 @@ class UpdateScoresRow extends Component {
         });
       });
     }
-    
   }
 
   massUpdateRequested() {

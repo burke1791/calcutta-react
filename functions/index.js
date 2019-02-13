@@ -99,3 +99,53 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
     });
   });
 });
+
+exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-structure/{year}/{gameId}/score').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+
+  const team1Score = change.after.child('team1').val();
+  const team2Score = change.after.child('team2').val();
+
+  let gamesObj;
+  let gameObj;
+  let nextGameId;
+  let winner;
+
+  return admin.database().ref('/btt-structure/' + year).once('value').then(games => {
+    gamesObj = games.val();
+    gameObj = games.child(gameId).val();
+
+    let team1Id = gameObj['team1']['id'];
+    let team2Id = gameObj['team2']['id'];
+
+    nextGameId = gameObj['next-round'];
+
+    const updateRef = admin.database().ref('/btt-structure/' + year + '/' + gameId);
+
+    if (team1Score > team2Score) {
+      winner = team1Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else if (team2Score > team1Score) {
+      winner = team2Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else {
+      return null
+    }
+  }).then(() => {
+
+    if (gamesObj[nextGameId]['team1']['id'] === 0) {
+      var team1Update = {"id": winner};
+      const team1UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team1');
+      return team1UpdateRef.update(team1Update);
+    } else if (gamesObj[nextGameId]['team2']['id'] === 0) {
+      var team2Update = {"id": winner};
+      const team2UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team2');
+      return team2UpdateRef.update(team2Update);
+    } else {
+      return null;
+    }
+  });
+});
