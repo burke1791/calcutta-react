@@ -87,20 +87,15 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
   const infoNode = snapshot.child('info-node').val();
   const teams = snapshot.child('teams');
 
-  const newLeaguePath = admin.database().ref('/leagues/' + pushId);
-  const newLeagueTeamsPath = admin.database().ref('/leagues/' + pushId + '/teams');
-
   teams.forEach(child => {
     const teamId = child.key;
 
     return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
-      var teamNameUpdate = {
-        [teamId]: {
-          'name': teamName.val()
-        }
-      };
+      var teamNameUpdate = {'name': teamName.val()};
 
-      return newLeagueTeamsPath.update(teamNameUpdate);
+      const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
+
+      return newLeagueTeamPath.update(teamNameUpdate);
     });
   });
 });
