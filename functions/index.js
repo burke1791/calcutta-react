@@ -115,6 +115,7 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
   return admin.database().ref('/btt-structure/' + year).once('value').then(games => {
     gamesObj = games.val();
     gameObj = games.child(gameId).val();
+    dayNum = games.child(gameId).child('day').val();
 
     let team1Id = gameObj['team1']['id'];
     let team2Id = gameObj['team2']['id'];
@@ -126,16 +127,17 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
     if (team1Score > team2Score) {
       winner = team1Id;
       winnerUpdate = {'winner': winner};
+      updateBTTPayoutInfoByTeamId(year, dayNum, winner);
       return updateRef.update(winnerUpdate);
     } else if (team2Score > team1Score) {
       winner = team2Id;
       winnerUpdate = {'winner': winner};
+      updateBTTPayoutInfoByTeamId(dayNum, winner);
       return updateRef.update(winnerUpdate);
     } else {
       return null
     }
   }).then(() => {
-
     if (gamesObj[nextGameId]['team1']['id'] === 0) {
       var team1Update = {"id": winner};
       const team1UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team1');

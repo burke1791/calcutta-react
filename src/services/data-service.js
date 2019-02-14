@@ -486,8 +486,18 @@ class DataService {
         'minBuyIn': 0,
         'maxBuyIn': 0
       },
+      'payout-settings': {
+        'day-1': 0.02,
+        'day-2': 0.04,
+        'day-3': 0.08,
+        'day-4': 0.12,
+        'day-5': 0.2,
+        'largest-upset': 0.02,
+        'biggest-loss': 0.02
+      },
       'sport': leagueSportCode,
-      'info-node': infoNode
+      'info-node': infoNode,
+      'pool-total': 0
     };
 
     let auction = {
@@ -500,7 +510,8 @@ class DataService {
         'name': "",
         'winner-uid': ""
       },
-      'in-progress': false
+      'in-progress': false,
+      'pool-total': 0
     };
 
     // temporary until I move creation of the league object to this function
@@ -517,7 +528,7 @@ class DataService {
       tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
       
       let teamsObj = {};
-
+      let pushId;
 
       database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
         seeds.forEach(child => {
@@ -531,9 +542,11 @@ class DataService {
         });
         league['teams'] = teamsObj;
         database.ref('/leagues').push(league).then((snapshot) => {
-          const pushId = snapshot.key;
+          pushId = snapshot.key;
           database.ref('/auctions').child(pushId).set(auction);
           ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+        }).then(() => {
+          database.ref('/leagues-' + tournamentCode + '/' + season).update({[pushId]: true});
         });
       });
       // populate league info from all source nodes
