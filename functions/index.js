@@ -127,12 +127,10 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
     if (team1Score > team2Score) {
       winner = team1Id;
       winnerUpdate = {'winner': winner};
-      updateBTTPayoutInfoByTeamId(year, dayNum, winner);
       return updateRef.update(winnerUpdate);
     } else if (team2Score > team1Score) {
       winner = team2Id;
       winnerUpdate = {'winner': winner};
-      updateBTTPayoutInfoByTeamId(dayNum, winner);
       return updateRef.update(winnerUpdate);
     } else {
       return null
@@ -151,3 +149,77 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
     }
   });
 });
+
+exports.updateBTTLeaguePayoutsAfterScoreUpdate = functions.database.ref('/btt-structure/{year}/{gameId}/winner').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+  const winnerId = change.after.val();
+
+  let dayNum = Number(gameId.match(/[0-9]+/g)[0]);
+  console.log('dayNum: ' + dayNum);
+
+  const allLeaguesRef = admin.database().ref('/leagues/');
+
+  if (winnerId !== 'n/a') {
+    return admin.database().ref('/leagues-btt/').once('value').then(leaguesBTT => {
+      let leagues_btt = leaguesBTT.child(year).val();
+      console.log(leagues_btt);
+      return leagues_btt;
+    }).then((leagues_btt) => {
+      for (leagueId in leagues_btt) {
+        console.log(leagueId);
+        if (leagues_btt[leagueId]) {
+          const leagueRef = admin.database().ref('/leagues/' + leagueId);
+          return leagueRef.once('value').then(league => {
+            let leagueObj = league.val();
+            var currentReturn = Number(leagueObj['teams'][winnerId]['return']);
+            console.log('current return: ' + currentReturn);
+            var totalPool = Number(leagueObj['pool-total']);
+            console.log('total pool: ' + totalPool);
+            var payoutRate;
+            if (dayNum === 1) {
+              payoutRate = Number(leagueObj['payout-settings']['day-1']);
+            } else if (dayNum === 2) {
+              payoutRate = Number(leagueObj['payout-settings']['day-2']);
+            } else if (dayNum === 3) {
+              payoutRate = Number(leagueObj['payout-settings']['day-3']);
+            } else if (dayNum === 4) {
+              payoutRate = Number(leagueObj['payout-settings']['day-4']);
+            } else if (dayNum === 5) {
+              payoutRate = Number(leagueObj['payout-settings']['day-5']);
+            } else {
+              payoutRate = 0;
+            }
+            console.log('payoutRate: ' + payoutRate);
+  
+            let newReturn = currentReturn + totalPool * payoutRate;
+  
+            // let newReturnObj = {'return': newReturn};
+  
+            const updatePath = admin.database().ref('/leagues/' + leagueId + '/teams/' + winnerId + '/return');
+  
+            return updatePath.transaction(currentValue => {
+              if (currentValue !== null) {
+                return currentValue + totalPool * payoutRate;
+              } else {
+                console.log('current return is null');
+                return currentValue;
+              }
+            }, function(error, committed, snapshot) {
+              if (error) {
+                console.log('Transaction failed abnormally: ' + error);
+              } else if (!committed) {
+                console.log('Aborted transaction');
+              } else if (committed) {
+                console.log('committed true - return update succeeded');
+              }
+            });
+          });
+        }
+      }
+      return null;
+    });
+  }
+  
+});
+

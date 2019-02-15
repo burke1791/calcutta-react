@@ -67,7 +67,7 @@ class UpdateScoresTable extends Component {
     if (this.state.games) {
       const list = Object.keys(this.state.games).map((key, i) => {
         return (
-          <UpdateScoresRow tournamentId={this.props.tournamentId} year={this.props.year} gameId={key} game={this.state.games[key]} key={key} />
+          <UpdateScoresRow tournamentId={this.props.tournamentId} year={this.props.year} gameId={key} game={this.state.games[key]} key={key} gameNum={i + 1} />
         );
       });
   
