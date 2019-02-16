@@ -486,14 +486,15 @@ class DataService {
         'minBuyIn': 0,
         'maxBuyIn': 0
       },
+      // default payout settings
       'payout-settings': {
-        'day-1': 0.02,
-        'day-2': 0.04,
-        'day-3': 0.08,
-        'day-4': 0.12,
-        'day-5': 0.2,
-        'largest-upset': 0.02,
-        'biggest-loss': 0.02
+        'R1': 0.02,
+        'R2': 0.04,
+        'R3': 0.08,
+        'R4': 0.12,
+        'R5': 0.2,
+        'upset': 0.02,
+        'loss': 0.02
       },
       'sport': leagueSportCode,
       'info-node': infoNode,
@@ -744,10 +745,8 @@ class DataService {
     database.ref('/' + tournamentId + '-seeds/' + year + '/').once('value').then(snapshot => {
       snapshot.forEach(child => {
         const childKey = child.key;
-        console.log('childKey: ' + childKey);
         const seedUpdate = {};
         seedUpdate[childKey] = 0;
-        console.log(seedUpdate);
 
         database.ref('/' + tournamentId + '-seeds/' + year).update(seedUpdate);
       });
@@ -2811,11 +2810,11 @@ class DataService {
     var btt_2019 = {
       "btt-structure": {
         "2019": {
-          "D1G1": {
+          "R1G1": {
             "team1": {
               "seed": "S12",
               "id": 0,
-              "name": ""
+              "name": ""         
             },
             "team2": {
               "seed": "S13",
@@ -2824,7 +2823,7 @@ class DataService {
             },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D2G2",
+            "next-round": "R2G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2833,7 +2832,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D1G2": {
+          "R1G2": {
             "team1": {
               "seed": "S11",
               "id": 0,
@@ -2846,7 +2845,7 @@ class DataService {
             },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D2G4",
+            "next-round": "R2G4",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2855,7 +2854,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D2G1": {
+          "R2G1": {
             "team1": {
               "seed": "S08",
               "id": 0,
@@ -2868,7 +2867,7 @@ class DataService {
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D3G1",
+            "next-round": "R3G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2877,20 +2876,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D2G2": {
+          "R2G2": {
             "team1": {
               "seed": "S05",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D1G1",
+              "seed": "R1G1",
               "id": 0,
               "name": ""
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D3G2",
+            "next-round": "R3G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2899,7 +2898,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D2G3": {
+          "R2G3": {
             "team1": {
               "seed": "S07",
               "id": 0,
@@ -2912,7 +2911,7 @@ class DataService {
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D3G3",
+            "next-round": "R3G3",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2921,20 +2920,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D2G4": {
+          "R2G4": {
             "team1": {
               "seed": "S06",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D1G2",
+              "seed": "R1G2",
               "id": 0,
               "name": ""
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D3G4",
+            "next-round": "R3G4",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2943,20 +2942,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D3G1": {
+          "R3G1": {
             "team1": {
               "seed": "S01",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "S03",
+              "seed": "R2G1",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D4G1",
+            "next-round": "R4G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2965,20 +2964,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D3G2": {
+          "R3G2": {
             "team1": {
               "seed": "S04",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D2G2",
+              "seed": "R2G2",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D4G1",
+            "next-round": "R4G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2987,20 +2986,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D3G3": {
+          "R3G3": {
             "team1": {
               "seed": "S02",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D2G3",
+              "seed": "R2G3",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D4G2",
+            "next-round": "R4G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -3009,20 +3008,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D3G4": {
+          "R3G4": {
             "team1": {
               "seed": "S03",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D2G4",
+              "seed": "R2G4",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D4G2",
+            "next-round": "R4G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -3031,20 +3030,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D4G1": {
+          "R4G1": {
             "team1": {
-              "seed": "D3G1",
+              "seed": "R3G1",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D3G2",
+              "seed": "R3G2",
               "id": 0,
               "name": ""
             },
             "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D5CH",
+            "next-round": "R5CH",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -3053,20 +3052,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D4G2": {
+          "R4G2": {
             "team1": {
-              "seed": "D3G3",
+              "seed": "R3G3",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D3G4",
+              "seed": "R3G4",
               "id": 0,
               "name": ""
             },
             "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "D5CH",
+            "next-round": "R5CH",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -3075,14 +3074,14 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "D5CH": {
+          "R5CH": {
             "team1": {
-              "seed": "D4G1",
+              "seed": "R4G1",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "D4G2",
+              "seed": "R4G2",
               "id": 0,
               "name": ""
             },
