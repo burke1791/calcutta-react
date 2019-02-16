@@ -168,21 +168,24 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
       data[0].forEach(game => {
         let gameObj = game.val();
 
+        let team1Score = Number(gameObj['score']['team1']);
+        let team2Score = Number(gameObj['score']['team2']);
+
         if (gameObj['winner'] !== 'n/a') {
           winners[game.key] = gameObj['winner'];
 
           // find the game with the largest point differential
-          pointDifferential = Math.abs(gameObj['score']['team1'] - gameObj['score']['team2']);
+          pointDifferential = Math.abs(team1Score - team2Score);
           if (pointDifferential > prevPointDifferential) {
             biggestLossGameId = game.key;
-            if (gameObj['score']['team1'] < gameObj['score']['team2']) {
+            if (team1Score < team2Score) {
               biggestLossTeamId = gameObj['team1']['id'];
             } else {
               biggestLossTeamId = gameObj['team2']['id'];
             }
           } else if (differential === prevDifferential) {
             biggestLossGameId.push(game.key);
-            if (gameObj['score']['team1'] < gameObj['score']['team2']) {
+            if (team1Score < team2Score) {
               biggestLossTeamId.push(gameObj['team1']['id']);
             } else {
               biggestLossTeamId.push(gameObj['team2']['id']);
