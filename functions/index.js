@@ -140,9 +140,6 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
   const gameId = context.params.gameId;
   const winnerId = change.after.val();
 
-  let dayNum = Number(gameId.match(/[0-9]+/g)[0]);
-  console.log('dayNum: ' + dayNum);
-
   const allLeaguesRef = admin.database().ref('/leagues/');
 
   const currentBracket = admin.database().ref('/btt-structure/' + year).once('value');
@@ -151,9 +148,6 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
   if (winnerId !== 'n/a') {
     return Promise.all([currentBracket, bttLeagues]).then(data => {
       let winners = {'tournament-code': 'btt'};
-
-      console.log('btt-leagues:');
-      console.log(data[1].val());
 
       // TODO: Add ability to determine biggest loss and largest upset
       var biggestLossGameId = [];
@@ -165,17 +159,22 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
       var biggestUpsetTeamId = [];
       var seedDifferential = 0;
       var prevSeedDifferential = 0;
+
       data[0].forEach(game => {
         let gameObj = game.val();
 
         let team1Score = Number(gameObj['score']['team1']);
         let team2Score = Number(gameObj['score']['team2']);
 
+        console.log('team1 score: ' + team1Score);
+        console.log('team2 score: ' + team2Score);
+
         if (gameObj['winner'] !== 'n/a') {
           winners[game.key] = gameObj['winner'];
 
           // find the game with the largest point differential
           pointDifferential = Math.abs(team1Score - team2Score);
+          console.log('point diff: ' + pointDifferential);
           if (pointDifferential > prevPointDifferential) {
             biggestLossGameId = game.key;
             if (team1Score < team2Score) {
@@ -183,7 +182,8 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
             } else {
               biggestLossTeamId = gameObj['team2']['id'];
             }
-          } else if (differential === prevDifferential) {
+            prevPointDifferential = pointDifferential;
+          } else if (pointDifferential === prevPointDifferential) {
             biggestLossGameId.push(game.key);
             if (team1Score < team2Score) {
               biggestLossTeamId.push(gameObj['team1']['id']);
@@ -199,14 +199,10 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
 
       winners['loss'] = biggestLossTeamId;
 
-      console.log('winners: ');
-      console.log(winners);
-
       data[1].forEach(league => {
         let leagueId = league.key;
         let leagueStatus = league.val();
-        console.log('leagueId: ' + leagueId);
-        console.log(leagueStatus);
+
         if (leagueStatus) {
           return admin.database().ref('/leagues/' + leagueId + '/game-winners').set(winners);
         }
@@ -221,8 +217,6 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
   const leagueId = context.params.leagueId;
   const winners = change.after.val();
 
-  console.log(winners['tournament-code']);
-
   if (winners['tournament-code'] === 'btt') {
     const payoutSettings = admin.database().ref('/leagues/' + leagueId + '/payout-settings').once('value');
     const poolTotal = admin.database().ref('/leagues/' + leagueId + '/pool-total').once('value');
@@ -236,13 +230,21 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
 
       for (var gameId in winners) {
         let roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
-        console.log('round code: ' + roundCode);
 
-        if (roundCode !== 'n/a') {
-          let payoutRate = Number(payouts[roundCode]);
-          console.log('payout rate: ' + payoutRate);
-          let returnValue = total * payoutRate;
+        let payoutRate;
+        if (gameId === 'loss') {
+          payoutRate = Number(payouts['loss']);
+        } else if (gameId === 'upset') {
+          payoutRate = Number(payouts['upset']);
+        } else if (roundCode !== 'n/a') {
+          payoutRate = Number(payouts[roundCode]);
+        } else {
+          payoutRate = 0;
+        }
 
+        let returnValue = total * payoutRate;
+
+        if (returnValue > 0) {
           if (!teamPayouts[winners[gameId]]) {
             teamPayouts[winners[gameId]] = returnValue;
           } else {
