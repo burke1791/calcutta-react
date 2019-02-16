@@ -69,17 +69,19 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
   const infoNode = snapshot.child('info-node').val();
   const teams = snapshot.child('teams');
 
-  teams.forEach(child => {
-    const teamId = child.key;
-
-    return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
-      var teamNameUpdate = {'name': teamName.val()};
-
-      const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
-
-      return newLeagueTeamPath.update(teamNameUpdate);
+  if (sport !== 'custom') {
+    teams.forEach(child => {
+      const teamId = child.key;
+  
+      return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+        var teamNameUpdate = {'name': teamName.val()};
+  
+        const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
+  
+        return newLeagueTeamPath.update(teamNameUpdate);
+      });
     });
-  });
+  }
 });
 
 exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-structure/{year}/{gameId}/score').onUpdate((change, context) => {
@@ -118,17 +120,25 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
       return null
     }
   }).then(() => {
-    let team1SeedVal = gameObj['team1']['seed-value'];
-    let team2SeedVal = gameObj['team2']['seed-value'];
+    let winnerSeedVal;
+    if (winner === gamesObj[gameId]['team1']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team1']['seed-value'];
+    } else if (winner === gamesObj[gameId]['team2']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team2']['seed-value'];
+    }
 
-    if (gamesObj[nextGameId]['team1']['id'] === 0) {
-      var team1Update = {"id": winner, "seed-value": team1SeedVal};
-      const team1UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team1');
-      return team1UpdateRef.update(team1Update);
-    } else if (gamesObj[nextGameId]['team2']['id'] === 0) {
-      var team2Update = {"id": winner, "seed-value": team2SeedVal};
-      const team2UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team2');
-      return team2UpdateRef.update(team2Update);
+    if (nextGameId !== 'n/a') {
+      if (gamesObj[nextGameId]['team1']['id'] === 0) {
+        var team1Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team1UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team1');
+        return team1UpdateRef.update(team1Update);
+      } else if (gamesObj[nextGameId]['team2']['id'] === 0) {
+        var team2Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team2UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team2');
+        return team2UpdateRef.update(team2Update);
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
@@ -157,8 +167,8 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
 
       var biggestUpsetGameId = [];
       var biggestUpsetTeamId = [];
-      var seedDifferential = 0;
-      var prevSeedDifferential = 0;
+      var upsetDifferential = 0;
+      var prevUpsetDifferential = 0;
 
       data[0].forEach(game => {
         let gameObj = game.val();
@@ -166,21 +176,23 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
         let team1Score = Number(gameObj['score']['team1']);
         let team2Score = Number(gameObj['score']['team2']);
 
-        console.log('team1 score: ' + team1Score);
-        console.log('team2 score: ' + team2Score);
+        let team1SeedVal = Number(gameObj['team1']['seed-value']);
+        let team2SeedVal = Number(gameObj['team2']['seed-value']);
+
+        let team1Id = gameObj['team1']['id'];
+        let team2Id = gameObj['team2']['id'];
 
         if (gameObj['winner'] !== 'n/a') {
           winners[game.key] = gameObj['winner'];
 
           // find the game with the largest point differential
           pointDifferential = Math.abs(team1Score - team2Score);
-          console.log('point diff: ' + pointDifferential);
           if (pointDifferential > prevPointDifferential) {
-            biggestLossGameId = game.key;
+            biggestLossGameId = [game.key];
             if (team1Score < team2Score) {
-              biggestLossTeamId = gameObj['team1']['id'];
+              biggestLossTeamId = [gameObj['team1']['id']];
             } else {
-              biggestLossTeamId = gameObj['team2']['id'];
+              biggestLossTeamId = [gameObj['team2']['id']];
             }
             prevPointDifferential = pointDifferential;
           } else if (pointDifferential === prevPointDifferential) {
@@ -192,12 +204,39 @@ exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt
             }
           }
 
+          var winnerKey;
           // find the game with the biggest upset
+          if (gameObj['winner'] === team1Id) {
+            winnerKey = 'team1';
+            // check if game was an upset
+            if (team1SeedVal - team2SeedVal > 0) {
+              upsetDifferential = team1SeedVal - team2SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          } else if (gameObj['winner'] === team2Id) {
+            winnerKey = 'team2';
+            // check if game was an upset
+            if (team2SeedVal - team1SeedVal > 0) {
+              upsetDifferential = team2SeedVal - team1SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          }
 
+          if (upsetDifferential > prevUpsetDifferential && upsetDifferential > 0) {
+            prevUpsetDifferential = upsetDifferential;
+            biggestUpsetGameId = [game.key];
+            biggestUpsetTeamId = [gameObj['winner']];
+          } else if (upsetDifferential === prevUpsetDifferential && upsetDifferential > 0) {
+            biggestUpsetGameId.push(game.key);
+            biggestUpsetTeamId.push(gameObj['winner']);
+          }
         }
       });
 
       winners['loss'] = biggestLossTeamId;
+      winners['upset'] = biggestUpsetTeamId;
 
       data[1].forEach(league => {
         let leagueId = league.key;
@@ -228,6 +267,18 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
       let teams = data[2].val();
       let teamPayouts = {};
 
+      var biggestUpsetCount = 0;
+      var biggestLossCount = 0;
+
+      var ind;
+      for (ind in winners['loss']) {
+        biggestLossCount++;
+      }
+      
+      for (ind in winners['upset']) {
+        biggestUpsetCount++;
+      }
+
       for (var gameId in winners) {
         let roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
 
@@ -235,9 +286,9 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
         if (gameId === 'loss') {
           payoutRate = Number(payouts['loss']);
         } else if (gameId === 'upset') {
-          payoutRate = Number(payouts['upset']);
+          payoutRate = Number(payouts['upset']) / biggestUpsetCount;
         } else if (roundCode !== 'n/a') {
-          payoutRate = Number(payouts[roundCode]);
+          payoutRate = Number(payouts[roundCode]) / biggestLossCount;
         } else {
           payoutRate = 0;
         }
