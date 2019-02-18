@@ -3,7 +3,7 @@ import './auctionTeam.css';
 import AuctionClock from '../auctionClock/auctionClock';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
-import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_ITEM_SOLD, NOTIF_SIGNIN } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_ITEM_SOLD, NOTIF_SIGNIN, NOTIF_AUCTION_TOTAL_UPDATED } from '../../../services/notification-service';
 
 let authService = new AuthenticationService();
 let ds = new DataService();
@@ -16,20 +16,21 @@ class AuctionTeam extends Component {
     this.state = {
       currentBid: 'Bid: $0',
       currentWinner: 'High Bid: ',
-      myTotal: 0,
+      myBidTotal: 0,
+      myTaxTotal: 0,
       auctionTotal: 0,
       uid: ''
     }
 
     this.userSignedIn = this.userSignedIn.bind(this);
-    this.generatePotInfo = this.generatePotInfo.bind(this);
     this.newAuctionData = this.newAuctionData.bind(this);
-    this.newItemSold = this.newItemSold.bind(this);
+    this.auctionTotalUpdated = this.auctionTotalUpdated.bind(this);
+    this.generatePotInfo = this.generatePotInfo.bind(this);
   }
 
   componentDidMount() {
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
-    ns.addObserver(NOTIF_AUCTION_ITEM_SOLD, this, this.newItemSold);
+    ns.addObserver(NOTIF_AUCTION_TOTAL_UPDATED, this, this.auctionTotalUpdated);
     ns.addObserver(NOTIF_SIGNIN, this, this.userSignedIn);
     
     if (authService.getUser()) {
@@ -37,12 +38,16 @@ class AuctionTeam extends Component {
         uid: authService.getUser().uid
       });
     }
+
+    ds.attachLeagueTotalsListener(this.props.leagueId);
   }
 
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
-    ns.removeObserver(this, NOTIF_AUCTION_ITEM_SOLD);
+    ns.removeObserver(this, NOTIF_AUCTION_TOTAL_UPDATED);
     ns.removeObserver(this, NOTIF_SIGNIN);
+
+    ds.detatchLeagueTotalsListener(this.props.leagueId);
   }
 
   userSignedIn() {
@@ -55,18 +60,6 @@ class AuctionTeam extends Component {
     }
   }
 
-  generatePotInfo = () => { 
-    // fetch auction history from database
-    let myTotal = ds.formatMoney(this.state.myTotal);
-    let auctionTotal = ds.formatMoney(this.state.auctionTotal);
-
-    return (
-      <p>
-        <strong>My Purchases: </strong>({myTotal}) - <strong>Total: </strong>({auctionTotal})
-      </p>
-    );
-  }
-
   newAuctionData(newData) {
     var currentBid = newData['current-item']['current-bid'];
     var currentWinner = newData['current-item']['current-winner'];
@@ -77,30 +70,60 @@ class AuctionTeam extends Component {
     });
   }
 
-  newItemSold(leagueTeams) {
-    var self = this;
+  auctionTotalUpdated(prizePool) {
     if (this.state.uid !== '') {
-      ds.getTotalPrizePoolByLeagueId(this.props.leagueId, this.state.uid).then(prizePool => {
-        var auctionTotal = Number(prizePool['total']);
-        var myTotal = 0;
+      var myBidTotal = 0;
+      var myTaxTotal = 0;
+      var auctionTotal = prizePool['total'];
+      if (prizePool['bids'] && prizePool['bids'][this.state.uid]) {
+        myBidTotal += Number(prizePool['bids'][this.state.uid]);
+      }
 
-        let bids = prizePool['bids'];
-        let tax = prizePool['use-tax'];
+      if (prizePool['use-tax'] && prizePool['use-tax'][this.state.uid]) {
+        myTaxTotal += Number(prizePool['use-tax'][this.state.uid]);
+      }
 
-        if (bids && bids[this.state.uid]) {
-          myTotal += Number(bids[this.state.uid]);
-        }
-
-        if (tax && tax[this.state.uid]) {
-          myTotal += Number(tax[this.state.uid]);
-        }
-
-        self.setState({
-          myTotal: myTotal,
-          auctionTotal: auctionTotal
-        });
+      this.setState({
+        myBidTotal: myBidTotal,
+        myTaxTotal: myTaxTotal,
+        auctionTotal: auctionTotal
       });
     }
+  }
+
+  generatePotInfo = () => { 
+    // fetch auction history from database
+    let myBidTotal = ds.formatMoney(this.state.myBidTotal);
+    let myTaxTotal = ds.formatMoney(this.state.myTaxTotal);
+    let auctionTotal = ds.formatMoney(this.state.auctionTotal);
+
+    if (this.state.myTaxTotal) {
+      return (
+        <div className='auction-totals'>
+          <p>
+            <strong>My Purchases: </strong>{myBidTotal}
+          </p>
+          <p className='text-danger'>
+            <strong>My Taxes: </strong>{myTaxTotal}
+          </p>
+          <p>
+            <strong>Prize Pool: </strong>{auctionTotal}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className='auction-totals'>
+          <p>
+            <strong>My Purchases: </strong>{myBidTotal}
+          </p>
+          <p>
+            <strong>Prize Pool: </strong>{auctionTotal}
+          </p>
+        </div>
+      );
+    }
+    
   }
 
   render() {

@@ -361,10 +361,12 @@ exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/
 
       grandTotal += price;
 
-      if (!updateObj['prize-pool']['bids'][uid]) {
-        updateObj['prize-pool']['bids'][uid] = price;
-      } else {
-        updateObj['prize-pool']['bids'][uid] += price;
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
       }
     }
 

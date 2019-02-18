@@ -3,7 +3,8 @@ import NotificationService, {
   NOTIF_LEAGUE_CREATED, 
   NOTIF_AUCTION_CHANGE, 
   NOTIF_AUCTION_NEW_MESSAGE,
-  NOTIF_AUCTION_ITEM_SOLD 
+  NOTIF_AUCTION_ITEM_SOLD,
+  NOTIF_AUCTION_TOTAL_UPDATED
 } from './notification-service';
 import { database } from './fire';
 
@@ -159,6 +160,18 @@ class DataService {
 
   detatchLeagueBiddingListener = (leagueId) => {
     database.ref('/leagues/' + leagueId + '/teams').off('value');
+  }
+
+  attachLeagueTotalsListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/prize-pool').on('value', function(prizeSnapshot) {
+      ns.postNotification(NOTIF_AUCTION_TOTAL_UPDATED, prizeSnapshot.val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchLeagueTotalsListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/prize-pool').off('value');
   }
 
   getTeamCodes = (leagueId) => {
