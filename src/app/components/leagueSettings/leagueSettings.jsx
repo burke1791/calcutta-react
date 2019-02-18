@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './leagueSettings.css';
 import { Redirect } from 'react-router-dom';
 import Button from '../button/button';
+import PayoutSettingsTable from '../payoutSettingsTable/payoutSettingsTable';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
@@ -22,11 +23,15 @@ class LeagueSettings extends Component {
       unclaimed: false,
       minBid: 1,
       minBuyIn: 0,
-      maxBuyIn: 0
+      maxBuyIn: 0,
+      useTax: 0,
+      taxRate: 0,
+      sportCode: ''
     }
 
     //bind functions
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
+    this.getLeagueSportCode = this.getLeagueSportCode.bind(this);
     this.fetchSettings = this.fetchSettings.bind(this);
     this.onUnclaimedChange = this.onUnclaimedChange.bind(this);
     this.onMinBidChange = this.onMinBidChange.bind(this);
@@ -38,12 +43,14 @@ class LeagueSettings extends Component {
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
     this.saveSettings = this.saveSettings.bind(this);
+    this.generatePayoutSettings = this.generatePayoutSettings.bind(this);
     this.generateSettingsPage = this.generateSettingsPage.bind(this);
   }
 
   componentDidMount() {
     this.getLeagueOwner();
     this.fetchSettings();
+    this.getLeagueSportCode();
   }
 
   getLeagueOwner() {
@@ -51,6 +58,13 @@ class LeagueSettings extends Component {
 
     ds.getLeagueOwner(this.props.leagueId).then(function(leagueOwner) {
       self.setState({owner: leagueOwner});
+    });
+  }
+
+  getLeagueSportCode() {
+    var self = this;
+    ds.getLeagueSportCode(this.props.leagueId).then(sportCode => {
+      self.setState({sportCode: sportCode});
     });
   }
 
@@ -187,6 +201,20 @@ class LeagueSettings extends Component {
     }
   }
 
+  generatePayoutSettings = () => {
+    if (this.state.sportCode === '' || this.state.sportCode === 'custom') {
+      return (
+        <div className='not-supported'>
+          <h5>Custom Leagues Do Not Currently Support Automated Payouts</h5>
+        </div>
+      );
+    } else {
+      return (
+        <PayoutSettingsTable leagueId={this.props.leagueId} sportCode={this.state.sportCode} />
+      );
+    }
+  }
+
   generateSettingsPage = () => {
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
 
@@ -239,7 +267,7 @@ class LeagueSettings extends Component {
             </div>
           </div>
           <div className='row justify-content-center'>
-            <div className='col-6 input-group my-1'>
+            <div className='col-6 my-1'>
               <label><strong>Use Tax</strong></label>
               <div className='input-group'>
                 <div className='input-group-prepend'>
@@ -255,6 +283,9 @@ class LeagueSettings extends Component {
                 <input type='number' className='form-control' value={this.state.taxRate} onChange={this.onTaxRateChange} />
               </div>
             </div>
+          </div>
+          <div className='payout-settings'>
+            {this.generatePayoutSettings()}
           </div>
           <div className='row'>
             <div className='col'>

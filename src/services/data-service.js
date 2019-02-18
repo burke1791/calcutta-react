@@ -138,6 +138,15 @@ class DataService {
     });
   }
 
+  getLeagueSportCode = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/sport').once('value').then(sportCodeSnapshot => {
+        let sportCode = sportCodeSnapshot.val();
+        resolve(sportCode);
+      });
+    });
+  }
+
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
@@ -602,6 +611,19 @@ class DataService {
     });
   }
 
+  fetchPayoutSettings = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/payout-settings').once('value').then(payoutSettingsSnapshot => {
+        let payoutSettings = payoutSettingsSnapshot.val();
+        if (payoutSettings) {
+          resolve(payoutSettings);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
   leaveLeague = (uid, leagueId) => {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/members/' + uid).set(false, function(error) {
@@ -703,6 +725,15 @@ class DataService {
     }
     currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
+  }
+
+  getTournamentStructure = (tournamentId, year) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + tournamentId + '-structure/' + year).once('value').then(structureSnapshot => {
+        let tournamentStructure = structureSnapshot.val();
+        resolve(tournamentStructure);
+      });
+    });
   }
 
   getTourneyTeamsFromTourneyIdAndYear = (tourneyId, year) => {
