@@ -145,7 +145,7 @@ exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-str
   });
 });
 
-exports.updateBTTLeagueTeamsNodesAfterScoreUpdate = functions.database.ref('/btt-structure/{year}/{gameId}/winner').onUpdate((change, context) => {
+exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/btt-structure/{year}/{gameId}/winner').onUpdate((change, context) => {
   const year = context.params.year;
   const gameId = context.params.gameId;
   const winnerId = change.after.val();
@@ -317,4 +317,75 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
   }
   
 
-})
+});
+
+exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/{leagueId}/teams/{teamId}/owner').onUpdate((change, context) => {
+  const leagueId = context.params.leagueId;
+  const teamId = context.params.teamId;
+  const newOwnerId = change.after.val();
+
+  const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
+
+  return Promise.all([teams, settings]).then(data => {
+    let teams = data[0].val();
+    let settings = data[1].val();
+
+    var useTax = false;
+
+    if (settings['use-tax'] > 0) {
+      var noTaxLimit = settings['use-tax'];
+      var taxRate = settings['tax-rate'];
+      useTax = true;
+    }
+
+    let updateObj = {
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {},
+        'use-tax': {}
+      }
+    };
+
+    var grandTotal = 0;
+
+    var teamId;
+    var uid;
+    var price;
+
+    // calculates each user's total bid amount
+    for (teamId in teams) {
+      uid = teams[teamId]['owner'];
+      price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (!updateObj['prize-pool']['bids'][uid]) {
+        updateObj['prize-pool']['bids'][uid] = price;
+      } else {
+        updateObj['prize-pool']['bids'][uid] += price;
+      }
+    }
+
+    // calculates the amount of use tax each user owes
+    if (useTax) {
+      var bidTotal;
+      var useTaxOwed;
+      for (uid in updateObj['prize-pool']['bids']) {
+        bidTotal = updateObj['prize-pool']['bids'][uid];
+        if (bidTotal > noTaxLimit) {
+          useTaxOwed = (bidTotal - noTaxLimit) * taxRate;
+          updateObj['prize-pool']['use-tax'][uid] = useTaxOwed;
+
+          grandTotal += useTaxOwed;
+        }
+      }
+    }
+
+    updateObj['pool-total'] = grandTotal;
+    updateObj['prize-pool']['total'] = grandTotal;
+    
+    return admin.database().ref('/leagues/' + leagueId).update(updateObj);
+  });
+});

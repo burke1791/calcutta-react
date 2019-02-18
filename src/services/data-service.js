@@ -313,6 +313,20 @@ class DataService {
     });
   }
 
+  getTotalPrizePoolByLeagueId(leagueId, uid) {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/prize-pool').once('value').then(prizePoolSnapshot => {
+        if (prizePoolSnapshot.val() === null) {
+          reject();
+        } else {
+          resolve(prizePoolSnapshot.val());
+        }
+      }, function(error) {
+        reject(error);
+      });
+    })
+  }
+
   endAuction(leagueId, reset = false) {
 
     var freshAuction = {
@@ -484,7 +498,9 @@ class DataService {
         'unclaimed': false,
         'minBid': 1,
         'minBuyIn': 0,
-        'maxBuyIn': 0
+        'maxBuyIn': 0,
+        'use-tax': 0,
+        'tax-rate': 0
       },
       // default payout settings
       'payout-settings': {
@@ -498,7 +514,12 @@ class DataService {
       },
       'sport': leagueSportCode,
       'info-node': infoNode,
-      'pool-total': 0
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {}, // object where the keys are each league member's uids and the values are their bid totals
+        'use-tax': {} // same as above, but the values are that member's use tax
+      }
     };
 
     let auction = {
