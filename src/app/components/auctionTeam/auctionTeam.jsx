@@ -23,8 +23,11 @@ class AuctionTeam extends Component {
     // attach listener to auction node in firebase
   }
 
-  generatePotInfo() { 
+  componentWillUnmount() {
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
+  }
+
+  generatePotInfo() { 
     // fetch auction history from database
     
   }

@@ -89,8 +89,6 @@ class AuctionMain extends Component {
   }
 
   render() {
-    console.log('owner: ' + this.state.owner);
-
     return (
       <div className='container'>
         <div className='auction-header'>
@@ -105,7 +103,7 @@ class AuctionMain extends Component {
           </div>
         </div>
         <div className='row justify-content-md-center'>
-          <AuctionTotals />
+          <AuctionTotals leagueId={this.state.leagueId} />
         </div>
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>
