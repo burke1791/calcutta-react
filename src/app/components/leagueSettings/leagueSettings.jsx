@@ -32,6 +32,8 @@ class LeagueSettings extends Component {
     this.onMinBidChange = this.onMinBidChange.bind(this);
     this.onMinBuyInChange = this.onMinBuyInChange.bind(this);
     this.onMaxBuyInChange = this.onMaxBuyInChange.bind(this);
+    this.onUseTaxChange = this.onUseTaxChange.bind(this);
+    this.onTaxRateChange = this.onTaxRateChange.bind(this);
     this.leaveLeague = this.leaveLeague.bind(this);
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
@@ -61,14 +63,18 @@ class LeagueSettings extends Component {
           unclaimed: settings['unclaimed'],
           minBid: settings['minBid'],
           minBuyIn: settings['minBuyIn'],
-          maxBuyIn: settings['maxBuyIn']
+          maxBuyIn: settings['maxBuyIn'],
+          useTax: settings['use-tax'] ? settings['use-tax'] : 0,
+          taxRate: settings['tax-rate'] ? settings['tax-rate'] : 0
         });
       } else {
         self.setState({
           unclaimed: true,
           minBid: 0,
           minBuyIn: 0,
-          maxBuyIn: 0
+          maxBuyIn: 0,
+          useTax: 0,
+          taxRate: 0
         });
       }
     });
@@ -102,6 +108,14 @@ class LeagueSettings extends Component {
     event.preventDefault();
 
     this.setState({unclaimed: event.target.checked});
+  }
+
+  onUseTaxChange(event) {
+    this.setState({useTax: event.target.value});
+  }
+
+  onTaxRateChange(event) {
+    this.setState({taxRate: event.target.value});
   }
 
   leaveLeague = () => {
@@ -157,7 +171,9 @@ class LeagueSettings extends Component {
       'unclaimed': this.state.unclaimed,
       'minBid': Number(this.state.minBid),
       'minBuyIn': Number(this.state.minBuyIn),
-      'maxBuyIn': Number(this.state.maxBuyIn)
+      'maxBuyIn': Number(this.state.maxBuyIn),
+      'use-tax': Number(this.state.useTax),
+      'tax-rate': Number(this.state.taxRate)
     };
 
     if (uid) {
@@ -219,6 +235,24 @@ class LeagueSettings extends Component {
               <div className='form-check'>
                 <input className='form-check-input' type='checkbox' checked={this.state.unclaimed} onChange={this.onUnclaimedChange} />
                 <label className='form-check-label'>Allow Unclaimed Teams?</label>
+              </div>
+            </div>
+          </div>
+          <div className='row justify-content-center'>
+            <div className='col-6 input-group my-1'>
+              <label><strong>Use Tax</strong></label>
+              <div className='input-group'>
+                <div className='input-group-prepend'>
+                  <span className='input-group-text'>$</span>
+                </div>
+                <input type='number' className='form-control' value={this.state.useTax} onChange={this.onUseTaxChange} />
+              </div>
+              <label><strong>Tax Rate</strong></label>
+              <div className='input-group'>
+                <div className='input-group-prepend'>
+                  <span className='input-group-text'>$</span>
+                </div>
+                <input type='number' className='form-control' value={this.state.taxRate} onChange={this.onTaxRateChange} />
               </div>
             </div>
           </div>
