@@ -74,14 +74,19 @@ class AuctionTeam extends Component {
     if (this.state.uid !== '') {
       var myBidTotal = 0;
       var myTaxTotal = 0;
-      var auctionTotal = prizePool['total'];
-      if (prizePool['bids'] && prizePool['bids'][this.state.uid]) {
-        myBidTotal += Number(prizePool['bids'][this.state.uid]);
-      }
+      var auctionTotal = 0;
 
-      if (prizePool['use-tax'] && prizePool['use-tax'][this.state.uid]) {
-        myTaxTotal += Number(prizePool['use-tax'][this.state.uid]);
+      if (prizePool) {
+        auctionTotal = prizePool['total'];
+        if (prizePool['bids'] && prizePool['bids'][this.state.uid]) {
+          myBidTotal += Number(prizePool['bids'][this.state.uid]);
+        }
+
+        if (prizePool['use-tax'] && prizePool['use-tax'][this.state.uid]) {
+          myTaxTotal += Number(prizePool['use-tax'][this.state.uid]);
+        }
       }
+      
 
       this.setState({
         myBidTotal: myBidTotal,

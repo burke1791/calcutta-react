@@ -16,8 +16,13 @@ class MembersRow extends Component {
   }
 
   render() {
+    console.log('uid: ' + this.props.uid);
+    var rowClass = 'd-flex tr-hover';
+    if (this.props.uid === this.props.id) {
+      rowClass = 'd-flex tr-hover table-primary';
+    }
     return (
-      <tr className='d-flex tr-hover' key={this.props.id} onClick={this.handleClick}>
+      <tr className={rowClass} key={this.props.id} onClick={this.handleClick}>
         <td className='col col-md-2'>{this.props.rank}</td>
         <td className='col col-md-4'>{this.props.name}</td>
         <td className='col col-md-2'>{this.props.buyIn}</td>

@@ -60,7 +60,7 @@ class MemberPage extends Component {
             </div>
           </div>
           <div className='container card'>
-            <TeamTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
+            <TeamTable className='table table-striped table-hover table-sm' isAuthenticated={this.state.isAuthenticated} />
           </div>
         </div>
       );

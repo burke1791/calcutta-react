@@ -64,15 +64,15 @@ class Leagues extends Component {
         </div>
         <div className='container card my-4'>
           <h3>In Progress Leagues</h3>
-          <LeagueTable className='table table-striped table-hover' tableSource='in-progress' />
+          <LeagueTable className='table table-striped table-hover table-sm' tableSource='in-progress' />
         </div>
         <div className='container card my-4'>
           <h3>Leagues Pending Setup</h3>
-          <LeagueTable className='table table-striped table-hover' tableSource='pending' />
+          <LeagueTable className='table table-striped table-hover table-sm' tableSource='pending' />
         </div>
         <div className='container card my-4'>
           <h3>Completed Leagues</h3>
-          <LeagueTable className='table table-striped table-hover' tableSource='complete' />
+          <LeagueTable className='table table-striped table-hover table-sm' tableSource='complete' />
         </div>
       </div>
     );

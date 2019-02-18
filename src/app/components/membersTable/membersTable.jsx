@@ -24,7 +24,8 @@ class MembersTable extends Component {
       users: {},
       isAuthenticated: this.props.isAuthenticated,
       usersDownloaded: false,
-      leagueId: this.props.match.params.id
+      leagueId: this.props.match.params.id,
+      uid: ''
     };
 
     // Bind functions
@@ -52,8 +53,11 @@ class MembersTable extends Component {
     ns.removeObserver(this, NOTIF_SIGNOUT);
   }
 
-  userAuthenticated() {
-    this.setState({isAuthenticated: true});
+  userAuthenticated(uid) {
+    this.setState({
+      isAuthenticated: true,
+      uid: uid
+    });
     this.loadUsers();
   }
 
@@ -142,28 +146,11 @@ class MembersTable extends Component {
 
         return (
           // TODO: Create a MemberRow component that has a "rank" column
-          <MembersRow key={mem} id={mem} rank={this.state.members[mem].rank} name={this.state.users[mem]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+          <MembersRow key={mem} id={mem} uid={authService.getUser().uid} rank={this.state.members[mem].rank} name={this.state.users[mem]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
       });
       return (list);
     }
-    /*
-    if (Object.keys(this.state.members).length > 0) {
-      const list = Object.keys(this.state.members).map((member) => {
-        var buyIn = this.formatMoney(this.state.members[member].buyIn);
-        var payout = this.formatMoney(this.state.members[member].payout);
-        var netReturn = this.formatMoney(this.state.members[member].netReturn);
-  
-        var netReturnNegativeClass = this.state.members[member].netReturn < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
-  
-        return (
-          // TODO: Create a MemberRow component that has a "rank" column
-          <MembersRow key={member} id={member} rank={this.state.members[member].rank} name={this.state.users[member]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
-        );
-      });
-      return (list);
-    }
-    */
   }
 
   render() {

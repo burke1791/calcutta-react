@@ -56,7 +56,7 @@ class LeagueHome extends Component {
       return (
         <div className='league-home'>
           <div className='container card'>
-            <MembersTable className='table table-striped table-hover' isAuthenticated={this.state.isAuthenticated} />
+            <MembersTable className='table table-striped table-hover table-sm' isAuthenticated={this.state.isAuthenticated} />
           </div>
         </div>
       );

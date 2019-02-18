@@ -174,7 +174,7 @@ class ResultsTable extends Component {
   render() {
     return (
       <div className='row justify-content-md-center'>
-        <table className='table'>
+        <table className='table table-sm'>
           <thead>
             {this.generateResultsHeader(this.props.resultType)}
           </thead>
