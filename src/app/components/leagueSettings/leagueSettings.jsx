@@ -6,9 +6,11 @@ import PayoutSettingsTable from '../payoutSettingsTable/payoutSettingsTable';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
+import NotificationService, { NOTIF_SAVE_SETTINGS_REQUESTED } from '../../../services/notification-service';
 
 let ds = new DataService();
 let authService = new AuthenticationService();
+let ns = new NotificationService();
 
 class LeagueSettings extends Component {
 
@@ -178,6 +180,8 @@ class LeagueSettings extends Component {
   }
 
   saveSettings = () => {
+    ns.postNotification(NOTIF_SAVE_SETTINGS_REQUESTED, null);
+
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
     var self = this;
 

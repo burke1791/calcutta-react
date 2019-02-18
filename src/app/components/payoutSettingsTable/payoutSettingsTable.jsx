@@ -3,8 +3,10 @@ import './payoutSettingsTable.css';
 import PayoutSettingsRow from '../payoutSettingsRow/payoutSettingsRow';
 
 import DataService from '../../../services/data-service';
+import NotificationService, { NOTIF_SAVE_SETTINGS_REQUESTED } from '../../../services/notification-service';
 
 let ds = new DataService();
+let ns = new NotificationService();
 
 class PayoutSettingsTable extends Component {
   constructor(props) {
@@ -13,10 +15,12 @@ class PayoutSettingsTable extends Component {
     this.state = {
       payoutSettings: {},
       tournamentStructure: {},
-      payoutTotals: {}
+      payoutTotals: {},
+      totalShareValue: 0
     }
 
     // bind functions
+    this.savePayoutSettings = this.savePayoutSettings.bind(this);
     this.countNumGamesInRound = this.countNumGamesInRound.bind(this);
     this.onPayoutChange = this.onPayoutChange.bind(this);
     this.generateTableRows = this.generateTableRows.bind(this);
@@ -24,6 +28,8 @@ class PayoutSettingsTable extends Component {
   }
 
   componentDidMount() {
+    ns.addObserver(NOTIF_SAVE_SETTINGS_REQUESTED, this, this.savePayoutSettings);
+
     var self = this;
     var tournamentId = this.props.sportCode.match(/[a-z]{2,}/g)[0];
     var year = this.props.sportCode.match(/[0-9]{4}/g)[0];
@@ -34,6 +40,7 @@ class PayoutSettingsTable extends Component {
 
     ds.fetchPayoutSettings(this.props.leagueId).then(payoutSettings => {
       let payoutTotals = {};
+      var totalShareValue = 0;
 
       for (var payoutKey in payoutSettings) {
         let roundNum = payoutKey.match(/[0-9]+/g);
@@ -45,14 +52,29 @@ class PayoutSettingsTable extends Component {
           payoutTotals[payoutKey] = payoutSettings[payoutKey];
         }
       }
+
+      for (payoutKey in payoutTotals) {
+        totalShareValue += Number(payoutTotals[payoutKey]);
+      }
       
       self.setState({
         payoutSettings: payoutSettings,
         payoutTotals: payoutTotals,
         tournamentId: tournamentId,
-        year: year
+        year: year,
+        totalShareValue: totalShareValue
       });
     });
+  }
+
+  componentWillUnmount() {
+    ns.removeObserver(this, NOTIF_SAVE_SETTINGS_REQUESTED);
+  }
+
+  savePayoutSettings() {
+    if (this.state.totalShareValue === 1) {
+      ds.savePayoutSettings(this.props.leagueId, this.state.payoutSettings);
+    }
   }
 
   countNumGamesInRound = (roundNum) => {
@@ -68,6 +90,18 @@ class PayoutSettingsTable extends Component {
   }
 
   onPayoutChange(payoutKey, newValue, gameCount) {
+    var totalShareValue = 0;
+
+    for (var key in this.state.payoutTotals) {
+      if (key === payoutKey && (payoutKey === 'loss' || payoutKey === 'upset')) {
+        totalShareValue += Number(newValue);
+      } else if (key === payoutKey) {
+        totalShareValue += Number(newValue) * Number(gameCount);
+      } else {
+        totalShareValue += Number(this.state.payoutTotals[key]);
+      }
+    }
+
     if (payoutKey === 'loss' || payoutKey === 'upset') {
       this.setState(prevState => ({
         payoutSettings: {
@@ -77,7 +111,8 @@ class PayoutSettingsTable extends Component {
         payoutTotals: {
           ...prevState.payoutTotals,
           [payoutKey]: Number(newValue)
-        }
+        },
+        totalShareValue: totalShareValue
       }));
     } else {
       this.setState(prevState => ({
@@ -88,7 +123,8 @@ class PayoutSettingsTable extends Component {
         payoutTotals: {
           ...prevState.payoutTotals,
           [payoutKey]: Number(newValue) * Number(gameCount)
-        }
+        },
+        totalShareValue: totalShareValue
       }));
     }
     
@@ -122,15 +158,9 @@ class PayoutSettingsTable extends Component {
   }
 
   generateTable = () => {
-    var totalShareValue = 0;
-
-    for (var payoutKey in this.state.payoutTotals) {
-      totalShareValue += Number(this.state.payoutTotals[payoutKey]);
-    }
-
     var payoutValidationClass = '';
 
-    if (totalShareValue !== 1) {
+    if (this.state.totalShareValue !== 1) {
       payoutValidationClass = 'table-danger';
     }
     
@@ -153,7 +183,7 @@ class PayoutSettingsTable extends Component {
               <td>Total</td>
               <td></td>
               <td></td>
-              <td>{totalShareValue}</td>
+              <td>{this.state.totalShareValue}</td>
             </tr>
           </tfoot>
         </table>

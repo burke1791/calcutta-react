@@ -714,6 +714,19 @@ class DataService {
     });
   }
 
+  savePayoutSettings = (leagueId, newPayoutSettings) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/payout-settings').update(newPayoutSettings, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   formatMoney = (value) => {
     var currencyString = '';
 
