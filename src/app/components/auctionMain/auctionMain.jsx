@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './auctionMain.css';
 import AuctionTeam from '../auctionTeam/auctionTeam';
 import AuctionBid from '../auctionBid/auctionBid';
+import AuctionTotals from '../auctionTotals/auctionTotals';
 import AuctionItemHistory from '../auctionItemHistory/auctionItemHistory';
 import AuctionAdmin from '../auctionAdmin/auctionAdmin';
 import AuctionChat from '../auctionChat/auctionChat';
@@ -102,6 +103,9 @@ class AuctionMain extends Component {
             <AuctionTeam currentItem={this.state.currentItem} leagueId={this.state.leagueId} /> 
             <AuctionBid leagueId={this.state.leagueId} />
           </div>
+        </div>
+        <div className='row justify-content-md-center'>
+          <AuctionTotals />
         </div>
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>

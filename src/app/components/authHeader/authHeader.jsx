@@ -54,7 +54,6 @@ class AuthHeader extends Component {
     this.props.history.push('/god-mode/');
     // TEMP
     // ds.addSportToDatabase();
-    // Develop God Mode
   }
 
   onChangePasswordClicked() {
