@@ -13,17 +13,23 @@ class TeamTable extends Component {
 
     this.state = {
       teams: {},
-      teamKeys: []
+      teamKeys: [],
+      prizePool: {}
     }
 
     // bind functions
     this.loadTeams = this.loadTeams.bind(this);
     this.teamList = this.teamList.bind(this);
+    this.generateUseTaxRow = this.generateUseTaxRow.bind(this);
   }
 
   componentDidMount() {
     // TODO: add auth checks
     this.loadTeams();
+    var self = this;
+    ds.getTotalPrizePoolByLeagueId(this.props.match.params.id).then(prizePool => {
+      self.setState({prizePool: prizePool});
+    })
   }
 
   componentDidUpdate(prevProps) {
@@ -72,6 +78,27 @@ class TeamTable extends Component {
     }
   }
 
+  generateUseTaxRow = () => {
+    let uid = this.props.match.params.uid;
+
+    if (this.state.prizePool !== {} && this.state.prizePool['use-tax'] !== undefined && this.state.prizePool['use-tax'][uid] !== undefined) {
+      let taxBurdenVal = this.state.prizePool['use-tax'][uid];
+      let taxBurdenString = ds.formatMoney(taxBurdenVal);
+
+      let payout = ds.formatMoney(0);
+
+      let netReturn = ds.formatMoney(-taxBurdenVal);
+
+      var netReturnNegativeClass = 'col col-md-2 text-danger';
+
+      return (
+        <TeamRow key='taxRow' id='taxRow' name='***Tax Burden***' price={taxBurdenString} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
+      );
+    } else {
+      return null;
+    }
+  }
+
   render() {
     return (
       <div className='row justify-content-md-center'>
@@ -86,6 +113,7 @@ class TeamTable extends Component {
           </thead>
           <tbody>
             {this.teamList()}
+            {this.generateUseTaxRow()}
           </tbody>
         </table>
       </div>

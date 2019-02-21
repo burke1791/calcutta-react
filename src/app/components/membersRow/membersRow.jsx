@@ -16,7 +16,6 @@ class MembersRow extends Component {
   }
 
   render() {
-    console.log('uid: ' + this.props.uid);
     var rowClass = 'd-flex tr-hover';
     if (this.props.uid === this.props.id) {
       rowClass = 'd-flex tr-hover table-primary';
