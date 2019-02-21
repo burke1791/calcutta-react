@@ -335,7 +335,7 @@ class DataService {
     });
   }
 
-  getTotalPrizePoolByLeagueId(leagueId, uid) {
+  getTotalPrizePoolByLeagueId(leagueId, uid = '') {
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/prize-pool').once('value').then(prizePoolSnapshot => {
         if (prizePoolSnapshot.val() === null) {
@@ -366,8 +366,10 @@ class DataService {
 
     if (reset) {
       database.ref('/auctions/' + leagueId).set(freshAuction);
+      database.ref('/leagues/' + leagueId + '/auction-status').set(false);
     } else {
       database.ref('/auctions/' + leagueId).update(freshAuction);
+      database.ref('/leagues/' + leagueId + '/auction-status').set(true);
     }
   }
 
@@ -509,6 +511,7 @@ class DataService {
     // TODO: add completion handler
 
     let league = {
+      'auction-status': false,
       'status': 'in-progress',
       'creator': uid,
       'members': {
