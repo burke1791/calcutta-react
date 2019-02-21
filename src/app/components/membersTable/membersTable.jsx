@@ -134,8 +134,13 @@ class MembersTable extends Component {
       } else if (this.state.prizePool.bids[uid] !== undefined) {
         buyIn = this.state.prizePool.bids[uid];
       }
+    } else if (this.state.prizePool.bids !== undefined) {
+      if (this.state.prizePool.bids[uid] !== undefined) {
+        buyIn = this.state.prizePool.bids[uid];
+      }
+    } else {
+      buyIn = this.state.members[uid].buyIn;
     }
-    
     return buyIn;
   }
 
