@@ -25,14 +25,15 @@ class MembersTable extends Component {
       isAuthenticated: this.props.isAuthenticated,
       usersDownloaded: false,
       leagueId: this.props.match.params.id,
-      uid: ''
+      uid: '',
+      prizePool: {}
     };
 
     // Bind functions
     this.loadMembers = this.loadMembers.bind(this);
+    this.calculateBuyIn = this.calculateBuyIn.bind(this);
     this.membersList = this.membersList.bind(this);
     this.clearTable = this.clearTable.bind(this);
-    this.formatMoney = this.formatMoney.bind(this);
     this.loadUsers = this.loadUsers.bind(this);
     this.userAuthenticated = this.userAuthenticated.bind(this);
   }
@@ -45,6 +46,10 @@ class MembersTable extends Component {
     // won't fire if not authenticated
     if (this.state.isAuthenticated) {
       this.loadUsers();
+      var self = this;
+      ds.getTotalPrizePoolByLeagueId(this.props.match.params.id).then(prizePool => {
+        self.setState({prizePool: prizePool});
+      });
     }
   }
 
@@ -120,27 +125,33 @@ class MembersTable extends Component {
     this.setState({members: []});
   }
 
-  formatMoney = (value) => {
-    var currencyString = '';
-
-    var s = '';
-    var sym = '$';
+  calculateBuyIn = (uid) => {
+    var buyIn = 0;
     
-    if (value < 0) {
-      s = '-';
+    if (this.state.prizePool['use-tax'] !== undefined) {
+      if (this.state.prizePool.bids[uid] !== undefined && this.state.prizePool['use-tax'][uid] !== undefined) {
+        buyIn = this.state.prizePool.bids[uid] + this.state.prizePool['use-tax'][uid];
+      } else if (this.state.prizePool.bids[uid] !== undefined) {
+        buyIn = this.state.prizePool.bids[uid];
+      }
     }
-    currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
-    return (currencyString);
+    
+    return buyIn;
   }
 
   membersList = () => {
     // TODO: write logic to display them in order of rank
     var numMembers = this.state.memberRanks.length;
+    var useTaxFlag = this.state.prizePool['use-tax'] !== undefined ? true : false;
     if (numMembers > 0) {
       const list = this.state.memberRanks.map((mem, index) => {
-        var buyIn = this.formatMoney(this.state.members[mem].buyIn);
-        var payout = this.formatMoney(this.state.members[mem].payout);
-        var netReturn = this.formatMoney(this.state.members[mem].netReturn);
+        var buyInVal = this.calculateBuyIn(mem);
+        var payoutVal = this.state.members[mem].payout;
+        var netReturnVal = payoutVal - buyInVal;
+
+        var buyIn = ds.formatMoney(buyInVal);
+        var payout = ds.formatMoney(payoutVal);
+        var netReturn = ds.formatMoney(netReturnVal);
 
         var netReturnNegativeClass = this.state.members[mem].netReturn < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
 

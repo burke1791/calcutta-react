@@ -128,11 +128,12 @@ class LeagueHome extends Component {
         data: [{
           type: 'pie',
           startAngle: 0,
-          toolTipContent: '<b>{label}</b>: ${y}',
+          toolTipContent: '<b>{label}</b>: {y}',
           showInLegend: 'true',
           legendText: '{label}',
           indexLabelFontSize: 16,
-          indexLabel: '{label} - ${y}',
+          indexLabel: '{label} - {y}',
+          yValueFormatString: '$###,###.00',
           dataPoints: []
         }]
       };
@@ -142,10 +143,19 @@ class LeagueHome extends Component {
         if (this.state.members[uid]) {
           username = this.state.users[uid];
           
-          if (this.state.prizePool.bids[uid] !== undefined) {
+          if (this.state.prizePool['use-tax'] !== undefined) {
+            if (this.state.prizePool.bids[uid] !== undefined && this.state.prizePool['use-tax'][uid] !== undefined) {
+              var totalBid = this.state.prizePool.bids[uid] + this.state.prizePool['use-tax'][uid];
+              let dataPoint = {y: totalBid, label: username};
+              options.data[0].dataPoints.push(dataPoint);
+            } else if (this.state.prizePool.bids[uid] !== undefined) {
+              var totalBid = this.state.prizePool.bids[uid];
+              let dataPoint = {y: totalBid, label: username};
+              options.data[0].dataPoints.push(dataPoint);
+            }
+          } else if (this.state.prizePool.bids[uid] !== undefined) {
             var totalBid = this.state.prizePool.bids[uid];
             let dataPoint = {y: totalBid, label: username};
-
             options.data[0].dataPoints.push(dataPoint);
           }
         }
