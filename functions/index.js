@@ -50,17 +50,45 @@ exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year
       
       if (child.val().team1.seed === seedId) {
         const childRef = admin.database().ref('/btt-structure/' + year + '/' + child.key + '/team1');
-        return childRef.update(seedUpdate);
+        childRef.update(seedUpdate);
       }
 
       if (child.val().team2.seed === seedId) {
         const childRef = admin.database().ref('/btt-structure/' + year + '/' + child.key + '/team2');
-        return childRef.update(seedUpdate);
+        childRef.update(seedUpdate);
       }
-      return null;
     });
-    return null;
+    return;
   });
+});
+
+exports.updateBTTSeedsInLeaguesNode = functions.database.ref('/btt-seeds/{year}/{seedId}').onUpdate((change, context) => {
+  const oldTeamId = change.before.val();
+  const newTeamId = change.after.val();
+
+  const year = context.params.year;
+  const seedId = context.params.seedId;
+  const seedValue = Number(seedId.match(/[0-9]+/g)[0]);
+  
+  const bttLeagues = admin.database().ref('/leagues-btt/' + year).once('value');
+
+  if (newTeamId !== 0) {
+    return bttLeagues.then(bttLeaguesSnapshot => {
+      bttLeaguesSnapshot.forEach(child => {
+        var leagueId = child.key;
+        var isActive = child.val();
+  
+        console.log(leagueId);
+        console.log(isActive);
+  
+        if (isActive) {
+          let seedValueUpdate = {'seed-value': seedValue};
+          admin.database().ref('leagues/' + leagueId + '/teams/' + newTeamId).update(seedValueUpdate);
+        }
+      });
+      return;
+    });
+  }
 });
 
 exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
@@ -243,11 +271,11 @@ exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/b
         let leagueStatus = league.val();
 
         if (leagueStatus) {
-          return admin.database().ref('/leagues/' + leagueId + '/game-winners').set(winners);
+          admin.database().ref('/leagues/' + leagueId + '/game-winners').set(winners);
         }
       });
 
-      return null;
+      return;
     });
   }
 });
