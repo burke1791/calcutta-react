@@ -17,15 +17,21 @@ class LoginForm extends Component {
       signupClassName: 'form-group d-none',
       submitBtnText: 'Log In',
       newAccountLinkText: 'Don\'t have an account? Sign Up Here...',
+      forgotPasswordText: 'Forgot Password?',
       usernameVal: '',
       emailVal: '',
       pass1Val: '',
-      pass2Val: ''
+      pass2Val: '',
+      signInRejectedFlag: false,
+      signInErrorCode: '',
+      signInErrorMessage: ''
     };
 
     //Bind functions
     this.authTypeToggle = this.authTypeToggle.bind(this);
+    this.forgotPassword = this.forgotPassword.bind(this);
     this.authSubmission = this.authSubmission.bind(this);
+    this.generateErrorMessage = this.generateErrorMessage.bind(this);
     this.onUsernameChange = this.onUsernameChange.bind(this);
     this.onEmailChange = this.onEmailChange.bind(this);
     this.onPass1Change = this.onPass1Change.bind(this);
@@ -58,19 +64,58 @@ class LoginForm extends Component {
     }
   }
 
+  forgotPassword() {
+
+  }
+
   authSubmission(event) {
     // Check for valid inputs
-    
     event.preventDefault();
-
+    var self = this;
     if (this.state.createUser) {
       // Utilize a promise later on to identify a successful account creation
       var success = authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
     } else {
-      authService.signInUser(this.state.emailVal, this.state.pass1Val);
+      authService.signInUser(this.state.emailVal, this.state.pass1Val).then(() => {
+        // sign in success - dismiss modal
+        this.props.submitHandler();
+      }).catch((error) => {
+        self.setState({
+          signInRejectedFlag: true,
+          signInErrorCode: error.code,
+          signInErrorMessage: error.message
+        });
+        console.log('rejected sign in');
+      });
     }
     
-    this.props.submitHandler();
+    // this.props.submitHandler();
+  }
+
+  generateErrorMessage = () => {
+    if (this.state.signInRejectedFlag) {
+      if (this.state.signInErrorCode === 'auth/wrong-password') {
+        return (
+          <div className='sign-in-error'>
+            <p className='text-danger'>Password Incorrect</p>
+          </div>
+        );
+      } else if (this.state.signInErrorCode === 'auth/user-not-found') {
+        return (
+          <div className='sign-in-error'>
+            <p className='text-danger'>Email Address Not Found</p>
+          </div>
+        );
+      } else if (this.state.signInErrorCode === 'auth/invalid-email') {
+        return (
+          <div className='sign-in-error'>
+            <p className='text-danger'>Invalid Email</p>
+          </div>
+        );
+      }
+    } else {
+      return null;
+    }
   }
 
   onUsernameChange(event) {
@@ -91,9 +136,13 @@ class LoginForm extends Component {
   
   render() {
     // TODO: refactor to have the create/login differences returned by a function
+    if (this.state.signInRejectedFlag) {
+      
+    }
     return (
       <div className='login-form'>
         <form>
+          {this.generateErrorMessage()}
           <div className={this.state.signupClassName}>
             <label><strong>Username</strong></label>
             <input type='text' className='form-control' value={this.state.usernameVal} onChange={this.onUsernameChange} placeholder='Username' />
@@ -119,6 +168,11 @@ class LoginForm extends Component {
             <div className='row'>
               <div className='col-12'>
                 <Button btnType='button' btnClass='btn btn-link' onClick={this.authTypeToggle} btnValue={this.state.newAccountLinkText} />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col-12'>
+                <Button btnType='button' btnClass='btn btn-link' onClick={this.forgotPassword} btnValue={this.state.forgotPasswordText} />
               </div>
             </div>
           </div>

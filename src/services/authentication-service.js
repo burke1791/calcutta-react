@@ -33,14 +33,21 @@ class AuthenticationService {
     });
   }
 
-  signInUser(email, password) {
-    auth.signInWithEmailAndPassword(email, password).then(function(user) {
-      ns.postNotification(NOTIF_SIGNIN, user.user.uid);
-    }, function(error) {
-      // var errorCode = error.code;
-      var errorMessage = error.message;
+  signInUser = (email, password) => {
+    return new Promise((resolve, reject) => {
+      auth.signInWithEmailAndPassword(email, password).then(function(user) {
+        ns.postNotification(NOTIF_SIGNIN, user.user.uid);
+        resolve();
+      }, function(error) {
+        // var errorCode = error.code;
+        var errorMessage = error.message;
+        var errorCode = error.code;
+  
+        console.log('sign in error: ' + errorMessage);
+        console.log('sign in error code: ' + errorCode);
 
-      console.log('sign in error: ' + errorMessage);
+        reject(error);
+      });
     })
   }
 
@@ -63,6 +70,19 @@ class AuthenticationService {
     // need to check reauthentication
     //auth.currentUser.reauthenticateWithCredential()
     auth.currentUser.updatePassword(newPassword);
+  }
+
+  sendPasswordResetEmail() {
+    let email = auth.currentUser.email;
+
+    if (email) {
+      auth.sendPasswordResetEmail(email).then(() => {
+        // email send
+      }).catch(function(error) {
+        console.log('error sending password reset email');
+        console.log(error);
+      });
+    }
   }
 
   addAuthListener(thisApp) {
