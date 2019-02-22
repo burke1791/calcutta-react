@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import './leagueSettings.css';
 import { Redirect } from 'react-router-dom';
 import Button from '../button/button';
+import PayoutSettingsTable from '../payoutSettingsTable/payoutSettingsTable';
 
 import DataService from '../../../services/data-service';
 import AuthenticationService from '../../../services/authentication-service';
+import NotificationService, { NOTIF_SAVE_SETTINGS_REQUESTED } from '../../../services/notification-service';
 
 let ds = new DataService();
 let authService = new AuthenticationService();
+let ns = new NotificationService();
 
 class LeagueSettings extends Component {
 
@@ -22,26 +25,34 @@ class LeagueSettings extends Component {
       unclaimed: false,
       minBid: 1,
       minBuyIn: 0,
-      maxBuyIn: 0
+      maxBuyIn: 0,
+      useTax: 0,
+      taxRate: 0,
+      sportCode: ''
     }
 
     //bind functions
     this.getLeagueOwner = this.getLeagueOwner.bind(this);
+    this.getLeagueSportCode = this.getLeagueSportCode.bind(this);
     this.fetchSettings = this.fetchSettings.bind(this);
     this.onUnclaimedChange = this.onUnclaimedChange.bind(this);
     this.onMinBidChange = this.onMinBidChange.bind(this);
     this.onMinBuyInChange = this.onMinBuyInChange.bind(this);
     this.onMaxBuyInChange = this.onMaxBuyInChange.bind(this);
+    this.onUseTaxChange = this.onUseTaxChange.bind(this);
+    this.onTaxRateChange = this.onTaxRateChange.bind(this);
     this.leaveLeague = this.leaveLeague.bind(this);
     this.resetAuction = this.resetAuction.bind(this);
     this.deleteLeague = this.deleteLeague.bind(this);
     this.saveSettings = this.saveSettings.bind(this);
+    this.generatePayoutSettings = this.generatePayoutSettings.bind(this);
     this.generateSettingsPage = this.generateSettingsPage.bind(this);
   }
 
   componentDidMount() {
     this.getLeagueOwner();
     this.fetchSettings();
+    this.getLeagueSportCode();
   }
 
   getLeagueOwner() {
@@ -49,6 +60,13 @@ class LeagueSettings extends Component {
 
     ds.getLeagueOwner(this.props.leagueId).then(function(leagueOwner) {
       self.setState({owner: leagueOwner});
+    });
+  }
+
+  getLeagueSportCode() {
+    var self = this;
+    ds.getLeagueSportCode(this.props.leagueId).then(sportCode => {
+      self.setState({sportCode: sportCode});
     });
   }
 
@@ -61,14 +79,18 @@ class LeagueSettings extends Component {
           unclaimed: settings['unclaimed'],
           minBid: settings['minBid'],
           minBuyIn: settings['minBuyIn'],
-          maxBuyIn: settings['maxBuyIn']
+          maxBuyIn: settings['maxBuyIn'],
+          useTax: settings['use-tax'] ? settings['use-tax'] : 0,
+          taxRate: settings['tax-rate'] ? settings['tax-rate'] : 0
         });
       } else {
         self.setState({
           unclaimed: true,
           minBid: 0,
           minBuyIn: 0,
-          maxBuyIn: 0
+          maxBuyIn: 0,
+          useTax: 0,
+          taxRate: 0
         });
       }
     });
@@ -102,6 +124,14 @@ class LeagueSettings extends Component {
     event.preventDefault();
 
     this.setState({unclaimed: event.target.checked});
+  }
+
+  onUseTaxChange(event) {
+    this.setState({useTax: event.target.value});
+  }
+
+  onTaxRateChange(event) {
+    this.setState({taxRate: event.target.value});
   }
 
   leaveLeague = () => {
@@ -150,6 +180,8 @@ class LeagueSettings extends Component {
   }
 
   saveSettings = () => {
+    ns.postNotification(NOTIF_SAVE_SETTINGS_REQUESTED, null);
+
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
     var self = this;
 
@@ -157,7 +189,9 @@ class LeagueSettings extends Component {
       'unclaimed': this.state.unclaimed,
       'minBid': Number(this.state.minBid),
       'minBuyIn': Number(this.state.minBuyIn),
-      'maxBuyIn': Number(this.state.maxBuyIn)
+      'maxBuyIn': Number(this.state.maxBuyIn),
+      'use-tax': Number(this.state.useTax),
+      'tax-rate': Number(this.state.taxRate)
     };
 
     if (uid) {
@@ -168,6 +202,20 @@ class LeagueSettings extends Component {
       });
     } else {
       alert('Could not save settings please try again');
+    }
+  }
+
+  generatePayoutSettings = () => {
+    if (this.state.sportCode === '' || this.state.sportCode === 'custom') {
+      return (
+        <div className='not-supported'>
+          <h5>Custom Leagues Do Not Currently Support Automated Payouts</h5>
+        </div>
+      );
+    } else {
+      return (
+        <PayoutSettingsTable leagueId={this.props.leagueId} sportCode={this.state.sportCode} />
+      );
     }
   }
 
@@ -221,6 +269,27 @@ class LeagueSettings extends Component {
                 <label className='form-check-label'>Allow Unclaimed Teams?</label>
               </div>
             </div>
+          </div>
+          <div className='row justify-content-center'>
+            <div className='col-6 my-1'>
+              <label><strong>Use Tax</strong></label>
+              <div className='input-group'>
+                <div className='input-group-prepend'>
+                  <span className='input-group-text'>$</span>
+                </div>
+                <input type='number' className='form-control' value={this.state.useTax} onChange={this.onUseTaxChange} />
+              </div>
+              <label><strong>Tax Rate</strong></label>
+              <div className='input-group'>
+                <div className='input-group-prepend'>
+                  <span className='input-group-text'>$</span>
+                </div>
+                <input type='number' className='form-control' value={this.state.taxRate} onChange={this.onTaxRateChange} />
+              </div>
+            </div>
+          </div>
+          <div className='payout-settings'>
+            {this.generatePayoutSettings()}
           </div>
           <div className='row'>
             <div className='col'>

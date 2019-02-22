@@ -15,6 +15,10 @@ class ResultsTable extends Component {
     this.state = {
       teams: {},
       teamKeys: [],
+      teamNames: {},
+      teamNamesDownloaded: false,
+      seeds: {},
+      seedsDownloaded: false,
       participants: [],
       users: {},
       usersDownloaded: false
@@ -23,6 +27,8 @@ class ResultsTable extends Component {
     // bind functions
     this.fetchUsers = this.fetchUsers.bind(this);
     this.fetchParticipants = this.fetchParticipants.bind(this);
+    this.fetchTeamNames = this.fetchTeamNames.bind(this);
+    this.fetchSeedValues = this.fetchSeedValues.bind(this);
     this.newItemSold = this.newItemSold.bind(this);
     this.generateResultsRows = this.generateResultsRows.bind(this);
   }
@@ -69,6 +75,42 @@ class ResultsTable extends Component {
     });
   }
 
+  fetchTeamNames() {
+    // Potential suggestion is to add the team name to firebase the first time they are downloaded for any user, then subsequent users would have a shorter load time...
+    if (this.props.resultType === 'team' && this.state.teamKeys.length) {
+      var self = this;
+      let teamIds = this.state.teamKeys;
+      ds.getDataSnapshot('/leagues/' + this.props.leagueId + '/sport').then(sportCode => {
+        ds.getAllTeamNamesInLeagueById(teamIds, sportCode.val()).then(teamNames => {
+          self.setState(prevState => ({
+            teamNames: teamNames,
+            teamNamesDownloaded: true
+          }));
+        });
+      });
+    }
+  }
+
+  fetchSeedValues() {
+    var self = this;
+    if (this.props.resultType === 'team' && this.state.teamKeys.length && !this.state.seedsDownloaded) {
+      ds.getDataSnapshot('/leagues/' + this.props.leagueId + '/sport').then(sportCodeSnapshot => {
+        let sportCode = sportCodeSnapshot.val();
+        let tournamentId = sportCode.match(/[a-z]{2,}/g) !== null ? sportCode.match(/[a-z]{2,}/g)[0] : false;
+        let year = sportCode.match(/[0-9]{4,}/g) !== null ? sportCode.match(/[0-9]{4,}/g)[0] : false;
+        
+        if (tournamentId && year) {
+          ds.getTournamentSeedsByTournamentIdAndYear(tournamentId, year).then(seedsObj => {
+            self.setState({
+              seeds: seedsObj,
+              seedsDownloaded: true
+            });
+          });
+        }
+      });
+    }
+  }
+
   newItemSold(newData) {
     if (newData !== null) {
       var teams = newData;
@@ -77,7 +119,7 @@ class ResultsTable extends Component {
       this.setState({
         teams: teams,
         teamKeys: keys
-      });
+      }, this.fetchSeedValues());
     }
   }
 
@@ -103,6 +145,7 @@ class ResultsTable extends Component {
 
   generateResultsRows = (resultType) => {
     var numTeams = this.state.teamKeys.length;
+    console.log(this.state.seeds);
     if (resultType === 'team') {
       if (numTeams > 0) {
         const list = this.state.teamKeys.map((key, index) => {
@@ -115,7 +158,23 @@ class ResultsTable extends Component {
             var winner = this.state.users[uid] !== null ? this.state.users[uid] : ' '
           }
           
-          var teamName = this.state.teams[key]['name'];
+          var teamName;
+          var seedVal = 0;
+          if (this.state.seeds !== undefined) {
+            for (var seedId in this.state.seeds) {
+              if (this.state.seeds[seedId] === key) {
+                seedVal = Number(seedId.match(/[0-9]+/g)[0]);
+              }
+            }
+            if (seedVal !== 0) {
+              teamName = '(' + seedVal + ') ' + this.state.teams[key]['name'];
+            } else {
+              teamName = this.state.teams[key]['name'];
+            }
+          } else {
+            teamName = this.state.teams[key]['name'];
+          }
+
           var sellingPrice = this.state.teams[key]['price'] > 0 ? '$ ' + this.state.teams[key]['price'] : ' ';
 
           var colored = sellingPrice !== ' ' ? true : false;
@@ -154,7 +213,7 @@ class ResultsTable extends Component {
   render() {
     return (
       <div className='row justify-content-md-center'>
-        <table className='table'>
+        <table className='table table-sm'>
           <thead>
             {this.generateResultsHeader(this.props.resultType)}
           </thead>

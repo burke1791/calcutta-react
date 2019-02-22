@@ -16,7 +16,7 @@ class UpdateScoresRow extends Component {
       updateRequested: false,
       updateSucceeded: false,
       firstTeamScore: this.props.game.score.team1,
-      secondTeamScore: this.props.game.score.team1,
+      secondTeamScore: this.props.game.score.team2,
       numOT: this.props.game.score['num-ot']
     }
 
@@ -70,15 +70,10 @@ class UpdateScoresRow extends Component {
     if (!firstTeamScoreChanged && !secondTeamScoreChanged && !numOTChanged) {
       return null;
     } else {
-      if (firstTeamScoreChanged) {
-        newScoreObj.score.team1 = this.state.firstTeamScore;
-      }
-      if (secondTeamScoreChanged) {
-        newScoreObj.score.team2 = this.state.secondTeamScore;
-      }
-      if (numOTChanged) {
-        newScoreObj.score['num-ot'] = this.state.numOT;
-      }
+      newScoreObj.score.team1 = this.state.firstTeamScore;
+      newScoreObj.score.team2 = this.state.secondTeamScore;
+      newScoreObj.score['num-ot'] = this.state.numOT;
+
       return newScoreObj;
     }
   }
@@ -91,7 +86,6 @@ class UpdateScoresRow extends Component {
     });
 
     var self = this;
-
     var newScoreObj = this.generateNewScoreObj();
 
     if (newScoreObj !== null) {
@@ -102,7 +96,6 @@ class UpdateScoresRow extends Component {
         });
       });
     }
-    
   }
 
   massUpdateRequested() {
@@ -112,9 +105,10 @@ class UpdateScoresRow extends Component {
   render() {
     // props: gameId, game
 
-    var gameNum = Number(this.props.gameId.match(/[0-9]{1,}/g));
-    var firstTeam = this.props.game.team1.name === '' ? 'TBD' : this.props.game.team1.name;
-    var secondTeam = this.props.game.team2.name === '' ? 'TBD' : this.props.game.team2.name;
+    // var gameNum = Number(this.props.gameId.match(/[0-9]{1,}/g));
+    var gameNum = this.props.gameNum;
+    var firstTeam = this.props.game.team1.name === '' ? 'TBD' : '(' + this.props.game.team1['seed-value'] + ') ' + this.props.game.team1.name;
+    var secondTeam = this.props.game.team2.name === '' ? 'TBD' : '(' + this.props.game.team2['seed-value'] + ') ' + this.props.game.team2.name;
     var firstTeamScore = this.props.game.score.team1;
     var secondTeamScore = this.props.game.score.team2;
     var numOT = this.props.game.score['num-ot'];

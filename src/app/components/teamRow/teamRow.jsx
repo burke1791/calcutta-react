@@ -18,9 +18,15 @@ class TeamRow extends Component {
   }
 
   render() { 
+    let rowClass;
+    if (this.props.id === 'taxRow') {
+      rowClass = 'd-flex tr-hover table-secondary';
+    } else {
+      rowClass = 'd-flex tr-hover';
+    }
 
     return (
-      <tr className='d-flex tr-hover' key={this.props.id} onClick={this.handleClick}>
+      <tr className={rowClass} key={this.props.id} onClick={this.handleClick}>
         <td className='col col-md-6'>{this.props.name}</td>
         <td className='col col-md-2'>{this.props.price}</td>
         <td className='col col-md-2'>{this.props.payout}</td>

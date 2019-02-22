@@ -72,6 +72,8 @@ class AuctionMain extends Component {
   }
 
   generateAuctionHeader = () => {
+    // TODO: Add auth observer and use a state variable for the uid
+    // pass uid variable to sub components
     var uid = authService.getUser() != null ? authService.getUser().uid : null;
 
     if (uid != null && uid === this.state.owner) {
@@ -88,8 +90,6 @@ class AuctionMain extends Component {
   }
 
   render() {
-    console.log('owner: ' + this.state.owner);
-
     return (
       <div className='container'>
         <div className='auction-header'>

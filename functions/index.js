@@ -9,25 +9,6 @@ admin.initializeApp();
 //  response.send("Hello from Firebase!");
 // });
 
-/*
-exports.testFunction = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
-  const original = snapshot.val();
-  var sport = original['sport'];
-  console.log('New League Sport Code: ' + sport);
-
-  var newSeed = {
-    's-09': {
-      'name': 'test function',
-      'owner': 'nobody',
-      'price': 0,
-      'return': 0
-    }
-  };
-
-  return null;
-});
-*/
-
 exports.updateBTTTeamNamesInStructureNode = functions.database.ref('/btt-structure/{year}/{gameId}/{team}/id').onUpdate((change, context) => {
   const oldTeamId = change.before.val();
   const newTeamId = change.after.val();
@@ -60,10 +41,11 @@ exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year
 
   const year = context.params.year;
   const seedId = context.params.seedId;
+  const seedValue = Number(seedId.match(/[0-9]+/g)[0]);
   const btt_structureRef = admin.database().ref('/btt-structure/' + year);
 
   return btt_structureRef.once('value').then(snapshot => {
-    const seedUpdate = {"id": newTeamId};
+    const seedUpdate = {"id": newTeamId, "seed-value": seedValue};
     snapshot.forEach(child => {
       
       if (child.val().team1.seed === seedId) {
@@ -78,5 +60,334 @@ exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year
       return null;
     });
     return null;
+  });
+});
+
+exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
+  const pushId = context.params.pushId;
+  const sport = snapshot.child('sport').val();
+  const infoNode = snapshot.child('info-node').val();
+  const teams = snapshot.child('teams');
+
+  if (sport !== 'custom') {
+    teams.forEach(child => {
+      const teamId = child.key;
+  
+      return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+        var teamNameUpdate = {'name': teamName.val()};
+  
+        const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
+  
+        return newLeagueTeamPath.update(teamNameUpdate);
+      });
+    });
+  }
+});
+
+exports.updateBTTBracketAfterFinalScoreChange = functions.database.ref('/btt-structure/{year}/{gameId}/score').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+
+  const team1Score = Number(change.after.child('team1').val());
+  const team2Score = Number(change.after.child('team2').val());
+
+  let gamesObj;
+  let gameObj;
+  let nextGameId;
+  let winner;
+
+  return admin.database().ref('/btt-structure/' + year).once('value').then(games => {
+    gamesObj = games.val();
+    gameObj = games.child(gameId).val();
+    dayNum = games.child(gameId).child('day').val();
+
+    let team1Id = gameObj['team1']['id'];
+    let team2Id = gameObj['team2']['id'];
+
+    nextGameId = gameObj['next-round'];
+
+    const updateRef = admin.database().ref('/btt-structure/' + year + '/' + gameId);
+
+    if (team1Score > team2Score) {
+      winner = team1Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else if (team2Score > team1Score) {
+      winner = team2Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else {
+      return null
+    }
+  }).then(() => {
+    let winnerSeedVal;
+    if (winner === gamesObj[gameId]['team1']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team1']['seed-value'];
+    } else if (winner === gamesObj[gameId]['team2']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team2']['seed-value'];
+    }
+
+    if (nextGameId !== 'n/a') {
+      if (gamesObj[nextGameId]['team1']['id'] === 0) {
+        var team1Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team1UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team1');
+        return team1UpdateRef.update(team1Update);
+      } else if (gamesObj[nextGameId]['team2']['id'] === 0) {
+        var team2Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team2UpdateRef = admin.database().ref('/btt-structure/' + year + '/' + nextGameId + '/team2');
+        return team2UpdateRef.update(team2Update);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  });
+});
+
+exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/btt-structure/{year}/{gameId}/winner').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+  const winnerId = change.after.val();
+
+  const allLeaguesRef = admin.database().ref('/leagues/');
+
+  const currentBracket = admin.database().ref('/btt-structure/' + year).once('value');
+  const bttLeagues = admin.database().ref('/leagues-btt/' + year).once('value');
+
+  if (winnerId !== 'n/a') {
+    return Promise.all([currentBracket, bttLeagues]).then(data => {
+      let winners = {'tournament-code': 'btt'};
+
+      // TODO: Add ability to determine biggest loss and largest upset
+      var biggestLossGameId = [];
+      var biggestLossTeamId = [];
+      var pointDifferential = 0;
+      var prevPointDifferential = 0;
+
+      var biggestUpsetGameId = [];
+      var biggestUpsetTeamId = [];
+      var upsetDifferential = 0;
+      var prevUpsetDifferential = 0;
+
+      data[0].forEach(game => {
+        let gameObj = game.val();
+
+        let team1Score = Number(gameObj['score']['team1']);
+        let team2Score = Number(gameObj['score']['team2']);
+
+        let team1SeedVal = Number(gameObj['team1']['seed-value']);
+        let team2SeedVal = Number(gameObj['team2']['seed-value']);
+
+        let team1Id = gameObj['team1']['id'];
+        let team2Id = gameObj['team2']['id'];
+
+        if (gameObj['winner'] !== 'n/a') {
+          winners[game.key] = gameObj['winner'];
+
+          // find the game with the largest point differential
+          pointDifferential = Math.abs(team1Score - team2Score);
+          if (pointDifferential > prevPointDifferential) {
+            biggestLossGameId = [game.key];
+            if (team1Score < team2Score) {
+              biggestLossTeamId = [gameObj['team1']['id']];
+            } else {
+              biggestLossTeamId = [gameObj['team2']['id']];
+            }
+            prevPointDifferential = pointDifferential;
+          } else if (pointDifferential === prevPointDifferential) {
+            biggestLossGameId.push(game.key);
+            if (team1Score < team2Score) {
+              biggestLossTeamId.push(gameObj['team1']['id']);
+            } else {
+              biggestLossTeamId.push(gameObj['team2']['id']);
+            }
+          }
+
+          var winnerKey;
+          // find the game with the biggest upset
+          if (gameObj['winner'] === team1Id) {
+            winnerKey = 'team1';
+            // check if game was an upset
+            if (team1SeedVal - team2SeedVal > 0) {
+              upsetDifferential = team1SeedVal - team2SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          } else if (gameObj['winner'] === team2Id) {
+            winnerKey = 'team2';
+            // check if game was an upset
+            if (team2SeedVal - team1SeedVal > 0) {
+              upsetDifferential = team2SeedVal - team1SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          }
+
+          if (upsetDifferential > prevUpsetDifferential && upsetDifferential > 0) {
+            prevUpsetDifferential = upsetDifferential;
+            biggestUpsetGameId = [game.key];
+            biggestUpsetTeamId = [gameObj['winner']];
+          } else if (upsetDifferential === prevUpsetDifferential && upsetDifferential > 0) {
+            biggestUpsetGameId.push(game.key);
+            biggestUpsetTeamId.push(gameObj['winner']);
+          }
+        }
+      });
+
+      winners['loss'] = biggestLossTeamId;
+      winners['upset'] = biggestUpsetTeamId;
+
+      data[1].forEach(league => {
+        let leagueId = league.key;
+        let leagueStatus = league.val();
+
+        if (leagueStatus) {
+          return admin.database().ref('/leagues/' + leagueId + '/game-winners').set(winners);
+        }
+      });
+
+      return null;
+    });
+  }
+});
+
+exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/game-winners').onUpdate((change, context) => {
+  const leagueId = context.params.leagueId;
+  const winners = change.after.val();
+
+  if (winners['tournament-code'] === 'btt') {
+    const payoutSettings = admin.database().ref('/leagues/' + leagueId + '/payout-settings').once('value');
+    const poolTotal = admin.database().ref('/leagues/' + leagueId + '/pool-total').once('value');
+    const teamsNode = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+
+    return Promise.all([payoutSettings, poolTotal, teamsNode]).then(data => {
+      let payouts = data[0].val();
+      let total = data[1].val();
+      let teams = data[2].val();
+      let teamPayouts = {};
+
+      var biggestUpsetCount = 0;
+      var biggestLossCount = 0;
+
+      var ind;
+      for (ind in winners['loss']) {
+        biggestLossCount++;
+      }
+      
+      for (ind in winners['upset']) {
+        biggestUpsetCount++;
+      }
+
+      for (var gameId in winners) {
+        let roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
+
+        let payoutRate;
+        if (gameId === 'loss') {
+          payoutRate = Number(payouts['loss']);
+        } else if (gameId === 'upset') {
+          payoutRate = Number(payouts['upset']) / biggestUpsetCount;
+        } else if (roundCode !== 'n/a') {
+          payoutRate = Number(payouts[roundCode]) / biggestLossCount;
+        } else {
+          payoutRate = 0;
+        }
+
+        let returnValue = total * payoutRate;
+
+        if (returnValue > 0) {
+          if (!teamPayouts[winners[gameId]]) {
+            teamPayouts[winners[gameId]] = returnValue;
+          } else {
+            teamPayouts[winners[gameId]] = teamPayouts[winners[gameId]] + returnValue;
+          }
+        }
+      }
+
+      for (var teamId in teams) {
+        if (teamPayouts[teamId]) {
+          teams[teamId]['return'] = teamPayouts[teamId];
+        } else {
+          teams[teamId]['return'] = 0;
+        }
+      }
+
+      return admin.database().ref('/leagues/' + leagueId + '/teams').update(teams);
+    });
+  }
+  
+
+});
+
+exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/{leagueId}/teams/{teamId}/owner').onUpdate((change, context) => {
+  const leagueId = context.params.leagueId;
+  const teamId = context.params.teamId;
+  const newOwnerId = change.after.val();
+
+  const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
+
+  return Promise.all([teams, settings]).then(data => {
+    let teams = data[0].val();
+    let settings = data[1].val();
+
+    var useTax = false;
+
+    if (settings['use-tax'] > 0) {
+      var noTaxLimit = settings['use-tax'];
+      var taxRate = settings['tax-rate'];
+      useTax = true;
+    }
+
+    let updateObj = {
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {},
+        'use-tax': {}
+      }
+    };
+
+    var grandTotal = 0;
+
+    var teamId;
+    var uid;
+    var price;
+
+    // calculates each user's total bid amount
+    for (teamId in teams) {
+      uid = teams[teamId]['owner'];
+      price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates the amount of use tax each user owes
+    if (useTax) {
+      var bidTotal;
+      var useTaxOwed;
+      for (uid in updateObj['prize-pool']['bids']) {
+        bidTotal = updateObj['prize-pool']['bids'][uid];
+        if (bidTotal > noTaxLimit) {
+          useTaxOwed = (bidTotal - noTaxLimit) * taxRate;
+          updateObj['prize-pool']['use-tax'][uid] = useTaxOwed;
+
+          grandTotal += useTaxOwed;
+        }
+      }
+    }
+
+    updateObj['pool-total'] = grandTotal;
+    updateObj['prize-pool']['total'] = grandTotal;
+    
+    return admin.database().ref('/leagues/' + leagueId).update(updateObj);
   });
 });

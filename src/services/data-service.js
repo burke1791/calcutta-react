@@ -3,7 +3,8 @@ import NotificationService, {
   NOTIF_LEAGUE_CREATED, 
   NOTIF_AUCTION_CHANGE, 
   NOTIF_AUCTION_NEW_MESSAGE,
-  NOTIF_AUCTION_ITEM_SOLD 
+  NOTIF_AUCTION_ITEM_SOLD,
+  NOTIF_AUCTION_TOTAL_UPDATED
 } from './notification-service';
 import { database } from './fire';
 
@@ -137,6 +138,15 @@ class DataService {
     });
   }
 
+  getLeagueSportCode = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/sport').once('value').then(sportCodeSnapshot => {
+        let sportCode = sportCodeSnapshot.val();
+        resolve(sportCode);
+      });
+    });
+  }
+
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());
@@ -159,6 +169,18 @@ class DataService {
 
   detatchLeagueBiddingListener = (leagueId) => {
     database.ref('/leagues/' + leagueId + '/teams').off('value');
+  }
+
+  attachLeagueTotalsListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/prize-pool').on('value', function(prizeSnapshot) {
+      ns.postNotification(NOTIF_AUCTION_TOTAL_UPDATED, prizeSnapshot.val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
+  }
+
+  detatchLeagueTotalsListener = (leagueId) => {
+    database.ref('/leagues/' + leagueId + '/prize-pool').off('value');
   }
 
   getTeamCodes = (leagueId) => {
@@ -313,6 +335,20 @@ class DataService {
     });
   }
 
+  getTotalPrizePoolByLeagueId(leagueId, uid = '') {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/prize-pool').once('value').then(prizePoolSnapshot => {
+        if (prizePoolSnapshot.val() === null) {
+          reject();
+        } else {
+          resolve(prizePoolSnapshot.val());
+        }
+      }, function(error) {
+        reject(error);
+      });
+    })
+  }
+
   endAuction(leagueId, reset = false) {
 
     var freshAuction = {
@@ -330,8 +366,10 @@ class DataService {
 
     if (reset) {
       database.ref('/auctions/' + leagueId).set(freshAuction);
+      database.ref('/leagues/' + leagueId + '/auction-status').set(false);
     } else {
       database.ref('/auctions/' + leagueId).update(freshAuction);
+      database.ref('/leagues/' + leagueId + '/auction-status').set(true);
     }
   }
 
@@ -457,22 +495,59 @@ class DataService {
   }
 
   joinLeague(key, uid) {
-    database.ref('/leagues/' + key + '/members').update({
-      [uid]: true
-    }, function(error) {
+    let updates = {};
+    updates['leagues/' + key + '/members/' + uid] = true;
+    updates['users/' + uid + '/leagues/' + key] = true;
+    database.ref('/').update(updates).then(function() {
+      ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
+    }).catch(function(error) {
       if (error) {
         console.log('joinLeague error: ' + error);
-      } else {
-        console.log('league joined notification posted');
-        ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
       }
     });
   }
 
-  createLeague(league) {
-    const sportCode = league['sport'];
+  createLeague(uid, leagueName, leaguePassword, leagueSportCode, infoNode = '') {
+    // TODO: add completion handler
 
-    var auction = {
+    let league = {
+      'auction-status': false,
+      'status': 'in-progress',
+      'creator': uid,
+      'members': {
+        [uid]: true
+      },
+      'name': leagueName,
+      'password': leaguePassword,
+      'settings': {
+        'unclaimed': false,
+        'minBid': 1,
+        'minBuyIn': 0,
+        'maxBuyIn': 0,
+        'use-tax': 0,
+        'tax-rate': 0
+      },
+      // default payout settings
+      'payout-settings': {
+        'R1': 0.02,
+        'R2': 0.04,
+        'R3': 0.08,
+        'R4': 0.12,
+        'R5': 0.2,
+        'upset': 0.02,
+        'loss': 0.02
+      },
+      'sport': leagueSportCode,
+      'info-node': infoNode,
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {}, // object where the keys are each league member's uids and the values are their bid totals
+        'use-tax': {} // same as above, but the values are that member's use tax
+      }
+    };
+
+    let auction = {
       'current-item': {
         'code': "",
         'complete': true,
@@ -482,29 +557,48 @@ class DataService {
         'name': "",
         'winner-uid': ""
       },
-      'in-progress': false
+      'in-progress': false,
+      'pool-total': 0
     };
 
     // temporary until I move creation of the league object to this function
     var newLeague = league;
 
-    if (sportCode.includes('march-madness')) {
-      var season = sportCode.substring(14, 18);
-      
-      // populate league info from all source nodes
-      // TODO: create cloud function to add tourney structure
+    if (leagueSportCode === 'custom') {
+      alert('Custom Leagues are not yet supported');
     } else {
-      database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
-        var teams = snapshot.val();
-        newLeague['teams'] = teams;
-  
-        database.ref('/leagues').push(league).then(function(snapshot) {
-          const pushId = snapshot.key;
+      // TODO: write error handling for any of the .matches not finding anything
+      var season = leagueSportCode.match(/[0-9]{4,}/g);
+      season = season[0]; // four digit year
+
+      var tournamentCode = leagueSportCode.match(/[a-z]{2,}/g);
+      tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
+      
+      let teamsObj = {};
+      let pushId;
+
+      database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
+        seeds.forEach(child => {
+          var teamId = child.key;
+          var teamVal = child.val();
+
+          teamsObj[teamId] = {};
+          teamsObj[teamId].owner = '';
+          teamsObj[teamId].price = 0;
+          teamsObj[teamId].return = 0;
+        });
+        league['teams'] = teamsObj;
+        database.ref('/leagues').push(league).then((snapshot) => {
+          pushId = snapshot.key;
           database.ref('/auctions').child(pushId).set(auction);
-          // TODO: Redirect to league setup page (react router)
           ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+        }).then(() => {
+          database.ref('/leagues-' + tournamentCode + '/' + season).update({[pushId]: true});
+          database.ref('/users/' + uid + '/leagues/' + pushId).set(true);
         });
       });
+      // populate league info from all source nodes
+      // TODO: create cloud function to add tourney structure
     }
   }
 
@@ -514,6 +608,19 @@ class DataService {
         var currentSettings = settings.val();
         if (currentSettings) {
           resolve(currentSettings);
+        } else {
+          reject();
+        }
+      });
+    });
+  }
+
+  fetchPayoutSettings = (leagueId) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/payout-settings').once('value').then(payoutSettingsSnapshot => {
+        let payoutSettings = payoutSettingsSnapshot.val();
+        if (payoutSettings) {
+          resolve(payoutSettings);
         } else {
           reject();
         }
@@ -550,6 +657,22 @@ class DataService {
           resolve();
         });
       });
+    });
+  }
+
+  getAllTeamNamesInLeagueById = (teamIds, sportCode, infoNode = '') => {
+    return new Promise((resolve, reject) => {
+      if (infoNode !== '') {
+        // go straight to the info node
+      } else {
+        database.ref('/tournaments/' + sportCode + '/info-node-id').once('value').then(infoNode => {
+          for (var teamId of teamIds) {
+            database.ref('/' + infoNode.val() + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+
+            });
+          }
+        });
+      }
     });
   }
 
@@ -595,6 +718,19 @@ class DataService {
     });
   }
 
+  savePayoutSettings = (leagueId, newPayoutSettings) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/leagues/' + leagueId + '/payout-settings').update(newPayoutSettings, function(error) {
+        if (error) {
+          console.log(error);
+          reject();
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   formatMoney = (value) => {
     var currencyString = '';
 
@@ -606,6 +742,15 @@ class DataService {
     }
     currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
+  }
+
+  getTournamentStructure = (tournamentId, year) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + tournamentId + '-structure/' + year).once('value').then(structureSnapshot => {
+        let tournamentStructure = structureSnapshot.val();
+        resolve(tournamentStructure);
+      });
+    });
   }
 
   getTourneyTeamsFromTourneyIdAndYear = (tourneyId, year) => {
@@ -644,8 +789,16 @@ class DataService {
             resolve(key);
           }
         }
+      });
+    });
+  }
 
-        reject();
+  getTournamentSeedsByTournamentIdAndYear = (tournamentId, year) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedSnapshot => {
+        let seedsObj = seedSnapshot.val();
+
+        resolve(seedsObj);
       });
     });
   }
@@ -682,10 +835,8 @@ class DataService {
     database.ref('/' + tournamentId + '-seeds/' + year + '/').once('value').then(snapshot => {
       snapshot.forEach(child => {
         const childKey = child.key;
-        console.log('childKey: ' + childKey);
         const seedUpdate = {};
         seedUpdate[childKey] = 0;
-        console.log(seedUpdate);
 
         database.ref('/' + tournamentId + '-seeds/' + year).update(seedUpdate);
       });
@@ -725,9 +876,49 @@ class DataService {
     if any of the above object properties are absent, then they will not be updated in firebase
     */
 
+    /*
+    bidRef.transaction(function(currentData) {
+      var currentBid = currentData['current-bid'];
+      if (currentData === null || currentBid < bid) {
+        var bidObj = {
+          'code': currentData['code'],
+          'complete': false,
+          'current-bid': bid,
+          'current-winner': name,
+          'end-time': currentData['end-time'],
+          'name': currentData['name'],
+          'winner-uid': uid
+        };
+        
+        // bidHistoryRef.child(currentData['code']).push(bidHistoryObj);
+
+        return bidObj; // update the current bid
+      } else if (currentBid > bid) {
+        return; // abort the transaction
+      }
+    }, function(error, committed, snapshot) {
+      if (error) {
+        console.log('Transaction failed abnormally: ' + error);
+      } else if (!committed) {
+        console.log('Aborted transaction because bid was too low');
+      } else if (committed) {
+        console.log('committed true - Bid succeeded');
+
+        var bidDate = new Date();
+        var bidTime = bidDate.toLocaleTimeString();
+
+        var bidHistoryObj = {
+          amount: snapshot.child('current-bid').val(),
+          bidder: snapshot.child('current-winner').val(),
+          time: bidTime,
+          uid: snapshot.child('winner-uid').val()
+        };
+        bidHistoryRef.child(snapshot.child('code').val()).push(bidHistoryObj);
+      }
+    });
+    */
+
     let path = '/' + tournamentId + '-structure/' + year + '/' + gameId + '/';
-    console.log(path);
-    console.log(newScoreObj);
 
     return new Promise((resolve, reject) => {
       // change to transaction
@@ -2709,11 +2900,11 @@ class DataService {
     var btt_2019 = {
       "btt-structure": {
         "2019": {
-          "G01": {
+          "R1G1": {
             "team1": {
               "seed": "S12",
               "id": 0,
-              "name": ""
+              "name": ""         
             },
             "team2": {
               "seed": "S13",
@@ -2722,7 +2913,7 @@ class DataService {
             },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G04",
+            "next-round": "R2G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2731,7 +2922,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G02": {
+          "R1G2": {
             "team1": {
               "seed": "S11",
               "id": 0,
@@ -2744,7 +2935,7 @@ class DataService {
             },
             "date": "Wed. March 13, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G06",
+            "next-round": "R2G4",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2753,7 +2944,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G03": {
+          "R2G1": {
             "team1": {
               "seed": "S08",
               "id": 0,
@@ -2766,7 +2957,7 @@ class DataService {
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G07",
+            "next-round": "R3G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2775,20 +2966,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G04": {
+          "R2G2": {
             "team1": {
               "seed": "S05",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G01",
+              "seed": "R1G1",
               "id": 0,
               "name": ""
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G08",
+            "next-round": "R3G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2797,7 +2988,7 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G05": {
+          "R2G3": {
             "team1": {
               "seed": "S07",
               "id": 0,
@@ -2810,7 +3001,7 @@ class DataService {
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G09",
+            "next-round": "R3G3",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2819,20 +3010,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G06": {
+          "R2G4": {
             "team1": {
               "seed": "S06",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G02",
+              "seed": "R1G2",
               "id": 0,
               "name": ""
             },
             "date": "Thurs. March 14, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G10",
+            "next-round": "R3G4",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2841,20 +3032,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G07": {
+          "R3G1": {
             "team1": {
               "seed": "S01",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "S03",
+              "seed": "R2G1",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G11",
+            "next-round": "R4G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2863,20 +3054,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G08": {
+          "R3G2": {
             "team1": {
               "seed": "S04",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G04",
+              "seed": "R2G2",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G11",
+            "next-round": "R4G1",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2885,20 +3076,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G09": {
+          "R3G3": {
             "team1": {
               "seed": "S02",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G05",
+              "seed": "R2G3",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G12",
+            "next-round": "R4G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2907,20 +3098,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G10": {
+          "R3G4": {
             "team1": {
               "seed": "S03",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G06",
+              "seed": "R2G4",
               "id": 0,
               "name": ""
             },
             "date": "Fri. March 15, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G12",
+            "next-round": "R4G2",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2929,20 +3120,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G11": {
+          "R4G1": {
             "team1": {
-              "seed": "G07",
+              "seed": "R3G1",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G08",
+              "seed": "R3G2",
               "id": 0,
               "name": ""
             },
             "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G13",
+            "next-round": "R5CH",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2951,20 +3142,20 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G12": {
+          "R4G2": {
             "team1": {
-              "seed": "G09",
+              "seed": "R3G3",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G10",
+              "seed": "R3G4",
               "id": 0,
               "name": ""
             },
             "date": "Sat. March 16, 2019",
             "location": "United Center, Chicago, IL",
-            "next-round": "G13",
+            "next-round": "R5CH",
             "score": {
               "team1": 0,
               "team2": 0,
@@ -2973,18 +3164,18 @@ class DataService {
             "status": "not-started",
             "winner": "n/a"
           },
-          "G13": {
+          "R5CH": {
             "team1": {
-              "seed": "G11",
+              "seed": "R4G1",
               "id": 0,
               "name": ""
             },
             "team2": {
-              "seed": "G12",
+              "seed": "R4G2",
               "id": 0,
               "name": ""
             },
-            "date": "Sat. March 17, 2019",
+            "date": "Sun. March 17, 2019",
             "location": "United Center, Chicago, IL",
             "next-round": "n/a",
             "score": {

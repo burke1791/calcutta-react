@@ -13,6 +13,8 @@ export const NOTIF_AUCTION_ITEM_COMPLETE = 'notif_auction_item_complete';
 export const NOTIF_AUCTION_NEW_MESSAGE = 'notif_auction_new_message';
 export const NOTIF_AUCTION_ITEM_SOLD = 'notif_auction_item_sold';
 export const NOTIF_ASSIGN_SEEDS = 'notif_assign_seeds';
+export const NOTIF_AUCTION_TOTAL_UPDATED = 'notif_auction_total_updated';
+export const NOTIF_SAVE_SETTINGS_REQUESTED = 'notif_save_settings_requested';
 
 var observers = {};
 let instance = null;

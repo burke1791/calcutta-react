@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import './authHeader.css'
 import Button from '../button/button';
 import GeneralModal from '../modals/generalModal';
-import NotificationService, { NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT } from '../../../services/notification-service';
+import NotificationService, { NOTIF_MODAL_TOGGLE, NOTIF_SIGNIN, NOTIF_SIGNOUT, NOTIF_LEAGUE_JOINED } from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
 import DataService from '../../../services/data-service';
 
@@ -25,19 +25,22 @@ class AuthHeader extends Component {
     this.onSignInClicked = this.onSignInClicked.bind(this);
     this.onSignIn = this.onSignIn.bind(this);
     this.onSignOut = this.onSignOut.bind(this);
+    this.onLeagueJoined = this.onLeagueJoined.bind(this);
     this.onGodModeClicked = this.onGodModeClicked.bind(this);
     this.checkAdmin = this.checkAdmin.bind(this);
     this.generateAuthBtn = this.generateAuthBtn.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     ns.addObserver(NOTIF_SIGNIN, this, this.onSignIn);
     ns.addObserver(NOTIF_SIGNOUT, this, this.onSignOut);
+    ns.addObserver(NOTIF_LEAGUE_JOINED, this, this.onLeagueJoined);
   }
 
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_SIGNIN);
     ns.removeObserver(this, NOTIF_SIGNOUT);
+    ns.removeObserver(this, NOTIF_LEAGUE_JOINED);
   }
 
   onSignInClicked() {
@@ -48,13 +51,18 @@ class AuthHeader extends Component {
     authService.signOutUser();
   }
 
+  
+  onLeagueJoined(leagueId) {
+    // this.props.history.push('/league-home/' + leagueId)
+  }
+  
+
   onGodModeClicked() {
     alert('Feature is still in development');
 
     this.props.history.push('/god-mode/');
     // TEMP
     // ds.addSportToDatabase();
-    // Develop God Mode
   }
 
   onChangePasswordClicked() {

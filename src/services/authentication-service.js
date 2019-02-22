@@ -24,7 +24,7 @@ class AuthenticationService {
     auth.createUserWithEmailAndPassword(email, password).then(function() {
       var user = auth.currentUser;
       ds.logUserInDatabase(user, username);
-      ns.postNotification(NOTIF_SIGNIN, null);
+      ns.postNotification(NOTIF_SIGNIN, user.uid);
     }, function(error) {
       // var errorCode = error.code;
       var errorMessage = error.message;
