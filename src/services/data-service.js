@@ -495,14 +495,14 @@ class DataService {
   }
 
   joinLeague(key, uid) {
-    database.ref('/leagues/' + key + '/members').update({
-      [uid]: true
-    }, function(error) {
+    let updates = {};
+    updates['leagues/' + key + '/members/' + uid] = true;
+    updates['users/' + uid + '/leagues/' + key] = true;
+    database.ref('/').update(updates).then(function() {
+      ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
+    }).catch(function(error) {
       if (error) {
         console.log('joinLeague error: ' + error);
-      } else {
-        console.log('league joined notification posted');
-        ns.postNotification(NOTIF_LEAGUE_JOINED, uid);
       }
     });
   }
@@ -594,6 +594,7 @@ class DataService {
           ns.postNotification(NOTIF_LEAGUE_CREATED, null);
         }).then(() => {
           database.ref('/leagues-' + tournamentCode + '/' + season).update({[pushId]: true});
+          database.ref('/users/' + uid + '/leagues/' + pushId).set(true);
         });
       });
       // populate league info from all source nodes
