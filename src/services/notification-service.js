@@ -55,8 +55,6 @@ class NotificationService {
 
   postNotification = (notifName, data) => {
     let obs = observers[notifName];
-    console.log('notifname: ' + notifName);
-    console.log(obs);
     if (obs) {
       if (obs.length) {
         for (var x = 0; x < obs.length; x++) {

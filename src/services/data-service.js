@@ -795,6 +795,16 @@ class DataService {
     });
   }
 
+  getTournamentSeedsByTournamentIdAndYear = (tournamentId, year) => {
+    return new Promise((resolve, reject) => {
+      database.ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedSnapshot => {
+        let seedsObj = seedSnapshot.val();
+
+        resolve(seedsObj);
+      });
+    });
+  }
+
   assignSeedByTeamId = (teamId, sportId, year, seed, region = null) => {
     if (region == null) {
       if (seed < 10) {
