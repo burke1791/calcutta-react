@@ -50,6 +50,9 @@ class DataService {
         } else {
           resolve(false);
         }
+      }, function(error) {
+        console.log('premission denied');
+        resolve(false);
       });
     });
   }

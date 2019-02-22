@@ -75,19 +75,7 @@ class AuthHeader extends Component {
   }
 
   onSignIn() {
-    var self = this;
-    this.checkAdmin().then(function(admin) {
-      if (admin) {
-        self.setState({
-          authenticated: true,
-          admin: true
-        });
-      } else {
-        self.setState({
-          authenticated: true
-        });
-      }
-    });
+    this.checkAdmin();
   }
 
   onSignOut() {
@@ -97,21 +85,23 @@ class AuthHeader extends Component {
     });
   }
 
-  checkAdmin = () => {
-    return new Promise((resolve, reject) => {
-      if (this.props.uid !== '') {
-        ds.isAdmin(this.props.uid).then(function(admin) {
-          if (admin) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
-      } else {
-        console.log('ERROR! authHeader.props.uid is empty');
-        resolve(false);
-      } 
-    });
+  checkAdmin() {
+    var self = this;
+    if (this.props.uid !== '') {
+      ds.isAdmin(this.props.uid).then(isAdmin => {
+        if (isAdmin) {
+          self.setState({
+            authenticated: true,
+            admin: isAdmin
+          });
+        } else {
+          self.setState({
+            authenticated: true,
+            admin: false
+          });
+        }
+      });
+    }
   }
 
   generateAuthBtn = () => {
