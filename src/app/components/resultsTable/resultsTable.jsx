@@ -159,18 +159,8 @@ class ResultsTable extends Component {
           }
           
           var teamName;
-          var seedVal = 0;
-          if (this.state.seeds !== undefined) {
-            for (var seedId in this.state.seeds) {
-              if (this.state.seeds[seedId] === key) {
-                seedVal = Number(seedId.match(/[0-9]+/g)[0]);
-              }
-            }
-            if (seedVal !== 0) {
-              teamName = '(' + seedVal + ') ' + this.state.teams[key]['name'];
-            } else {
-              teamName = this.state.teams[key]['name'];
-            }
+          if (this.state.teams[key]['seed-value'] !== undefined) {
+            teamName = '(' + this.state.teams[key]['seed-value'] + ') ' + this.state.teams[key]['name'];
           } else {
             teamName = this.state.teams[key]['name'];
           }
