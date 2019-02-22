@@ -217,7 +217,7 @@ class DataService {
         if (winnerUID === '') {
           winnerUID = '(unclaimed)';
         }
-  
+        
         if (unclaimed || winnerUID !== '(unclaimed)') {
           database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
             'owner': winnerUID,

@@ -169,7 +169,7 @@ class ResultsTable extends Component {
           var totalBids;
           var totalTax;
 
-          if (this.state.prizePool !== {}) {
+          if (this.state.prizePool !== {} && this.state.prizePool !== null) {
             if (this.state.prizePool['use-tax'] !== undefined) {
               if (this.state.prizePool['use-tax'][key] !== undefined && this.state.prizePool.bids[key] !== undefined) {
                 totalBids = this.state.prizePool.bids[key];
@@ -188,6 +188,9 @@ class ResultsTable extends Component {
               } else {
                 totalBids = 0;
               }
+            } else {
+              totalBids = 0;
+              totalTax = 0;
             }
           } else {
             totalBids = 0;
@@ -204,7 +207,6 @@ class ResultsTable extends Component {
             totalTaxString = ds.formatMoney(totalTax);
           }
           var totalBidString = ds.formatMoney(totalBids);
-
           return (
             <ResultsRow resultType={this.props.resultType} num={num} username={username} totalBids={totalBidString} totalTax={totalTaxString} id={key} key={key} />
           )

@@ -93,13 +93,26 @@ class AuctionAdmin extends Component {
     this.logResults();
   }
 
-  logResults() {
+  logResults(endAuction = false) {
     var self = this;
-    ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
-      self.loadNewItem(oldCode);
-    }, function(error) {
-      // future error handling
-    });
+    if (endAuction) {
+      ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
+        // do nothing
+      }, function(error) {
+        // future error handling
+      });
+    } else {
+      ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
+        if (oldCode === '') {
+          alert('All Items Have Been Auctioned Off');
+        } else {
+          self.loadNewItem(oldCode);
+        }
+      }, function(error) {
+        // future error handling
+      });
+    }
+    
   }
 
   loadNewItem(oldCode) {
@@ -151,6 +164,7 @@ class AuctionAdmin extends Component {
   }
 
   endAuction() {
+    this.logResults(true);
     ds.endAuction(this.state.leagueId);
   }
 
