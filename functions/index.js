@@ -98,16 +98,36 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
   const teams = snapshot.child('teams');
 
   if (sport !== 'custom') {
-    teams.forEach(child => {
-      const teamId = child.key;
+    // TODO: refactor to update the entire teams node at once to avoid the nested promise
+    let tournamentId = sport.match(/[a-z]{2,}/g)[0];
+    let year = sport.match(/[0-9]{4,}/g)[0];
+    return admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedsSnapshot => {
+      return seedsSnapshot.val();
+    }).then((seeds) => {
+      console.log('seeds: ');
+      console.log(seeds);
+      teams.forEach(child => {
+        const teamId = child.key;
+
+        let teamNameUpdate = {};
+
+        for (var seedId in seeds) {
+          if (seeds[seedId] === teamId) {
+            seedValue = Number(seedId.match(/[0-9]+/g)[0]);
+            teamNameUpdate['seed-value'] = seedValue;
+          }
+        }
+    
+        const infoNodeTeam = admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value');
   
-      return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
-        var teamNameUpdate = {'name': teamName.val()};
-  
-        const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
-  
-        return newLeagueTeamPath.update(teamNameUpdate);
+        return admin.database().ref('/' + infoNode + '-team-info/' + teamId + '/name').once('value').then(teamName => {
+          teamNameUpdate['name'] = teamName.val();
+          const newLeagueTeamPath = admin.database().ref('/leagues/' + pushId + '/teams/' + teamId);
+    
+          return newLeagueTeamPath.update(teamNameUpdate);
+        });
       });
+      return;
     });
   }
 });

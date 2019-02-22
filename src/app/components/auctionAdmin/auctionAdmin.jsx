@@ -76,8 +76,17 @@ class AuctionAdmin extends Component {
   }
 
   startAuction() {
-    this.loadNewItem();
-    this.setState({auctionStarted: true});
+    var self = this;
+    ds.getDataSnapshot('/leagues/' + this.state.leagueId + '/auction-status').then(auctionStatusSnapshot => {
+      let status = auctionStatusSnapshot.val();
+      if (!status) {
+        this.loadNewItem();
+        this.setState({auctionStarted: true});
+      } else {
+        alert('All Items Have Been Auctioned Off');
+      }
+    });
+    
   }
 
   nextItem() {
@@ -88,6 +97,8 @@ class AuctionAdmin extends Component {
     var self = this;
     ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
       self.loadNewItem(oldCode);
+    }, function(error) {
+      // future error handling
     });
   }
 
@@ -96,6 +107,8 @@ class AuctionAdmin extends Component {
     var codes = this.state.teamCodes;
 
     if (!oldCode) {
+      // called when Start Auction is pressed
+      console.log('supposed to be from a fresh auction');
       if (this.state.randomize) {
         var newCode = codes[Math.floor(Math.random() * codes.length)];
       } else {
