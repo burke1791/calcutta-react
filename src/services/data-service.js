@@ -789,8 +789,6 @@ class DataService {
             resolve(key);
           }
         }
-
-        reject();
       });
     });
   }
