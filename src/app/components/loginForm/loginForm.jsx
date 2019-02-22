@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './loginForm.css';
 import NotificationService, {NOTIF_AUTH_SUBMIT} from '../../../services/notification-service';
 import AuthenticationService from '../../../services/authentication-service';
+import * as DISPLAY_TYPE from '../../../services/constants';
 import Button from '../button/button';
 
 let ns = new NotificationService();
@@ -14,6 +15,7 @@ class LoginForm extends Component {
 
     this.state = {
       createUser: false,
+      displayType: DISPLAY_TYPE.SIGN_IN,
       signupClassName: 'form-group d-none',
       submitBtnText: 'Log In',
       newAccountLinkText: 'Don\'t have an account? Sign Up Here...',
@@ -22,14 +24,15 @@ class LoginForm extends Component {
       emailVal: '',
       pass1Val: '',
       pass2Val: '',
-      signInRejectedFlag: false,
-      signInErrorCode: '',
-      signInErrorMessage: ''
+      errorFlag: false,
+      errorCode: '',
+      errorMessage: ''
     };
 
     //Bind functions
-    this.authTypeToggle = this.authTypeToggle.bind(this);
-    this.forgotPassword = this.forgotPassword.bind(this);
+    this.displaySignUpForm = this.displaySignUpForm.bind(this);
+    this.displaySignInForm = this.displaySignInForm.bind(this);
+    this.displayForgotPasswordForm = this.displayForgotPasswordForm.bind(this);
     this.authSubmission = this.authSubmission.bind(this);
     this.generateErrorMessage = this.generateErrorMessage.bind(this);
     this.onUsernameChange = this.onUsernameChange.bind(this);
@@ -45,47 +48,68 @@ class LoginForm extends Component {
   componentWillUnmount() {
     ns.removeObserver(this, NOTIF_AUTH_SUBMIT);
   }
-  
-  authTypeToggle() {
-    if (this.state.createUser) {
-      this.setState({
-        createUser: false,
-        signupClassName: 'form-group d-none',
-        submitBtnText: 'Log In',
-        newAccountLinkText: 'Don\'t have an account? Sign Up Here...'
-      });
-    } else {
-      this.setState({
-        createUser: true,
-        signupClassName: 'form-group', 
-        submitBtnText: 'Create Account', 
-        newAccountLinkText: 'Already have an account? Log In Here...'
-      });
-    }
+
+  displaySignUpForm() {
+    this.setState({
+      displayType: DISPLAY_TYPE.SIGN_UP,
+      submitBtnText: 'Create Account',
+      newAccountLinkText: 'Already have an account? Log In Here...',
+      errorFlag: false,
+      errorCode: '',
+      errorMessage: ''
+    });
   }
 
-  forgotPassword() {
+  displaySignInForm() {
+    this.setState({
+      displayType: DISPLAY_TYPE.SIGN_IN,
+      submitBtnText: 'Log In',
+      newAccountLinkText: 'Don\'t have an account? Sign Up Here...',
+      errorFlag: false,
+      errorCode: '',
+      errorMessage: ''
+    });
+  }
 
+  displayForgotPasswordForm() {
+    this.setState({
+      displayType: DISPLAY_TYPE.FORGOT_PASSWORD,
+      submitBtnText: 'Send Password Reset Email',
+      newAccountLinkText: 'Sign In Here...',
+      errorFlag: false,
+      errorCode: '',
+      errorMessage: ''
+    });
   }
 
   authSubmission(event) {
     // Check for valid inputs
     event.preventDefault();
     var self = this;
-    if (this.state.createUser) {
+    if (this.state.displayType === DISPLAY_TYPE.SIGN_UP) {
       // Utilize a promise later on to identify a successful account creation
       var success = authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
-    } else {
+    } else if (this.state.displayType === DISPLAY_TYPE.SIGN_IN) {
       authService.signInUser(this.state.emailVal, this.state.pass1Val).then(() => {
         // sign in success - dismiss modal
         this.props.submitHandler();
       }).catch((error) => {
         self.setState({
-          signInRejectedFlag: true,
-          signInErrorCode: error.code,
-          signInErrorMessage: error.message
+          errorFlag: true,
+          errorCode: error.code,
+          errorMessage: error.message
         });
         console.log('rejected sign in');
+      });
+    } else if (this.state.displayType === DISPLAY_TYPE.FORGOT_PASSWORD) {
+      authService.sendPasswordResetEmail(this.state.emailVal).then(() => {
+        alert('Password Reset Email Sent');
+      }).catch((error) => {
+        self.setState({
+          errorFlag: true,
+          errorCode: error.code,
+          errorMessage: error.message
+        });
       });
     }
     
@@ -93,20 +117,20 @@ class LoginForm extends Component {
   }
 
   generateErrorMessage = () => {
-    if (this.state.signInRejectedFlag) {
-      if (this.state.signInErrorCode === 'auth/wrong-password') {
+    if (this.state.errorFlag) {
+      if (this.state.errorCode === 'auth/wrong-password') {
         return (
           <div className='sign-in-error'>
             <p className='text-danger'>Password Incorrect</p>
           </div>
         );
-      } else if (this.state.signInErrorCode === 'auth/user-not-found') {
+      } else if (this.state.errorCode === 'auth/user-not-found') {
         return (
           <div className='sign-in-error'>
             <p className='text-danger'>Email Address Not Found</p>
           </div>
         );
-      } else if (this.state.signInErrorCode === 'auth/invalid-email') {
+      } else if (this.state.errorCode === 'auth/invalid-email') {
         return (
           <div className='sign-in-error'>
             <p className='text-danger'>Invalid Email</p>
@@ -115,6 +139,97 @@ class LoginForm extends Component {
       }
     } else {
       return null;
+    }
+  }
+
+  generateFormContent = () => {
+    if (this.state.displayType === DISPLAY_TYPE.SIGN_IN) {
+      return (
+        <div className='sign-in-inputs'>
+          <div className='form-group'>
+            <label><strong>Email Address</strong></label>
+            <input type='email' className='form-control' value={this.state.emailVal} onChange={this.onEmailChange} placeholder='Enter email' />
+          </div>
+          <div className='form-group'>
+            <label><strong>Password</strong></label>
+            <input type='password' className='form-control' value={this.state.pass1Val} onChange={this.onPass1Change} placeholder='Password' />
+          </div>
+        </div>
+      );
+    } else if (this.state.displayType === DISPLAY_TYPE.SIGN_UP) {
+      return (
+        <div className='sign-up-inputs'>
+          <div className='form-group'>
+            <label><strong>Username</strong></label>
+            <input type='text' className='form-control' value={this.state.usernameVal} onChange={this.onUsernameChange} placeholder='Username' />
+          </div>
+          <div className='form-group'>
+            <label><strong>Email Address</strong></label>
+            <input type='email' className='form-control' value={this.state.emailVal} onChange={this.onEmailChange} placeholder='Enter email' />
+          </div>
+          <div className='form-group'>
+            <label><strong>Password</strong></label>
+            <input type='password' className='form-control' value={this.state.pass1Val} onChange={this.onPass1Change} placeholder='Password' />
+          </div>
+          <div className='form-group'>
+            <label><strong>Confirm Password</strong></label>
+            <input type='password' className='form-control' value={this.state.pass2Val} onChange={this.onPass2Change} placeholder='Confirm Password' />
+          </div>
+        </div>
+      );
+    } else if (this.state.displayType === DISPLAY_TYPE.FORGOT_PASSWORD) {
+      return (
+        <div className='forgot-pw-inputs'>
+          <div className='form-group'>
+            <label><strong>Email Address</strong></label>
+            <input type='email' className='form-control' value={this.state.emailVal} onChange={this.onEmailChange} placeholder='Enter email' />
+          </div>
+        </div>
+      );
+    }
+  }
+
+  generateControlButtons = () => {
+    if (this.state.displayType === DISPLAY_TYPE.SIGN_IN) {
+      return (
+        <div className='control-buttons'>
+          <div className='row'>
+            <div className='col-12'>
+              <Button btnType='button' btnClass='btn btn-link' onClick={this.displaySignUpForm} btnValue={this.state.newAccountLinkText} />
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-12'>
+              <Button btnType='button' btnClass='btn btn-link' onClick={this.displayForgotPasswordForm} btnValue={this.state.forgotPasswordText} />
+            </div>
+          </div>
+        </div>
+      );
+    } else if (this.state.displayType === DISPLAY_TYPE.SIGN_UP) {
+      return (
+        <div className='control-buttons'>
+          <div className='row'>
+            <div className='col-12'>
+              <Button btnType='button' btnClass='btn btn-link' onClick={this.displaySignInForm} btnValue={this.state.newAccountLinkText} />
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-12'>
+              <Button btnType='button' btnClass='btn btn-link' onClick={this.displayForgotPasswordForm} btnValue={this.state.forgotPasswordText} />
+            </div>
+          </div>
+        </div>
+      );
+    } else if (this.state.displayType === DISPLAY_TYPE.FORGOT_PASSWORD) {
+      return (
+        <div className='control-buttons'>
+          <div className='row'>
+            <div className='col-12'>
+              <Button btnType='button' btnClass='btn btn-link' onClick={this.displaySignInForm} btnValue={this.state.newAccountLinkText} />
+            </div>
+          </div>
+        </div>
+      );
     }
   }
 
@@ -143,38 +258,14 @@ class LoginForm extends Component {
       <div className='login-form'>
         <form>
           {this.generateErrorMessage()}
-          <div className={this.state.signupClassName}>
-            <label><strong>Username</strong></label>
-            <input type='text' className='form-control' value={this.state.usernameVal} onChange={this.onUsernameChange} placeholder='Username' />
-          </div>
-          <div className='form-group'>
-            <label><strong>Email Address</strong></label>
-            <input type='email' className='form-control' value={this.state.emailVal} onChange={this.onEmailChange} placeholder='Enter email' />
-          </div>
-          <div className='form-group'>
-            <label><strong>Password</strong></label>
-            <input type='password' className='form-control' value={this.state.pass1Val} onChange={this.onPass1Change} placeholder='Password' />
-          </div>
-          <div className={this.state.signupClassName}>
-            <label><strong>Confirm Password</strong></label>
-            <input type='password' className='form-control' value={this.state.pass2Val} onChange={this.onPass2Change} placeholder='Confirm Password' />
-          </div>
+          {this.generateFormContent()}
           <div className='container'>
             <div className='row'>
               <div className='col-12'>
                 <Button btnType='submit' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
               </div>
             </div>
-            <div className='row'>
-              <div className='col-12'>
-                <Button btnType='button' btnClass='btn btn-link' onClick={this.authTypeToggle} btnValue={this.state.newAccountLinkText} />
-              </div>
-            </div>
-            <div className='row'>
-              <div className='col-12'>
-                <Button btnType='button' btnClass='btn btn-link' onClick={this.forgotPassword} btnValue={this.state.forgotPasswordText} />
-              </div>
-            </div>
+            {this.generateControlButtons()}
           </div>
         </form>
       </div>

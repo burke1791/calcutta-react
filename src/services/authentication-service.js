@@ -72,17 +72,27 @@ class AuthenticationService {
     auth.currentUser.updatePassword(newPassword);
   }
 
-  sendPasswordResetEmail() {
-    let email = auth.currentUser.email;
-
-    if (email) {
-      auth.sendPasswordResetEmail(email).then(() => {
-        // email send
-      }).catch(function(error) {
-        console.log('error sending password reset email');
-        console.log(error);
-      });
+  sendPasswordResetEmail = (email = '') => {
+    var userEmail;
+    if (email === '') {
+      userEmail = auth.currentUser.email;
+    } else {
+      userEmail = email;
     }
+
+    return new Promise((resolve, reject) => {
+      if (userEmail) {
+        auth.sendPasswordResetEmail(userEmail).then(() => {
+          resolve();
+        }).catch(function(error) {
+          console.log('error sending password reset email');
+          console.log(error);
+          reject(error);
+        });
+      } else {
+        reject('need email to send reset link');
+      }
+    });
   }
 
   addAuthListener(thisApp) {
