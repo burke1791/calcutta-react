@@ -239,11 +239,16 @@ class DataService {
   }
 
   loadNextItem = (teamCode, leagueId) => {
-    var name = '';
+    var name;
 
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
-        name = snapshot.child('name').val();
+        if (snapshot.child('seed-value').exists()) {
+          name = '(' + snapshot.child('seed-value').val() + ') ' + snapshot.child('name').val();
+        } else {
+          name = snapshot.child('name').val();
+        }
+
         database.ref('/auctions/' + leagueId).update({
           'current-item': {
             'code': teamCode,
