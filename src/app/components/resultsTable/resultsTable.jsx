@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './resultsTable.css';
 import ResultsRow from '../resultsRow/resultsRow';
 
-import NotificationService, { NOTIF_AUCTION_ITEM_SOLD } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_ITEM_SOLD, NOTIF_AUCTION_TOTAL_UPDATED } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
@@ -17,25 +17,25 @@ class ResultsTable extends Component {
       teamKeys: [],
       teamNames: {},
       teamNamesDownloaded: false,
-      seeds: {},
-      seedsDownloaded: false,
       participants: [],
       users: {},
-      usersDownloaded: false
+      usersDownloaded: false,
+      prizePool: {}
     }
 
     // bind functions
     this.fetchUsers = this.fetchUsers.bind(this);
     this.fetchParticipants = this.fetchParticipants.bind(this);
     this.fetchTeamNames = this.fetchTeamNames.bind(this);
-    this.fetchSeedValues = this.fetchSeedValues.bind(this);
     this.newItemSold = this.newItemSold.bind(this);
+    this.auctionTotalUpdated = this.auctionTotalUpdated.bind(this);
     this.generateResultsRows = this.generateResultsRows.bind(this);
   }
 
   componentDidMount() {
     ds.attachLeagueBiddingListener(this.props.leagueId);
     ns.addObserver(NOTIF_AUCTION_ITEM_SOLD, this, this.newItemSold);
+    ns.addObserver(NOTIF_AUCTION_TOTAL_UPDATED, this, this.auctionTotalUpdated);
 
     this.fetchUsers();
     this.fetchParticipants();
@@ -44,6 +44,7 @@ class ResultsTable extends Component {
   componentWillUnmount() {
     ds.detatchLeagueBiddingListener(this.props.leagueId);
     ns.removeObserver(this, NOTIF_AUCTION_ITEM_SOLD);
+    ns.removeObserver(this, NOTIF_AUCTION_TOTAL_UPDATED);
   }
 
   fetchUsers() {
@@ -91,26 +92,6 @@ class ResultsTable extends Component {
     }
   }
 
-  fetchSeedValues() {
-    var self = this;
-    if (this.props.resultType === 'team' && this.state.teamKeys.length && !this.state.seedsDownloaded) {
-      ds.getDataSnapshot('/leagues/' + this.props.leagueId + '/sport').then(sportCodeSnapshot => {
-        let sportCode = sportCodeSnapshot.val();
-        let tournamentId = sportCode.match(/[a-z]{2,}/g) !== null ? sportCode.match(/[a-z]{2,}/g)[0] : false;
-        let year = sportCode.match(/[0-9]{4,}/g) !== null ? sportCode.match(/[0-9]{4,}/g)[0] : false;
-        
-        if (tournamentId && year) {
-          ds.getTournamentSeedsByTournamentIdAndYear(tournamentId, year).then(seedsObj => {
-            self.setState({
-              seeds: seedsObj,
-              seedsDownloaded: true
-            });
-          });
-        }
-      });
-    }
-  }
-
   newItemSold(newData) {
     if (newData !== null) {
       var teams = newData;
@@ -119,8 +100,12 @@ class ResultsTable extends Component {
       this.setState({
         teams: teams,
         teamKeys: keys
-      }, this.fetchSeedValues());
+      });
     }
+  }
+
+  auctionTotalUpdated(prizePool) {
+    this.setState({prizePool: prizePool});
   }
 
   generateResultsHeader = (resultType) => {
@@ -145,7 +130,6 @@ class ResultsTable extends Component {
 
   generateResultsRows = (resultType) => {
     var numTeams = this.state.teamKeys.length;
-    console.log(this.state.seeds);
     if (resultType === 'team') {
       if (numTeams > 0) {
         const list = this.state.teamKeys.map((key, index) => {
@@ -179,20 +163,50 @@ class ResultsTable extends Component {
     } else if (resultType === 'user') {
       if (numTeams > 0) {
         const list = this.state.participants.map((key, index) => {
+          // key is the user's uid
           var num = index + 1;
           var username = this.state.users[key];
-          var total = 0;
+          var totalBids;
+          var totalTax;
 
-          for (var team in this.state.teams) {
-            if (key === this.state.teams[team]['owner']) {
-              total += this.state.teams[team]['price'];
+          if (this.state.prizePool !== {}) {
+            if (this.state.prizePool['use-tax'] !== undefined) {
+              if (this.state.prizePool['use-tax'][key] !== undefined && this.state.prizePool.bids[key] !== undefined) {
+                totalBids = this.state.prizePool.bids[key];
+                totalTax = this.state.prizePool['use-tax'][key];
+              } else if (this.state.prizePool.bids[key] !== undefined) {
+                totalBids = this.state.prizePool.bids[key];
+                totalTax = 0;
+              } else {
+                totalBids = 0;
+                totalTax = 0;
+              }
+            } else if (this.state.prizePool.bids !== undefined) {
+              totalTax = 0;
+              if (this.state.prizePool.bids[key] !== undefined) {
+                totalBids = this.state.prizePool.bids[key];
+              } else {
+                totalBids = 0;
+              }
+            }
+          } else {
+            totalBids = 0;
+            totalTax = 0;
+            for (var team in this.state.teams) {
+              if (key === this.state.teams[team]['owner']) {
+                totalBids += this.state.teams[team]['price'];
+              }
             }
           }
 
-          var totalSpent = ds.formatMoney(total);
+          var totalTaxString = 'n/a';
+          if (totalTax !== 0) {
+            totalTaxString = ds.formatMoney(totalTax);
+          }
+          var totalBidString = ds.formatMoney(totalBids);
 
           return (
-            <ResultsRow resultType={this.props.resultType} num={num} username={username} total={totalSpent} id={key} key={key} />
+            <ResultsRow resultType={this.props.resultType} num={num} username={username} totalBids={totalBidString} totalTax={totalTaxString} id={key} key={key} />
           )
         });
         return (list);

@@ -119,7 +119,7 @@ class AuctionMain extends Component {
           <ResultsTable leagueId={this.state.leagueId} resultType='team' />
         </div>
         <div className='container card my-4'>
-          <ResultsTable leagueId={this.state.leagueId} resultType='user' />
+          <ResultsTable leagueId={this.state.leagueId} resultType='user' myAuthObj={authService.getUser()} />
         </div>
       </div>
       

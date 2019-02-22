@@ -25,14 +25,24 @@ class ResultsRow extends Component {
         </tr>
       );
     } else if (this.props.resultType === 'user') {
-      return (
-        <tr className={rowClass} key={this.props.id}>
-          <td className='col col-md-6'>{this.props.username}</td>
-          <td className='col col-md-6'>{this.props.total}</td>
-        </tr>
-      );
+      if (this.props.totalTax === 'n/a') {
+        return (
+          <tr className={rowClass} key={this.props.id}>
+            <td className='col col-md-6'>{this.props.username}</td>
+            <td className='col col-md-6'>{this.props.totalBids}</td>
+          </tr>
+        );
+      } else {
+        return (
+          <tr className={rowClass} key={this.props.id}>
+            <td className='col col-md-6'>{this.props.username}</td>
+            <td className='col col-md-6'>
+              {this.props.totalBids}<span className='text-danger'> (+ {this.props.totalTax})</span> 
+            </td>
+          </tr>
+        )
+      }
     }
-    
   }
 }
 
