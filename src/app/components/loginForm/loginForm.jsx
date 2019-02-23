@@ -88,7 +88,15 @@ class LoginForm extends Component {
     var self = this;
     if (this.state.displayType === DISPLAY_TYPE.SIGN_UP) {
       // Utilize a promise later on to identify a successful account creation
-      var success = authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal);
+      authService.createUser(this.state.emailVal, this.state.pass1Val, this.state.usernameVal).then(() => {
+        this.props.submitHandler();
+      }).catch(error => {
+        self.setState({
+          errorFlag: true,
+          errorCode: error.code,
+          errorMessage: error.message
+        });
+      });
     } else if (this.state.displayType === DISPLAY_TYPE.SIGN_IN) {
       authService.signInUser(this.state.emailVal, this.state.pass1Val).then(() => {
         // sign in success - dismiss modal
@@ -99,7 +107,6 @@ class LoginForm extends Component {
           errorCode: error.code,
           errorMessage: error.message
         });
-        console.log('rejected sign in');
       });
     } else if (this.state.displayType === DISPLAY_TYPE.FORGOT_PASSWORD) {
       authService.sendPasswordResetEmail(this.state.emailVal).then(() => {
@@ -112,8 +119,6 @@ class LoginForm extends Component {
         });
       });
     }
-    
-    // this.props.submitHandler();
   }
 
   generateErrorMessage = () => {
@@ -134,6 +139,12 @@ class LoginForm extends Component {
         return (
           <div className='sign-in-error'>
             <p className='text-danger'>Invalid Email</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className='sign-in-error'>
+            <p className='text-danger'>Unknown Error - Please Try Again</p>
           </div>
         );
       }
@@ -157,6 +168,19 @@ class LoginForm extends Component {
         </div>
       );
     } else if (this.state.displayType === DISPLAY_TYPE.SIGN_UP) {
+      var passValidClass;
+      var passValidText;
+      var passValidIcon;
+      if (this.state.pass1Val === this.state.pass2Val && this.state.pass1Val.length >= 6) {
+        passValidClass = 'text-success';
+        passValidText = 'Passwords Valid';
+        passValidIcon = 'fas fa-check';
+      } else {
+        passValidClass = 'text-danger';
+        passValidText = 'Passwords Invalid';
+        passValidIcon = 'fas fa-times';
+      }
+      
       return (
         <div className='sign-up-inputs'>
           <div className='form-group'>
@@ -174,6 +198,9 @@ class LoginForm extends Component {
           <div className='form-group'>
             <label><strong>Confirm Password</strong></label>
             <input type='password' className='form-control' value={this.state.pass2Val} onChange={this.onPass2Change} placeholder='Confirm Password' />
+          </div>
+          <div className='password-validator'>
+            <span className={passValidClass}>{passValidText} <i className={passValidIcon}></i></span>
           </div>
         </div>
       );
@@ -262,7 +289,7 @@ class LoginForm extends Component {
           <div className='container'>
             <div className='row'>
               <div className='col-12'>
-                <Button btnType='submit' btnClass='btn btn-primary btn-block' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
+                <Button btnType='submit' btnClass='btn btn-primary btn-block my-2' onClick={this.authSubmission} btnValue={this.state.submitBtnText} />
               </div>
             </div>
             {this.generateControlButtons()}

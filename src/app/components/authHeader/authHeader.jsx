@@ -67,7 +67,7 @@ class AuthHeader extends Component {
 
   onChangePasswordClicked() {
     // Password change requires recent authentication
-    // ns.postNotification(NOTIF_MODAL_TOGGLE, 'newPassword');
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'newPassword');
   }
 
   onChangeUsernameClicked() {

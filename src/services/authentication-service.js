@@ -1,6 +1,6 @@
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from './notification-service';
 import DataService from './data-service';
-import { auth } from './fire';
+import { auth, emailAuth } from './fire';
 
 let ns = new NotificationService();
 let ds = new DataService();
@@ -20,16 +20,15 @@ class AuthenticationService {
   }
 
   createUser(email, password, username) {
-    console.log('username in authServ: ' + username);
-    auth.createUserWithEmailAndPassword(email, password).then(function() {
-      var user = auth.currentUser;
-      ds.logUserInDatabase(user, username);
-      ns.postNotification(NOTIF_SIGNIN, user.uid);
-    }, function(error) {
-      // var errorCode = error.code;
-      var errorMessage = error.message;
-
-      console.log('create user error: ' + errorMessage);
+    return new Promise((resolve, reject) => {
+      auth.createUserWithEmailAndPassword(email, password).then(function() {
+        var user = auth.currentUser;
+        ds.logUserInDatabase(user, username);
+        ns.postNotification(NOTIF_SIGNIN, user.uid);
+        resolve();
+      }, function(error) {
+        reject(error);
+      });
     });
   }
 
@@ -66,10 +65,27 @@ class AuthenticationService {
     ds.updateUsername(uid, newUsername);
   }
 
+  reauthenticateUser = (email, password) => {
+    let cred = emailAuth.credential(email, password);
+
+    return new Promise((resolve, reject) => {
+      auth.currentUser.reauthenticateAndRetrieveDataWithCredential(cred).then(userCredential => {
+        resolve(userCredential);
+      }).catch(error => {
+        reject(error);
+      });
+    })
+  }
+
   updatePassword = (newPassword) => {
-    // need to check reauthentication
-    //auth.currentUser.reauthenticateWithCredential()
-    auth.currentUser.updatePassword(newPassword);
+    return new Promise((resolve, reject) => {
+      auth.currentUser.updatePassword(newPassword).then((passwordChangeReturn) => {
+        resolve(passwordChangeReturn);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+    
   }
 
   sendPasswordResetEmail = (email = '') => {
