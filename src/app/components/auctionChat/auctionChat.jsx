@@ -47,6 +47,8 @@ class AuctionChat extends Component {
       messages: messages,
       messageKeys: keys
     });
+
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
   }
 
   generateChatMessages = () => {
@@ -79,6 +81,7 @@ class AuctionChat extends Component {
           <ul className='messages-list'>
             {this.generateChatMessages()}
           </ul>
+          <div id='dummy-scroll-target' ref={(el) => { this.messagesEnd = el; }}></div>
         </div>
         <ChatInput leagueId={this.props.leagueId} uid={this.props.uid} /> 
       </div>
