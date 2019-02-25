@@ -90,6 +90,8 @@ class AuctionMain extends Component {
   }
 
   render() {
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+
     return (
       <div className='container'>
         <div className='auction-header'>
@@ -106,7 +108,7 @@ class AuctionMain extends Component {
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              <AuctionChat leagueId={this.state.leagueId} />
+              <AuctionChat leagueId={this.state.leagueId} uid={uid} />
             </div>
           </div>
           <div className='col col-md-6'>

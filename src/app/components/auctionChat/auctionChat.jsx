@@ -56,9 +56,16 @@ class AuctionChat extends Component {
         var author = this.state.messages[key].author;
         var body = this.state.messages[key].body;
         var time = this.state.messages[key].time;
+        var timestamp;
+
+        if (this.state.messages[key].timestamp !== undefined) {
+          timestamp = this.state.messages[key].timestamp;
+        } else {
+          timestamp = '';
+        }
 
         return (
-          <ChatMessage author={author} time={time} content={body} key={key} />
+          <ChatMessage author={author} time={time} timestamp={timestamp} content={body} key={key} />
         );
       });
       return (list);
@@ -71,7 +78,7 @@ class AuctionChat extends Component {
         <div className='chat-messages'>
           {this.generateChatMessages()}
         </div>
-        <ChatInput leagueId={this.props.leagueId} /> 
+        <ChatInput leagueId={this.props.leagueId} uid={this.props.uid} /> 
       </div>
     );
   }

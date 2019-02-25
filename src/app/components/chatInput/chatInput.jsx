@@ -14,7 +14,7 @@ class ChatInput extends Component {
 
     this.state = {
       message: '',
-      uid: '',
+      uid: this.props.uid,
       username: ''
     }
 
@@ -27,6 +27,7 @@ class ChatInput extends Component {
     event.preventDefault();
 
     console.log('send btn pressed');
+    console.log(this.state.uid);
 
     var self = this;
 
@@ -36,6 +37,7 @@ class ChatInput extends Component {
     }
     
     if (this.state.uid !== '') {
+      
       ds.getDisplayName(this.state.uid).then(function(username) {
         ds.postAuctionChatMessage(self.props.leagueId, self.state.message, username, self.state.uid)
         self.setState({message: ''});

@@ -6,7 +6,7 @@ import NotificationService, {
   NOTIF_AUCTION_ITEM_SOLD,
   NOTIF_AUCTION_TOTAL_UPDATED
 } from './notification-service';
-import { database } from './fire';
+import { database, fireDatabase } from './fire';
 
 let ns = new NotificationService();
 let instance = null;
@@ -401,8 +401,9 @@ class DataService {
       'author': user,
       'body': message,
       'time': messageTime,
-      'uid': uid
-    }
+      'uid': uid,
+      'timestamp': fireDatabase.ServerValue.TIMESTAMP
+    };
 
     database.ref('/messages-auction/' + leagueId).push(message);
   }
@@ -750,6 +751,26 @@ class DataService {
     }
     currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
+  }
+
+  formatServerTimestamp = (timestampInMilliseconds) => {
+    let date = new Date(timestampInMilliseconds);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    var period;
+
+    if (hours > 11) {
+      period = 'PM';
+    } else {
+      period = 'AM';
+    }
+
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+
+    return hours + ':' + minutes + ' ' + period;
   }
 
   getTournamentStructure = (tournamentId, year) => {

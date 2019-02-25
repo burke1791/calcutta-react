@@ -24,10 +24,12 @@ firebase.initializeApp(config);
 const auth = firebase.auth();
 const emailAuth = firebase.auth.EmailAuthProvider;
 const database = firebase.database();
+const fireDatabase = firebase.database;
 
 
 export {
   auth,
   emailAuth,
-  database
+  database,
+  fireDatabase
 };
