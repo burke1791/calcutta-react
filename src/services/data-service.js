@@ -238,7 +238,7 @@ class DataService {
     });
   }
 
-  loadNextItem = (teamCode, leagueId) => {
+  loadNextItem = (teamCode, leagueId, interval = 15) => {
     var name;
 
     return new Promise((resolve, reject) => {
@@ -249,13 +249,15 @@ class DataService {
           name = snapshot.child('name').val();
         }
 
+        let endTime = fireDatabase.ServerValue.TIMESTAMP;
+
         database.ref('/auctions/' + leagueId).update({
           'current-item': {
             'code': teamCode,
             'complete': false,
             'current-bid': 0,
             'current-winner': '',
-            'end-time': '',
+            'end-time': endTime,
             'name': name,
             'winner-uid': ''
           },
@@ -282,7 +284,7 @@ class DataService {
     });
   }
 
-  placeBid(leagueId, uid, name, bid) {
+  placeBid(leagueId, uid, name, bid, interval) {
     var bidRef = database.ref('/auctions/' + leagueId + '/current-item');
     var bidHistoryRef = database.ref('/auctions/' + leagueId + '/bid-history');
 
@@ -299,12 +301,13 @@ class DataService {
     bidRef.transaction(function(currentData) {
       var currentBid = currentData['current-bid'];
       if (currentData === null || currentBid < bid) {
+        let endTimestamp = fireDatabase.ServerValue.TIMESTAMP;
         var bidObj = {
           'code': currentData['code'],
           'complete': false,
           'current-bid': bid,
           'current-winner': name,
-          'end-time': currentData['end-time'],
+          'end-time': endTimestamp,
           'name': currentData['name'],
           'winner-uid': uid
         };
@@ -534,7 +537,8 @@ class DataService {
         'minBuyIn': 0,
         'maxBuyIn': 0,
         'use-tax': 0,
-        'tax-rate': 0
+        'tax-rate': 0,
+        'auction-interval': 15
       },
       // default payout settings
       'payout-settings': {
@@ -657,14 +661,21 @@ class DataService {
     var self = this;
 
     return new Promise((resolve, reject) => {
-      database.ref('/leagues/' + leagueId + '/sport').once('value').then(function(snapshot) {
-        var sportCode = snapshot.val();
-        database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
-          var teams = snapshot.val();
-          database.ref('/leagues/' + leagueId + '/teams').set(teams);
-          self.endAuction(leagueId, true);
-          resolve();
-        });
+      database.ref('/leagues/' + leagueId + '/teams').once('value').then(teamsSnapshot => {
+        let updates = {};
+        updates['/leagues/' + leagueId + '/auction-status'] = false;
+
+        let teams = teamsSnapshot.val();
+
+        for (var teamId in teams) {
+          teams[teamId].owner = '';
+          teams[teamId].price = 0;
+          teams[teamId].return = 0;
+        }
+        updates['/leagues/' + leagueId + '/teams'] = teams;
+
+        database.ref('/').update(updates);
+        database.ref('/auctions/' + leagueId).child('bid-history').remove();
       });
     });
   }

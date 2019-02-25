@@ -18,7 +18,8 @@ class AuctionAdmin extends Component {
       leagueId: this.props.leagueId,
       teamCodes: [],
       randomize: true,
-      unclaimed: false
+      unclaimed: false,
+      interval: 15
     }
 
     // bind functions
@@ -129,8 +130,12 @@ class AuctionAdmin extends Component {
       } else {
         var newCode = codes[0];
       }
-      
-      ds.loadNextItem(newCode, this.state.leagueId);
+
+      var interval = 15;
+      if (this.state.interval !== undefined) {
+        interval = this.state.interval;
+      }
+      ds.loadNextItem(newCode, this.state.leagueId, interval);
     } else {
       if (codes.length > 1) {
         for (var x = 0; x < codes.length; x++) {
@@ -143,7 +148,11 @@ class AuctionAdmin extends Component {
               var newCode = codes[0];
             }
             
-            ds.loadNextItem(newCode, this.state.leagueId).then(() => {
+            var interval = 15;
+            if (this.state.interval !== undefined) {
+              interval = this.state.interval;
+            }
+            ds.loadNextItem(newCode, this.state.leagueId, interval).then(() => {
               self.setState({teamCodes: codes});
             });
             break;

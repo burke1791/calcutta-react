@@ -11,7 +11,8 @@ class AuctionClock extends Component {
     this.state = {
       timeRemaining: 0,
       currentBid: this.props.currentBid,
-      currentTeam: ''
+      currentTeam: '',
+      endTime: 0
     }
 
     // Bind functions
@@ -38,7 +39,8 @@ class AuctionClock extends Component {
       clearInterval(this.timerID);
       ns.postNotification(NOTIF_AUCTION_ITEM_COMPLETE, null);
     } else {
-      var newRemainingTime = this.state.timeRemaining - 1;
+      let currentTime = new Date().getTime();
+      var newRemainingTime = Math.round((this.state.endTime - currentTime) / 1000);
       this.setState({timeRemaining: newRemainingTime});
     } 
   }
@@ -47,18 +49,22 @@ class AuctionClock extends Component {
     var itemComplete = newData['current-item']['complete'];
     var code = newData['current-item']['code'];
     var currentBid = newData['current-item']['current-bid'];
+    let endTime = newData['current-item']['end-time'] + (this.props.interval * 1000);
+    let currentTime = new Date().getTime();
 
-    console.log('interval: ' + this.props.interval);
+    console.log('currentTime: ' + currentTime);
 
     if (this.state.currentTeam !== code && !itemComplete) {
       clearInterval(this.timerID);
       this.setState({
-        timeRemaining: this.props.interval,
+        timeRemaining: Math.round((endTime - currentTime) / 1000),
         currentBid: currentBid,
-        currentTeam: code
+        currentTeam: code,
+        endTime: endTime
       });
       this.startClock();
-      console.log('clock should start ticking');
+      console.log('endTime: ' + endTime);
+      console.log('currentTime: ' + currentTime);
     } else {
       if (itemComplete) {
         clearInterval(this.timerID);
@@ -70,7 +76,8 @@ class AuctionClock extends Component {
         clearInterval(this.timerID);
         this.setState({
           currentBid: newData['current-item']['current-bid'],
-          timeRemaining: this.props.interval
+          timeRemaining: Math.round((endTime - currentTime) / 1000),
+          endTime: endTime
         });
         this.startClock();
       }
