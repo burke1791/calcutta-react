@@ -27,11 +27,13 @@ class ChatMessage extends Component {
   render() {
 
     return (
-      <div className='d-flex flex-row mx-1 message'>
-        <div className='' id='author'>{this.props.author + ':'}</div>
-        <div className='ml-2 text-left' id='content'>{this.props.content}</div>
-        <div className='ml-auto' id='time'>{this.convertTimestamp()}</div>
-      </div>
+      <li className='message'>
+        {/*<div className='d-flex flex-row mx-1 message'>*/}
+          <span className='float-left text-right' id='author'>{this.props.author + ':'}</span>
+          <span className='float-right text-right' id='time'>{this.convertTimestamp()}</span>
+          <span className='text-left' id='content'>{this.props.content}</span>
+        {/*</div>*/}
+      </li>
     );
   }
 }

@@ -76,7 +76,9 @@ class AuctionChat extends Component {
     return (
       <div className='d-flex flex-column justify-content-end auction-chat'>
         <div className='chat-messages'>
-          {this.generateChatMessages()}
+          <ul className='messages-list'>
+            {this.generateChatMessages()}
+          </ul>
         </div>
         <ChatInput leagueId={this.props.leagueId} uid={this.props.uid} /> 
       </div>
