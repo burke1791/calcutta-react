@@ -80,8 +80,8 @@ class AuctionAdmin extends Component {
     ds.getDataSnapshot('/leagues/' + this.state.leagueId + '/auction-status').then(auctionStatusSnapshot => {
       let status = auctionStatusSnapshot.val();
       if (!status) {
-        this.loadNewItem();
-        this.setState({auctionStarted: true});
+        
+        self.setState({auctionStarted: true}, self.loadNewItem);
       } else {
         alert('All Items Have Been Auctioned Off');
       }
@@ -118,7 +118,7 @@ class AuctionAdmin extends Component {
   loadNewItem(oldCode) {
     var self = this;
     var codes = this.state.teamCodes;
-
+    console.log(this.state.auctionStarted);
     if (!this.state.auctionStarted) {
       alert('Auction Is Not Active');
     } else if (!oldCode) {

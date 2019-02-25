@@ -157,11 +157,13 @@ class LeagueHome extends Component {
               let dataPoint = {y: totalBid, label: username};
               options.data[0].dataPoints.push(dataPoint);
             }
-          } else if (this.state.prizePool.bids[uid] !== undefined) {
-            var totalBid = this.state.prizePool.bids[uid];
-            let dataPoint = {y: totalBid, label: username};
-            options.data[0].dataPoints.push(dataPoint);
-          }
+          } else if (this.state.prizePool.bids !== undefined) {
+            if (this.state.prizePool.bids[uid] !== undefined) {
+              var totalBid = this.state.prizePool.bids[uid];
+              let dataPoint = {y: totalBid, label: username};
+              options.data[0].dataPoints.push(dataPoint);
+            }
+          } 
         }
       }
 

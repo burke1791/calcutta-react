@@ -113,7 +113,7 @@ class AuctionMain extends Component {
           </div>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              <AuctionItemHistory className='table table-striped table-hover' leagueId={this.state.leagueId} />
+              <AuctionItemHistory className='table table-striped table-hover table-sm' leagueId={this.state.leagueId} />
             </div>
           </div>
         </div>
