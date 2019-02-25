@@ -48,7 +48,7 @@ class AuctionChat extends Component {
       messageKeys: keys
     });
 
-    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    this.messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   }
 
   generateChatMessages = () => {

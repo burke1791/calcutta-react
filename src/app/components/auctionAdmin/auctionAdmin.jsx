@@ -119,7 +119,9 @@ class AuctionAdmin extends Component {
     var self = this;
     var codes = this.state.teamCodes;
 
-    if (!oldCode) {
+    if (!this.state.auctionStarted) {
+      alert('Auction Is Not Active');
+    } else if (!oldCode) {
       // called when Start Auction is pressed
       console.log('supposed to be from a fresh auction');
       if (this.state.randomize) {
@@ -164,6 +166,9 @@ class AuctionAdmin extends Component {
   }
 
   endAuction() {
+    this.setState({
+      auctionStarted: false
+    });
     this.logResults(true);
     ds.endAuction(this.state.leagueId);
   }
