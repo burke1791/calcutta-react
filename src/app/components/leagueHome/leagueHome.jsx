@@ -52,10 +52,14 @@ class LeagueHome extends Component {
       if (auctionStatusSnapshot !== null) {
         self.setState({auctionStatus: auctionStatus});
       }
+    }, function(error) {
+      console.log(error);
     });
 
     ds.getTotalPrizePoolByLeagueId(this.props.match.params.id).then(prizePool => {
       self.setState({prizePool: prizePool});
+    }, function(error) {
+      console.log(error);
     });
   }
 
