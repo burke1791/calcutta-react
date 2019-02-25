@@ -73,6 +73,9 @@ class AuctionBid extends Component {
           minBid: 0
         });
       }
+    }, function(error) {
+      console.log('fetchLeagueSettings error');
+      console.log(error);
     });
   }
 
