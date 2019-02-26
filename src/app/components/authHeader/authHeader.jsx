@@ -112,7 +112,7 @@ class AuthHeader extends Component {
             {'Signed in as: '  + this.props.username}
           </button>
           <div className='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenu'>
-            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password</button>
             <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
@@ -128,7 +128,7 @@ class AuthHeader extends Component {
             {'Signed in as: '  + this.props.username}
           </button>
           <div className='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenu'>
-            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password</button>
             <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
