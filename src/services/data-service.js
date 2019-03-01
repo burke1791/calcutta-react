@@ -6,7 +6,7 @@ import NotificationService, {
   NOTIF_AUCTION_ITEM_SOLD,
   NOTIF_AUCTION_TOTAL_UPDATED
 } from './notification-service';
-import { database } from './fire';
+import { database, fireDatabase } from './fire';
 
 let ns = new NotificationService();
 let instance = null;
@@ -50,6 +50,9 @@ class DataService {
         } else {
           resolve(false);
         }
+      }, function(error) {
+        console.log('premission denied');
+        resolve(false);
       });
     });
   }
@@ -214,7 +217,7 @@ class DataService {
         if (winnerUID === '') {
           winnerUID = '(unclaimed)';
         }
-  
+        
         if (unclaimed || winnerUID !== '(unclaimed)') {
           database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
             'owner': winnerUID,
@@ -235,19 +238,26 @@ class DataService {
     });
   }
 
-  loadNextItem = (teamCode, leagueId) => {
-    var name = '';
+  loadNextItem = (teamCode, leagueId, interval = 15) => {
+    var name;
 
     return new Promise((resolve, reject) => {
       database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
-        name = snapshot.child('name').val();
+        if (snapshot.child('seed-value').exists()) {
+          name = '(' + snapshot.child('seed-value').val() + ') ' + snapshot.child('name').val();
+        } else {
+          name = snapshot.child('name').val();
+        }
+
+        let endTime = fireDatabase.ServerValue.TIMESTAMP;
+
         database.ref('/auctions/' + leagueId).update({
           'current-item': {
             'code': teamCode,
             'complete': false,
             'current-bid': 0,
             'current-winner': '',
-            'end-time': '',
+            'end-time': endTime,
             'name': name,
             'winner-uid': ''
           },
@@ -274,7 +284,7 @@ class DataService {
     });
   }
 
-  placeBid(leagueId, uid, name, bid) {
+  placeBid(leagueId, uid, name, bid, interval) {
     var bidRef = database.ref('/auctions/' + leagueId + '/current-item');
     var bidHistoryRef = database.ref('/auctions/' + leagueId + '/bid-history');
 
@@ -291,12 +301,13 @@ class DataService {
     bidRef.transaction(function(currentData) {
       var currentBid = currentData['current-bid'];
       if (currentData === null || currentBid < bid) {
+        let endTimestamp = fireDatabase.ServerValue.TIMESTAMP;
         var bidObj = {
           'code': currentData['code'],
           'complete': false,
           'current-bid': bid,
           'current-winner': name,
-          'end-time': currentData['end-time'],
+          'end-time': endTimestamp,
           'name': currentData['name'],
           'winner-uid': uid
         };
@@ -393,8 +404,9 @@ class DataService {
       'author': user,
       'body': message,
       'time': messageTime,
-      'uid': uid
-    }
+      'uid': uid,
+      'timestamp': fireDatabase.ServerValue.TIMESTAMP
+    };
 
     database.ref('/messages-auction/' + leagueId).push(message);
   }
@@ -525,7 +537,8 @@ class DataService {
         'minBuyIn': 0,
         'maxBuyIn': 0,
         'use-tax': 0,
-        'tax-rate': 0
+        'tax-rate': 0,
+        'auction-interval': 15
       },
       // default payout settings
       'payout-settings': {
@@ -648,14 +661,21 @@ class DataService {
     var self = this;
 
     return new Promise((resolve, reject) => {
-      database.ref('/leagues/' + leagueId + '/sport').once('value').then(function(snapshot) {
-        var sportCode = snapshot.val();
-        database.ref('/sports/' + sportCode).once('value').then(function(snapshot) {
-          var teams = snapshot.val();
-          database.ref('/leagues/' + leagueId + '/teams').set(teams);
-          self.endAuction(leagueId, true);
-          resolve();
-        });
+      database.ref('/leagues/' + leagueId + '/teams').once('value').then(teamsSnapshot => {
+        let updates = {};
+        updates['/leagues/' + leagueId + '/auction-status'] = false;
+
+        let teams = teamsSnapshot.val();
+
+        for (var teamId in teams) {
+          teams[teamId].owner = '';
+          teams[teamId].price = 0;
+          teams[teamId].return = 0;
+        }
+        updates['/leagues/' + leagueId + '/teams'] = teams;
+
+        database.ref('/').update(updates);
+        database.ref('/auctions/' + leagueId).child('bid-history').remove();
       });
     });
   }
@@ -742,6 +762,30 @@ class DataService {
     }
     currencyString = s + sym + ' ' + Math.abs(value).toFixed(2);
     return (currencyString);
+  }
+
+  formatServerTimestamp = (timestampInMilliseconds) => {
+    let date = new Date(timestampInMilliseconds);
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    var period;
+
+    if (hours > 11) {
+      period = 'PM';
+    } else {
+      period = 'AM';
+    }
+
+    if (hours > 12) {
+      hours -= 12;
+    }
+
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+
+    return hours + ':' + minutes + ' ' + period;
   }
 
   getTournamentStructure = (tournamentId, year) => {

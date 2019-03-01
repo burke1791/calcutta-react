@@ -1,6 +1,6 @@
 import NotificationService, { NOTIF_SIGNIN, NOTIF_SIGNOUT } from './notification-service';
 import DataService from './data-service';
-import { auth } from './fire';
+import { auth, emailAuth } from './fire';
 
 let ns = new NotificationService();
 let ds = new DataService();
@@ -20,27 +20,33 @@ class AuthenticationService {
   }
 
   createUser(email, password, username) {
-    console.log('username in authServ: ' + username);
-    auth.createUserWithEmailAndPassword(email, password).then(function() {
-      var user = auth.currentUser;
-      ds.logUserInDatabase(user, username);
-      ns.postNotification(NOTIF_SIGNIN, user.uid);
-    }, function(error) {
-      // var errorCode = error.code;
-      var errorMessage = error.message;
-
-      console.log('create user error: ' + errorMessage);
+    return new Promise((resolve, reject) => {
+      auth.createUserWithEmailAndPassword(email, password).then(function() {
+        var user = auth.currentUser;
+        ds.logUserInDatabase(user, username);
+        ns.postNotification(NOTIF_SIGNIN, user.uid);
+        resolve();
+      }, function(error) {
+        reject(error);
+      });
     });
   }
 
-  signInUser(email, password) {
-    auth.signInWithEmailAndPassword(email, password).then(function(user) {
-      ns.postNotification(NOTIF_SIGNIN, user.user.uid);
-    }, function(error) {
-      // var errorCode = error.code;
-      var errorMessage = error.message;
+  signInUser = (email, password) => {
+    return new Promise((resolve, reject) => {
+      auth.signInWithEmailAndPassword(email, password).then(function(user) {
+        ns.postNotification(NOTIF_SIGNIN, user.user.uid);
+        resolve();
+      }, function(error) {
+        // var errorCode = error.code;
+        var errorMessage = error.message;
+        var errorCode = error.code;
+  
+        console.log('sign in error: ' + errorMessage);
+        console.log('sign in error code: ' + errorCode);
 
-      console.log('sign in error: ' + errorMessage);
+        reject(error);
+      });
     })
   }
 
@@ -59,10 +65,50 @@ class AuthenticationService {
     ds.updateUsername(uid, newUsername);
   }
 
+  reauthenticateUser = (email, password) => {
+    let cred = emailAuth.credential(email, password);
+
+    return new Promise((resolve, reject) => {
+      auth.currentUser.reauthenticateAndRetrieveDataWithCredential(cred).then(userCredential => {
+        resolve(userCredential);
+      }).catch(error => {
+        reject(error);
+      });
+    })
+  }
+
   updatePassword = (newPassword) => {
-    // need to check reauthentication
-    //auth.currentUser.reauthenticateWithCredential()
-    auth.currentUser.updatePassword(newPassword);
+    return new Promise((resolve, reject) => {
+      auth.currentUser.updatePassword(newPassword).then((passwordChangeReturn) => {
+        resolve(passwordChangeReturn);
+      }).catch((error) => {
+        reject(error);
+      });
+    });
+    
+  }
+
+  sendPasswordResetEmail = (email = '') => {
+    var userEmail;
+    if (email === '') {
+      userEmail = auth.currentUser.email;
+    } else {
+      userEmail = email;
+    }
+
+    return new Promise((resolve, reject) => {
+      if (userEmail) {
+        auth.sendPasswordResetEmail(userEmail).then(() => {
+          resolve();
+        }).catch(function(error) {
+          console.log('error sending password reset email');
+          console.log(error);
+          reject(error);
+        });
+      } else {
+        reject('need email to send reset link');
+      }
+    });
   }
 
   addAuthListener(thisApp) {

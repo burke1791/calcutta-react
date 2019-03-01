@@ -16,7 +16,9 @@ const customStyles = {
     right : 'auto',
     bottom : 'auto',
     marginRight : '-50%',
-    transform : 'translate(-50%, -50%)'
+    transform : 'translate(-50%, -50%)',
+    maxWidth : '450px',
+    minWidth : '350px'
   }
 };
 
@@ -94,7 +96,7 @@ class GeneralModal extends Component {
       );
     } else if (this.state.modalType === 'newPassword') {
       return (
-        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='password' />
+        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='password-reauthenticate' />
       );
     }
   }

@@ -67,7 +67,7 @@ class AuthHeader extends Component {
 
   onChangePasswordClicked() {
     // Password change requires recent authentication
-    // ns.postNotification(NOTIF_MODAL_TOGGLE, 'newPassword');
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'newPassword');
   }
 
   onChangeUsernameClicked() {
@@ -75,19 +75,7 @@ class AuthHeader extends Component {
   }
 
   onSignIn() {
-    var self = this;
-    this.checkAdmin().then(function(admin) {
-      if (admin) {
-        self.setState({
-          authenticated: true,
-          admin: true
-        });
-      } else {
-        self.setState({
-          authenticated: true
-        });
-      }
-    });
+    this.checkAdmin();
   }
 
   onSignOut() {
@@ -97,21 +85,23 @@ class AuthHeader extends Component {
     });
   }
 
-  checkAdmin = () => {
-    return new Promise((resolve, reject) => {
-      if (this.props.uid !== '') {
-        ds.isAdmin(this.props.uid).then(function(admin) {
-          if (admin) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
-        });
-      } else {
-        console.log('ERROR! authHeader.props.uid is empty');
-        resolve(false);
-      } 
-    });
+  checkAdmin() {
+    var self = this;
+    if (this.props.uid !== '') {
+      ds.isAdmin(this.props.uid).then(isAdmin => {
+        if (isAdmin) {
+          self.setState({
+            authenticated: true,
+            admin: isAdmin
+          });
+        } else {
+          self.setState({
+            authenticated: true,
+            admin: false
+          });
+        }
+      });
+    }
   }
 
   generateAuthBtn = () => {
@@ -122,7 +112,7 @@ class AuthHeader extends Component {
             {'Signed in as: '  + this.props.username}
           </button>
           <div className='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenu'>
-            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password</button>
             <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>
@@ -138,7 +128,7 @@ class AuthHeader extends Component {
             {'Signed in as: '  + this.props.username}
           </button>
           <div className='dropdown-menu dropdown-menu-right' aria-labelledby='dropdownMenu'>
-            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password (not working yet)</button>
+            <button className='dropdown-item' type='button' onClick={this.onChangePasswordClicked}>Change Password</button>
             <button className='dropdown-item' type='button' onClick={this.onChangeUsernameClicked}>Change Username</button>
             <div className='dropdown-divider'></div>
             <button className='dropdown-item' type='button' onClick={this.onSignOutClicked}>Sign Out</button>

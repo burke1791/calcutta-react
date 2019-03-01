@@ -22,9 +22,14 @@ var config_test = {
 firebase.initializeApp(config);
 
 const auth = firebase.auth();
+const emailAuth = firebase.auth.EmailAuthProvider;
 const database = firebase.database();
+const fireDatabase = firebase.database;
+
 
 export {
   auth,
-  database
+  emailAuth,
+  database,
+  fireDatabase
 };

@@ -19,7 +19,8 @@ class AuctionTeam extends Component {
       myBidTotal: 0,
       myTaxTotal: 0,
       auctionTotal: 0,
-      uid: ''
+      uid: '',
+      interval: 15
     }
 
     this.userSignedIn = this.userSignedIn.bind(this);
@@ -40,6 +41,12 @@ class AuctionTeam extends Component {
     }
 
     ds.attachLeagueTotalsListener(this.props.leagueId);
+    var self = this;
+    ds.fetchSettings(this.props.leagueId).then(settings => {
+      if (settings['auction-interval'] !== undefined) {
+        self.setState({interval: settings['auction-interval']});
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -138,7 +145,7 @@ class AuctionTeam extends Component {
           <h3>...</h3>
           <h5>Bid:</h5>
           <div className='auction-clock'> 
-            <AuctionClock  interval={10} currentBid={this.state.currentBid} />
+            <AuctionClock  interval={this.state.interval} currentBid={this.state.currentBid} />
           </div>
           <h5>Current Winner:</h5>
           <hr />
@@ -153,7 +160,7 @@ class AuctionTeam extends Component {
           <h3>{this.props.currentItem['name']}</h3>
           <h5>{'Bid: $' + this.props.currentItem['current-bid']}</h5>
           <div className='auction-clock'>
-            <AuctionClock  interval={10} currentBid={this.state.currentBid} />
+            <AuctionClock  interval={this.state.interval} currentBid={this.state.currentBid} />
           </div>
           <h5>{'High Bid: ' + this.props.currentItem['current-winner']}</h5>
           <hr />
