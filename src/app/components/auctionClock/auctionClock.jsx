@@ -70,7 +70,7 @@ class AuctionClock extends Component {
   }
 
   tick() {
-    if (this.state.timeRemaining == 0) {
+    if (this.state.timeRemaining <= 0) {
       clearInterval(this.timerID);
       ns.postNotification(NOTIF_AUCTION_ITEM_COMPLETE, null);
     } else {
