@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import './auctionClock.css';
 import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
+import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
+let ds = new DataService();
 
 class AuctionClock extends Component {
   constructor(props) {
@@ -12,10 +14,16 @@ class AuctionClock extends Component {
       timeRemaining: 0,
       currentBid: this.props.currentBid,
       currentTeam: '',
-      endTime: 0
+      endTime: 0,
+      offsetArray: [],
+      offsetAvg: 0,
+      synchronizedWithServer: false
     }
 
     // Bind functions
+    this.resetClockSynchronizationStateVariables = this.resetClockSynchronizationStateVariables.bind(this);
+    this.synchronizeClockWithServer = this.synchronizeClockWithServer.bind(this);
+    this.calculateOffset = this.calculateOffset.bind(this);
     this.generateCountdownDisplay = this.generateCountdownDisplay.bind(this);
     this.tick = this.tick.bind(this);
     this.newAuctionData = this.newAuctionData.bind(this);
@@ -25,6 +33,10 @@ class AuctionClock extends Component {
   componentDidMount() {
     ns.addObserver(NOTIF_AUCTION_CHANGE, this, this.newAuctionData);
     ns.addObserver(NOTIF_AUCTION_START_CLOCK, this, this.startClock);
+
+    if (this.props.uid !== undefined) {
+      this.resetClockSynchronizationStateVariables();
+    }
   }
 
   componentWillUnmount() {
@@ -32,6 +44,58 @@ class AuctionClock extends Component {
 
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
     ns.removeObserver(this, NOTIF_AUCTION_START_CLOCK);
+
+    ds.detatchUserServerClockListener(this.props.uid);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.uid !== prevProps.uid) {
+      this.resetClockSynchronizationStateVariables();
+    }
+  }
+
+  resetClockSynchronizationStateVariables() {
+    this.setState({
+      offsetArray: [],
+      offsetAvg: 0,
+      synchronizedWithServer: false
+    }, this.synchronizeClockWithServer);
+  }
+
+  synchronizeClockWithServer() {
+    ds.attachUserServerClockListener(this.props.uid, this.calculateOffset);
+  }
+
+  calculateOffset(newTimestamp) {
+    if (newTimestamp !== null) {
+      var offsetArray = this.state.offsetArray;
+
+      var offset = newTimestamp.client - newTimestamp.server;
+      offsetArray.push(offset);
+
+      if (offsetArray.length >= 5) {
+        // compute average then detatch listener
+        ds.detatchUserServerClockListener(this.props.uid);
+
+        var offsetSum = 0;
+        for (var offset of offsetArray) {
+          offsetSum += offset;
+        }
+        let offsetAvg = offsetSum / offsetArray.length;
+
+        this.setState({
+          offsetAvg: offsetAvg,
+          synchronizedWithServer: true
+        });
+        console.log('synchronized');
+      } else {
+        this.setState({
+          offsetArray: offsetArray
+        }, () => ds.sendNewClientServerTimestamp(this.props.uid));
+      }
+    } else {
+      ds.sendNewClientServerTimestamp(this.props.uid);
+    }
   }
 
   tick() {
