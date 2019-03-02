@@ -172,6 +172,17 @@ class DataService {
     });
   }
 
+  // TEST
+  getClientServerTimeOffset() {
+    let currentTime = new Date().getTime();
+    return new Promise((resolve, reject) => {
+      database.ref('.info/serverTimeOffset').once('value').then(function(offsetSnapshot) {
+        let offset = offsetSnapshot.val();
+        resolve(offset);
+      });
+    });
+  }
+
   attachAuctionListener = (leagueId) => {
     database.ref('/auctions/' + leagueId).on('value', function(snapshot) {
       ns.postNotification(NOTIF_AUCTION_CHANGE, snapshot.val());

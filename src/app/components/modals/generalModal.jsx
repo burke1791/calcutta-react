@@ -108,9 +108,9 @@ class GeneralModal extends Component {
   
   render() {
     if (this.props.modalType === 'login') {
-      var timeoutStyle = '';
+      var timeoutStyle;
       var overlayClose = true;
-      if (this.state.modalType.includes('timeout')) {
+      if (this.props.modalType.includes('timeout')) {
         timeoutStyle = {
           display: 'none'
         };

@@ -17,7 +17,8 @@ class AuctionClock extends Component {
       endTime: 0,
       offsetArray: [],
       offsetAvg: 0,
-      synchronizedWithServer: false
+      synchronizedWithServer: false,
+      lastSync: 0
     }
 
     // Bind functions
@@ -54,12 +55,18 @@ class AuctionClock extends Component {
     }
   }
 
+  testGetOffset() {
+    ds.getClientServerTimeOffset().then(offset => {
+      console.log('test offset: ' + offset);
+    });
+  }
+
   resetClockSynchronizationStateVariables() {
     ns.postNotification(NOTIF_MODAL_TOGGLE, 'timeout-clock-sync');
     this.setState({
       offsetArray: [],
       offsetAvg: 0,
-      synchronizedWithServer: false
+      synchronizedWithServer: false,
     }, this.synchronizeClockWithServer);
   }
 
@@ -68,29 +75,40 @@ class AuctionClock extends Component {
   }
 
   calculateOffset(newTimestamp) {
+    let currentTime = new Date().getTime();
+    let timeSinceLastServerTimestamp = Math.abs(currentTime - newTimestamp.client);
+    console.log(newTimestamp);
+    // console.log('time since last server timestamp: ' + timeSinceLastServerTimestamp);
     if (newTimestamp !== null) {
       var offsetArray = this.state.offsetArray;
 
       var offset = newTimestamp.client - newTimestamp.server;
+      console.log('new offset: ' + offset);
       offsetArray.push(offset);
 
       if (offsetArray.length >= 5) {
-        // compute average then detatch listener
+        // compute average and detatch listener
         ds.detatchUserServerClockListener(this.props.uid);
+
+        console.log(offsetArray);
 
         var offsetSum = 0;
         for (var offset of offsetArray) {
           offsetSum += offset;
         }
         let offsetAvg = offsetSum / offsetArray.length;
+        let lastSync = new Date().getTime();
 
         this.setState({
           offsetAvg: offsetAvg,
-          synchronizedWithServer: true
+          synchronizedWithServer: true,
+          lastSync: lastSync
         });
         ns.postNotification(NOTIF_MODAL_TOGGLE, null);
         console.log('synchronized');
+        console.log('offsetAvg: ' + offsetAvg);
       } else {
+        this.testGetOffset();
         this.setState({
           offsetArray: offsetArray
         }, () => ds.sendNewClientServerTimestamp(this.props.uid));
@@ -140,13 +158,23 @@ class AuctionClock extends Component {
         });
       } else {
         clearInterval(this.timerID);
+        let timeRemaining = Math.round((endTime - currentTime + this.state.offsetAvg) / 1000);
+        this.checkClockSynchronization(timeRemaining);
         this.setState({
           currentBid: newData['current-item']['current-bid'],
-          timeRemaining: Math.round((endTime - currentTime + this.state.offsetAvg) / 1000),
+          timeRemaining: timeRemaining,
           endTime: endTime
         });
         this.startClock();
       }
+    }
+  }
+
+  checkClockSynchronization(timeRemaining) {
+    console.log('timeRemaining: ' + timeRemaining);
+    console.log('interval: ' + this.props.interval);
+    if (Math.abs(timeRemaining - this.props.interval) > 1) {
+      this.resetClockSynchronizationStateVariables();
     }
   }
 
