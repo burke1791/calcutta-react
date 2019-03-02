@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './timeoutForm.css';
-// import Loader from 'react-loader-spinner';
+import Loader from 'react-loader-spinner';
 
 class TimeoutForm extends Component {
   constructor(props) {
@@ -10,12 +10,13 @@ class TimeoutForm extends Component {
   }
 
   render() {
-    /*
+    
     return (
-      <Loader type="Watch" color="#00BFFF" height="100" width="100" />
+      <div className='timeout-spinner'>
+        <Loader type="Watch" color="#FFA500" height="75" width="75" />
+      </div>
     );
-    */
-    return null;
+    
   }
 }
 

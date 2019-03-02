@@ -88,6 +88,7 @@ class AuctionClock extends Component {
           offsetAvg: offsetAvg,
           synchronizedWithServer: true
         });
+        ns.postNotification(NOTIF_MODAL_TOGGLE, null);
         console.log('synchronized');
       } else {
         this.setState({
@@ -105,7 +106,7 @@ class AuctionClock extends Component {
       ns.postNotification(NOTIF_AUCTION_ITEM_COMPLETE, null);
     } else {
       let currentTime = new Date().getTime();
-      var newRemainingTime = Math.round((this.state.endTime - currentTime) / 1000);
+      var newRemainingTime = Math.round((this.state.endTime - currentTime + this.state.offsetAvg) / 1000);
       this.setState({timeRemaining: newRemainingTime});
     } 
   }
@@ -122,7 +123,7 @@ class AuctionClock extends Component {
     if (this.state.currentTeam !== code && !itemComplete) {
       clearInterval(this.timerID);
       this.setState({
-        timeRemaining: Math.round((endTime - currentTime) / 1000),
+        timeRemaining: Math.round((endTime - currentTime + this.state.offsetAvg) / 1000),
         currentBid: currentBid,
         currentTeam: code,
         endTime: endTime
@@ -141,7 +142,7 @@ class AuctionClock extends Component {
         clearInterval(this.timerID);
         this.setState({
           currentBid: newData['current-item']['current-bid'],
-          timeRemaining: Math.round((endTime - currentTime) / 1000),
+          timeRemaining: Math.round((endTime - currentTime + this.state.offsetAvg) / 1000),
           endTime: endTime
         });
         this.startClock();
