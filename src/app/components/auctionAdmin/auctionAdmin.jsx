@@ -18,7 +18,8 @@ class AuctionAdmin extends Component {
       leagueId: this.props.leagueId,
       teamCodes: [],
       randomize: true,
-      unclaimed: false
+      unclaimed: false,
+      interval: 15
     }
 
     // bind functions
@@ -76,33 +77,65 @@ class AuctionAdmin extends Component {
   }
 
   startAuction() {
-    this.loadNewItem();
-    this.setState({auctionStarted: true});
+    var self = this;
+    ds.getDataSnapshot('/leagues/' + this.state.leagueId + '/auction-status').then(auctionStatusSnapshot => {
+      let status = auctionStatusSnapshot.val();
+      if (!status) {
+        
+        self.setState({auctionStarted: true}, self.loadNewItem);
+      } else {
+        alert('All Items Have Been Auctioned Off');
+      }
+    });
+    
   }
 
   nextItem() {
     this.logResults();
   }
 
-  logResults() {
+  logResults(endAuction = false) {
     var self = this;
-    ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
-      self.loadNewItem(oldCode);
-    });
+    if (endAuction) {
+      ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
+        // do nothing
+      }, function(error) {
+        // future error handling
+      });
+    } else {
+      ds.logAuctionItemResult(this.state.leagueId, this.state.unclaimed).then((oldCode) => {
+        if (oldCode === '') {
+          alert('All Items Have Been Auctioned Off');
+        } else {
+          self.loadNewItem(oldCode);
+        }
+      }, function(error) {
+        // future error handling
+      });
+    }
+    
   }
 
   loadNewItem(oldCode) {
     var self = this;
     var codes = this.state.teamCodes;
-
-    if (!oldCode) {
+    console.log(this.state.auctionStarted);
+    if (!this.state.auctionStarted) {
+      alert('Auction Is Not Active');
+    } else if (!oldCode) {
+      // called when Start Auction is pressed
+      console.log('supposed to be from a fresh auction');
       if (this.state.randomize) {
         var newCode = codes[Math.floor(Math.random() * codes.length)];
       } else {
         var newCode = codes[0];
       }
-      
-      ds.loadNextItem(newCode, this.state.leagueId);
+
+      var interval = 15;
+      if (this.state.interval !== undefined) {
+        interval = this.state.interval;
+      }
+      ds.loadNextItem(newCode, this.state.leagueId, interval);
     } else {
       if (codes.length > 1) {
         for (var x = 0; x < codes.length; x++) {
@@ -115,7 +148,11 @@ class AuctionAdmin extends Component {
               var newCode = codes[0];
             }
             
-            ds.loadNextItem(newCode, this.state.leagueId).then(() => {
+            var interval = 15;
+            if (this.state.interval !== undefined) {
+              interval = this.state.interval;
+            }
+            ds.loadNextItem(newCode, this.state.leagueId, interval).then(() => {
               self.setState({teamCodes: codes});
             });
             break;
@@ -138,6 +175,10 @@ class AuctionAdmin extends Component {
   }
 
   endAuction() {
+    this.setState({
+      auctionStarted: false
+    });
+    this.logResults(true);
     ds.endAuction(this.state.leagueId);
   }
 

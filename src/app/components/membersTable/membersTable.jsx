@@ -49,6 +49,8 @@ class MembersTable extends Component {
       var self = this;
       ds.getTotalPrizePoolByLeagueId(this.props.match.params.id).then(prizePool => {
         self.setState({prizePool: prizePool});
+      }, function(error) {
+        console.log(error);
       });
     }
   }
@@ -68,8 +70,6 @@ class MembersTable extends Component {
 
   loadUsers() {
     // TODO: move to DataService
-    console.log('loadUsers() called');
-    console.log('this.state.isAuthenticated: ' + this.state.isAuthenticated);
     var self = this;
     var users = {};
 
@@ -91,7 +91,6 @@ class MembersTable extends Component {
   }
 
   loadMembers() {
-    console.log('loadMembers() called');
     if (this.state.usersDownloaded) {
       var uid = authService.getUser() != null ? authService.getUser().uid : null;
       var self = this;
@@ -102,7 +101,6 @@ class MembersTable extends Component {
         ds.getLeagueUserInfo(this.state.leagueId, uid).then(function(members) {
           thisMembers = members;
           var uids = Object.keys(thisMembers);
-          console.log('loadMembers() num UIDs: ' + uids.length);
 
           for (var i = 0; i < uids.length; i++) {
             for (var mem in thisMembers) {

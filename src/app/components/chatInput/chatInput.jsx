@@ -14,7 +14,7 @@ class ChatInput extends Component {
 
     this.state = {
       message: '',
-      uid: '',
+      uid: this.props.uid,
       username: ''
     }
 
@@ -27,15 +27,16 @@ class ChatInput extends Component {
     event.preventDefault();
 
     console.log('send btn pressed');
+    console.log(this.state.uid);
 
     var self = this;
 
-    if (this.state.uid === '') {
+    if (this.state.uid === '' || this.state.uid === undefined || this.state.uid === null) {
       this.setState({uid: authService.getUser().uid});
       console.log('uid: ' + this.state.uid);
     }
     
-    if (this.state.uid !== '') {
+    if (this.state.uid !== '' && this.state.uid !== undefined && this.state.uid !== null) {
       ds.getDisplayName(this.state.uid).then(function(username) {
         ds.postAuctionChatMessage(self.props.leagueId, self.state.message, username, self.state.uid)
         self.setState({message: ''});
@@ -49,13 +50,17 @@ class ChatInput extends Component {
 
   render() {
     return (
-      <div className='input-group flex-row justify-content-end my-1'>
-        <div className='input-grow'>
-          <input type='text' className='form-control' value={this.state.message} onChange={this.onMessageChange} placeholder='Trash Talk Here' />
-        </div>
-        <div className='input-group-append'>
-          <Button btnType='button' onClick={this.sendMessage} className='btn btn-outline-secondary' btnValue='Send' />
-        </div>
+      <div className='justify-content-end my-1'>
+        <form>
+          <div className='form-row'>
+            <div className='col-10'>
+              <input type='text' className='form-control' value={this.state.message} onChange={this.onMessageChange} placeholder='Trash Talk Here' />
+            </div>
+            <div className='col-2'>
+              <button type='submit' onClick={this.sendMessage} className='btn btn-primary' id='send-chat'>Send</button>
+            </div>
+          </div>
+        </form>
       </div>
     ); 
   }

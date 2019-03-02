@@ -4,6 +4,7 @@ import NotificationService, {NOTIF_MODAL_TOGGLE, NOTIF_MODAL_TYPE_CHANGE} from '
 import LoginForm from '../loginForm/loginForm';
 import LeagueForm from '../leagueForm/leagueForm';
 import UpdateProfileForm from '../updateProfileForm/updateProfileForm';
+import TimeoutForm from '../timeoutForm/timeoutForm';
 
 import './generalModal.css';
 
@@ -16,7 +17,9 @@ const customStyles = {
     right : 'auto',
     bottom : 'auto',
     marginRight : '-50%',
-    transform : 'translate(-50%, -50%)'
+    transform : 'translate(-50%, -50%)',
+    maxWidth : '450px',
+    minWidth : '350px'
   }
 };
 
@@ -68,6 +71,8 @@ class GeneralModal extends Component {
       return 'Change Username';
     } else if (this.state.modalType === 'newPassword') {
       return 'Change Password';
+    } else if (this.state.modalType === 'timeout-clock-sync') {
+      return 'Please wait while your clock synchronizes with the server...';
     }
   }
 
@@ -94,27 +99,37 @@ class GeneralModal extends Component {
       );
     } else if (this.state.modalType === 'newPassword') {
       return (
-        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='password' />
+        <UpdateProfileForm submitHandler={this.toggleModal} profUpdateType='password-reauthenticate' />
       );
+    } else {
+      return <TimeoutForm />;
     }
   }
   
   render() {
     if (this.props.modalType === 'login') {
+      var timeoutStyle;
+      var overlayClose = true;
+      if (this.props.modalType.includes('timeout')) {
+        timeoutStyle = {
+          display: 'none'
+        };
+        overlayClose = false;
+      }
       return (
         <div className='modal fade' role='dialog'>
           <div className='modal-dialog modal-dialog-centered' role='document'>
             <div className='modal-content'>
-              <Modal isOpen={this.state.show} onRequestClose={this.toggleModal} style={customStyles} >
+              <Modal isOpen={this.state.show} onRequestClose={this.toggleModal} shouldCloseOnOverlayClick={overlayClose} style={customStyles} >
                 <div className='modal-header'>
                   <h4 className='modal-title'>{this.getTitle()}</h4>
-                  <button type='button' className='close' onClick={this.toggleModal}>&times;</button>
+                  <button type='button' className='close' style={timeoutStyle} onClick={this.toggleModal}>&times;</button>
                 </div>
                 <div className='modal-body'>
                   {this.generateModalForm()}
                 </div>
                 <div className='modal-footer'>
-                  <button type='button' className='btn btn-danger' onClick={this.toggleModal}>Close</button>
+                  <button type='button' className='btn btn-danger' style={timeoutStyle} onClick={this.toggleModal}>Close</button>
                 </div>
               </Modal>
             </div>

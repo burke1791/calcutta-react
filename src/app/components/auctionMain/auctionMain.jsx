@@ -90,6 +90,8 @@ class AuctionMain extends Component {
   }
 
   render() {
+    var uid = authService.getUser() != null ? authService.getUser().uid : null;
+
     return (
       <div className='container'>
         <div className='auction-header'>
@@ -106,12 +108,12 @@ class AuctionMain extends Component {
         <div className='row justify-content-md-center'>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              <AuctionChat leagueId={this.state.leagueId} />
+              <AuctionChat leagueId={this.state.leagueId} uid={uid} />
             </div>
           </div>
           <div className='col col-md-6'>
             <div className='card m-2'>
-              <AuctionItemHistory className='table table-striped table-hover' leagueId={this.state.leagueId} />
+              <AuctionItemHistory className='table table-striped table-hover table-sm' leagueId={this.state.leagueId} />
             </div>
           </div>
         </div>
@@ -119,7 +121,7 @@ class AuctionMain extends Component {
           <ResultsTable leagueId={this.state.leagueId} resultType='team' />
         </div>
         <div className='container card my-4'>
-          <ResultsTable leagueId={this.state.leagueId} resultType='user' />
+          <ResultsTable leagueId={this.state.leagueId} resultType='user' myAuthObj={authService.getUser()} />
         </div>
       </div>
       

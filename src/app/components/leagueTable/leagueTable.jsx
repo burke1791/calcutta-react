@@ -112,14 +112,43 @@ class LeagueTable extends Component {
     var payout = 0;
     var netReturn = 0;
 
-    var teams = (league.teams != null ? league.teams : []);
+    var teams = (league.teams !== undefined ? league.teams : []);
+
+    let prizePool = league['prize-pool'] !== undefined ? league['prize-pool'] : null;
+
+    console.log(prizePool);
+
+    if (prizePool !== null) {
+      if (prizePool['use-tax'] !== undefined) {
+        if (prizePool['use-tax'][this.state.uid] !== undefined) {
+          buyIn += Number(prizePool['use-tax'][this.state.uid]);
+        }
+
+        if (prizePool.bids !== undefined) {
+          if (prizePool.bids[this.state.uid] !== undefined) {
+            buyIn += Number(prizePool.bids[this.state.uid]);
+          }
+        }
+      } else if (prizePool.bids !== undefined) {
+        if (prizePool.bids[this.state.uid] !== undefined) {
+          buyIn += Number(prizePool.bids[this.state.uid]);
+        }
+      }
+    } else {
+      for (const [key, value] of Object.entries(teams)) {
+        if (value.owner === this.state.uid) {
+          buyIn += Number(value.price);
+          // payout += Number(value.return);
+        }
+      }
+    }
 
     for (const [key, value] of Object.entries(teams)) {
       if (value.owner === this.state.uid) {
-        buyIn += Number(value.price);
         payout += Number(value.return);
       }
     }
+    
 
     netReturn = payout - buyIn;
 

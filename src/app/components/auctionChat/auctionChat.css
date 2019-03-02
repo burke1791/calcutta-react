@@ -4,6 +4,37 @@
   display: block;
 }
 
+ul.messages-list {
+  padding: 0;
+}
+
+li.message {
+  clear: both;
+}
+
+li > span {
+  display: table-cell;
+}
+
+li > p {
+  margin-bottom: 0;
+}
+
+#author {
+  max-width: 100px;
+  padding-left: 4px;
+}
+
+#content {
+  width: 100%;
+  padding-left: 4px;
+}
+
+#time {
+  max-width: 95px;
+  padding-right: 4px;
+}
+
 .auction-chat {
   height: 300px;
 }

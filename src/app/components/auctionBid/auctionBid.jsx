@@ -21,6 +21,7 @@ class AuctionBid extends Component {
       minBidAllowed: 1,
       minBid: 1,
       bid: 1,
+      interval: 15,
       leagueId: this.props.leagueId,
       currentBid: 0,
       itemComplete: true,
@@ -63,16 +64,27 @@ class AuctionBid extends Component {
 
     ds.fetchSettings(this.props.leagueId).then(function(settings) {
       if (settings) {
-        self.setState({
-          minBidAllowed: settings['minBid'],
-          minBid: settings['minBid']
-        });
+        if (settings['auction-interval'] !== undefined) {
+          self.setState({
+            minBidAllowed: settings['minBid'],
+            minBid: settings['minBid'],
+            interval: settings['auction-interval']
+          });
+        } else {
+          self.setState({
+            minBidAllowed: settings['minBid'],
+            minBid: settings['minBid']
+          });
+        }
       } else {
         self.setState({
           minBidAllowed: 0,
           minBid: 0
         });
       }
+    }, function(error) {
+      console.log('fetchLeagueSettings error');
+      console.log(error);
     });
   }
 
@@ -86,7 +98,7 @@ class AuctionBid extends Component {
     // make the username a state value
     ds.getDisplayName(uid).then(function(username) {
       if (self.state.minBid > self.state.currentBid) {
-        ds.placeBid(self.state.leagueId, uid, username, self.state.minBid);
+        ds.placeBid(self.state.leagueId, uid, username, self.state.minBid, self.state.interval);
       }
     });
       
@@ -103,7 +115,7 @@ class AuctionBid extends Component {
 
     if (bid >= this.state.minBid) {
       ds.getDisplayName(uid).then(function(username) {
-        ds.placeBid(self.state.leagueId, uid, username, bid);
+        ds.placeBid(self.state.leagueId, uid, username, bid, self.state.interval);
       });
     }
   }
