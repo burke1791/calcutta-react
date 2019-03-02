@@ -47,7 +47,7 @@ class LeagueNav extends Component {
         <nav className='navbar navbar-expand-lg'>
           <div className='mr-auto'>
             <Link className='to-league-home mx-2' exact='true' to={leagueRoot + this.props.leagueId}>League Home</Link>
-            <Link className='to-my-team mx-2' exact='true' to={leagueRoot + this.props.leagueId + '/member/' + this.state.currentUserId}>My Team</Link>
+            <Link className='to-my-team mx-2' exact='true' to={leagueRoot + this.props.leagueId + '/member/' + this.state.currentUserId}>My Teams</Link>
             <Link className='to-auction-room mx-2' exact='true' to={leagueRoot + this.props.leagueId + '/auction'}>Auction Room</Link>
             <Link className='to-auction-room mx-2' exact='true' to={leagueRoot + this.props.leagueId + '/settings'}>League Settings</Link>
           </div>
