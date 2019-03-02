@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './auctionClock.css';
-import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE } from '../../../services/notification-service';
+import NotificationService, { NOTIF_AUCTION_CHANGE, NOTIF_AUCTION_START_CLOCK, NOTIF_AUCTION_RESTART_CLOCK, NOTIF_AUCTION_ITEM_COMPLETE, NOTIF_MODAL_TOGGLE } from '../../../services/notification-service';
 import DataService from '../../../services/data-service';
 
 let ns = new NotificationService();
@@ -55,6 +55,7 @@ class AuctionClock extends Component {
   }
 
   resetClockSynchronizationStateVariables() {
+    ns.postNotification(NOTIF_MODAL_TOGGLE, 'timeout-clock-sync');
     this.setState({
       offsetArray: [],
       offsetAvg: 0,
