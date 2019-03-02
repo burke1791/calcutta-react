@@ -15,16 +15,13 @@ class AuctionClock extends Component {
       currentBid: this.props.currentBid,
       currentTeam: '',
       endTime: 0,
-      offsetArray: [],
-      offsetAvg: 0,
-      synchronizedWithServer: false,
-      lastSync: 0
+      offset: 0,
+      synchronizedWithServer: false
     }
 
     // Bind functions
     this.resetClockSynchronizationStateVariables = this.resetClockSynchronizationStateVariables.bind(this);
     this.synchronizeClockWithServer = this.synchronizeClockWithServer.bind(this);
-    this.calculateOffset = this.calculateOffset.bind(this);
     this.generateCountdownDisplay = this.generateCountdownDisplay.bind(this);
     this.tick = this.tick.bind(this);
     this.newAuctionData = this.newAuctionData.bind(this);
@@ -45,8 +42,6 @@ class AuctionClock extends Component {
 
     ns.removeObserver(this, NOTIF_AUCTION_CHANGE);
     ns.removeObserver(this, NOTIF_AUCTION_START_CLOCK);
-
-    ds.detatchUserServerClockListener(this.props.uid);
   }
 
   componentDidUpdate(prevProps) {
@@ -55,67 +50,23 @@ class AuctionClock extends Component {
     }
   }
 
-  testGetOffset() {
-    ds.getClientServerTimeOffset().then(offset => {
-      console.log('test offset: ' + offset);
-    });
-  }
-
   resetClockSynchronizationStateVariables() {
     ns.postNotification(NOTIF_MODAL_TOGGLE, 'timeout-clock-sync');
     this.setState({
-      offsetArray: [],
-      offsetAvg: 0,
-      synchronizedWithServer: false,
+      offset: 0,
+      synchronizedWithServer: false
     }, this.synchronizeClockWithServer);
   }
 
   synchronizeClockWithServer() {
-    ds.attachUserServerClockListener(this.props.uid, this.calculateOffset);
-  }
-
-  calculateOffset(newTimestamp) {
-    let currentTime = new Date().getTime();
-    let timeSinceLastServerTimestamp = Math.abs(currentTime - newTimestamp.client);
-    console.log(newTimestamp);
-    // console.log('time since last server timestamp: ' + timeSinceLastServerTimestamp);
-    if (newTimestamp !== null) {
-      var offsetArray = this.state.offsetArray;
-
-      var offset = newTimestamp.client - newTimestamp.server;
-      console.log('new offset: ' + offset);
-      offsetArray.push(offset);
-
-      if (offsetArray.length >= 5) {
-        // compute average and detatch listener
-        ds.detatchUserServerClockListener(this.props.uid);
-
-        console.log(offsetArray);
-
-        var offsetSum = 0;
-        for (var offset of offsetArray) {
-          offsetSum += offset;
-        }
-        let offsetAvg = offsetSum / offsetArray.length;
-        let lastSync = new Date().getTime();
-
-        this.setState({
-          offsetAvg: offsetAvg,
-          synchronizedWithServer: true,
-          lastSync: lastSync
-        });
-        ns.postNotification(NOTIF_MODAL_TOGGLE, null);
-        console.log('synchronized');
-        console.log('offsetAvg: ' + offsetAvg);
-      } else {
-        this.testGetOffset();
-        this.setState({
-          offsetArray: offsetArray
-        }, () => ds.sendNewClientServerTimestamp(this.props.uid));
-      }
-    } else {
-      ds.sendNewClientServerTimestamp(this.props.uid);
-    }
+    var self = this;
+    ds.getClientServerTimeOffset().then(offset => {
+      console.log('offset: ' + offset);
+      self.setState({
+        offset: offset,
+        synchronizedWithServer: true
+      }, () => ns.postNotification(NOTIF_MODAL_TOGGLE, 'timeout-clock-sync'));
+    });
   }
 
   tick() {
@@ -124,7 +75,7 @@ class AuctionClock extends Component {
       ns.postNotification(NOTIF_AUCTION_ITEM_COMPLETE, null);
     } else {
       let currentTime = new Date().getTime();
-      var newRemainingTime = Math.round((this.state.endTime - currentTime + this.state.offsetAvg) / 1000);
+      var newRemainingTime = Math.round((this.state.endTime - currentTime - this.state.offset) / 1000);
       this.setState({timeRemaining: newRemainingTime});
     } 
   }
@@ -141,7 +92,7 @@ class AuctionClock extends Component {
     if (this.state.currentTeam !== code && !itemComplete) {
       clearInterval(this.timerID);
       this.setState({
-        timeRemaining: Math.round((endTime - currentTime + this.state.offsetAvg) / 1000),
+        timeRemaining: Math.round((endTime - currentTime - this.state.offset) / 1000),
         currentBid: currentBid,
         currentTeam: code,
         endTime: endTime
@@ -158,7 +109,7 @@ class AuctionClock extends Component {
         });
       } else {
         clearInterval(this.timerID);
-        let timeRemaining = Math.round((endTime - currentTime + this.state.offsetAvg) / 1000);
+        let timeRemaining = Math.round((endTime - currentTime - this.state.offset) / 1000);
         this.checkClockSynchronization(timeRemaining);
         this.setState({
           currentBid: newData['current-item']['current-bid'],
