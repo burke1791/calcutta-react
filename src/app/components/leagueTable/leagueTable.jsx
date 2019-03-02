@@ -116,8 +116,6 @@ class LeagueTable extends Component {
 
     let prizePool = league['prize-pool'] !== undefined ? league['prize-pool'] : null;
 
-    console.log(prizePool);
-
     if (prizePool !== null) {
       if (prizePool['use-tax'] !== undefined) {
         if (prizePool['use-tax'][this.state.uid] !== undefined) {
