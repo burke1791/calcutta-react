@@ -2912,6 +2912,24 @@ class DataService {
         "1111": {
 
         }
+      },
+      "tournaments": {
+        "btt-1111": {
+          "name": "Men's Big Ten Tournament Test",
+          "info-node-id": "cbb-mens"
+        },
+        "btt-2019": {
+          "name": "2019 Men's Big Ten Tournament",
+          "info-node-id": "cbb-mens"
+        },
+        "mm-1111": {
+          "name": "March Madness Test",
+          "info-node-id": "cbb-mens"
+        },
+        "mm-2019": {
+          "name": "March Madness 2019",
+          "info-node-id": "cbb-mens"
+        }
       }
     }
 
@@ -3391,8 +3409,16 @@ class DataService {
 
     var tournaments = {
       "tournaments": {
+        "btt-1111": {
+          "name": "Men's Big Ten Tournament Test",
+          "info-node-id": "cbb-mens"
+        },
         "btt-2019": {
           "name": "2019 Men's Big Ten Tournament",
+          "info-node-id": "cbb-mens"
+        },
+        "mm-1111": {
+          "name": "March Madness Test",
           "info-node-id": "cbb-mens"
         },
         "mm-2019": {

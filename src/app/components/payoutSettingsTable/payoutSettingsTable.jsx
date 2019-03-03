@@ -16,7 +16,8 @@ class PayoutSettingsTable extends Component {
       payoutSettings: {},
       tournamentStructure: {},
       payoutTotals: {},
-      totalShareValue: 0
+      totalShareValue: 0,
+      tournamentId: ''
     }
 
     // bind functions
@@ -133,6 +134,10 @@ class PayoutSettingsTable extends Component {
   generateTableRows = () => {
     if (Object.keys(this.state.payoutSettings)) {
       const list = Object.keys(this.state.payoutSettings).map((key, ind) => {
+        var basicPayoutCode = key.match(/[A-Z]{1}/g);
+        console.log('payout code: ');
+        console.log(basicPayoutCode);
+        
         var roundNum = key.match(/[0-9]+/g);
         var payoutCategory;
         var gameCount;
@@ -142,9 +147,19 @@ class PayoutSettingsTable extends Component {
         } else if (key === 'upset') {
           payoutCategory = 'Largest Upset';
           gameCount = 'n/a';
-        } else if (roundNum) {
-          payoutCategory = 'Round ' + roundNum;
-          gameCount = this.countNumGamesInRound(roundNum);
+        } else if (basicPayoutCode[0] === 'R') {
+          if (roundNum) {
+            payoutCategory = 'Round ' + roundNum;
+            gameCount = this.countNumGamesInRound(roundNum);
+          }
+        } else if (basicPayoutCode[0] === 'W') {
+          if (Number(roundNum) === 1) {
+            payoutCategory = roundNum + ' win';
+            gameCount = this.countNumGamesInRound(roundNum);
+          } else if (roundNum) {
+            payoutCategory = roundNum + ' wins';
+            gameCount = this.countNumGamesInRound(roundNum);
+          }
         }
 
         return (
@@ -171,6 +186,30 @@ class PayoutSettingsTable extends Component {
             <tr>
               <th>Category</th>
               <th># Games</th>
+              <th>Share</th>
+              <th>Total Share</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.generateTableRows()}
+          </tbody>
+          <tfoot>
+            <tr className={payoutValidationClass}>
+              <td>Total</td>
+              <td></td>
+              <td></td>
+              <td>{this.state.totalShareValue}</td>
+            </tr>
+          </tfoot>
+        </table>
+      );
+    } else if (this.state.tournamentId === 'mm') {
+      return (
+        <table className='table table-striped table-sm'>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th># Teams</th>
               <th>Share</th>
               <th>Total Share</th>
             </tr>
