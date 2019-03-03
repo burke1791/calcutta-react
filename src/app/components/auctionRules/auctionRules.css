@@ -1,0 +1,10 @@
+div.tax-rules > p {
+  margin-bottom: 0;
+  margin-left: 4px;
+  text-align: left;
+}
+
+div.unclaimed-rules > p {
+  margin-left: 4px;
+  text-align: left;
+}
