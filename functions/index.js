@@ -72,23 +72,27 @@ exports.updateBTTSeedsInLeaguesNode = functions.database.ref('/btt-seeds/{year}/
   
   const bttLeagues = admin.database().ref('/leagues-btt/' + year).once('value');
 
-  if (newTeamId !== 0) {
-    return bttLeagues.then(bttLeaguesSnapshot => {
-      bttLeaguesSnapshot.forEach(child => {
-        var leagueId = child.key;
-        var isActive = child.val();
-  
-        console.log(leagueId);
-        console.log(isActive);
-  
-        if (isActive) {
-          let seedValueUpdate = {'seed-value': seedValue};
-          admin.database().ref('leagues/' + leagueId + '/teams/' + newTeamId).update(seedValueUpdate);
+  return bttLeagues.then(bttLeaguesSnapshot => {
+    bttLeaguesSnapshot.forEach(child => {
+      var leagueId = child.key;
+      var isActive = child.val();
+
+      console.log(leagueId);
+      console.log(isActive);
+
+      if (isActive) {
+        let seedValueUpdate;
+        if (newTeamId === 0) {
+          seedValueUpdate = {'seed-value': 0}
+        } else {
+          seedValueUpdate = {'seed-value': seedValue};
         }
-      });
-      return;
+
+        admin.database().ref('leagues/' + leagueId + '/teams/' + newTeamId).update(seedValueUpdate);
+      }
     });
-  }
+    return;
+  });
 });
 
 exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {

@@ -1859,1069 +1859,1220 @@ class DataService {
           "Z16a": 1300,
           "Z16b": 1411
         }
-      },
-      "cbb-mens-team-info": {
-        "1437": {
-          "name": "Villanova",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "30-4"
-          }
-        },
-        "1458": {
-          "name": "Wisconsin",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "Madison, WI",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1268": {
-          "name": "Maryland",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1278": {
-          "name": "Minnesota",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1234": {
-          "name": "Iowa",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1231": {
-          "name": "Indiana",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "Bloomington, IN",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1304": {
-          "name": "Nebraska",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "Lincoln, NE",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1228": {
-          "name": "Illinois",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "Champaign, IL",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1336": {
-          "name": "Penn St",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1353": {
-          "name": "Rutgers",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1321": {
-          "name": "Northwestern",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "Evanston, IL",
-          "conf-record": {
-            "2019": "0-0"
-          },
-          "ovr-record": {
-            "2019": "0-0"
-          }
-        },
-        "1345": {
-          "name": "Purdue",
-          "conf": {
-            "2018": "Big Ten",
-            "2019": "Big Ten"
-          },
-          "location": "West Lafayette, IN",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "28-6"
-          }
-        },
-        "1403": {
-          "name": "Texas Tech",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "12-8"
-          },
-          "ovr-record": {
-            "2018": "24-9"
-          }
-        },
-        "1455": {
-          "name": "Wichita St",
-          "conf": {
-            "2018": "American Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-5"
-          },
-          "ovr-record": {
-            "2018": "25-7"
-          }
-        },
-        "1452": {
-          "name": "West Virginia",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-8"
-          },
-          "ovr-record": {
-            "2018": "24-10"
-          }
-        },
-        "1196": {
-          "name": "Florida",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "11-8"
-          },
-          "ovr-record": {
-            "2018": "20-12"
-          }
-        },
-        "1116": {
-          "name": "Arkansas",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "12-9"
-          },
-          "ovr-record": {
-            "2018": "23-11"
-          }
-        },
-        "1439": {
-          "name": "Virginia Tech",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-9"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1104": {
-          "name": "Alabama",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-11"
-          },
-          "ovr-record": {
-            "2018": "19-15"
-          }
-        },
-        "1139": {
-          "name": "Butler",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-10"
-          },
-          "ovr-record": {
-            "2018": "20-13"
-          }
-        },
-        "1382": {
-          "name": "St Bonaventure",
-          "conf": {
-            "2018": "Atlantic 10"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-5"
-          },
-          "ovr-record": {
-            "2018": "25-7"
-          }
-        },
-        "1417": {
-          "name": "UCLA",
-          "conf": {
-            "2018": "Pac-12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "12-8"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1293": {
-          "name": "Murray St",
-          "conf": {
-            "2018": "Ohio Valley Conference"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "18-2"
-          },
-          "ovr-record": {
-            "2018": "24-5"
-          }
-        },
-        "1267": {
-          "name": "Marshall",
-          "conf": {
-            "2018": "Conference USA"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-6"
-          },
-          "ovr-record": {
-            "2018": "23-10"
-          }
-        },
-        "1372": {
-          "name": "SF Austin",
-          "conf": {
-            "2018": "Southland Conference"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "24-6"
-          }
-        },
-        "1168": {
-          "name": "CS Fullerton",
-          "conf": {
-            "2018": "Big West"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-6"
-          },
-          "ovr-record": {
-            "2018": "18-11"
-          }
-        },
-        "1254": {
-          "name": "Long Island",
-          "conf": {
-            "2018": "Northeast Conference"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-8"
-          },
-          "ovr-record": {
-            "2018": "17-16"
-          }
-        },
-        "1347": {
-          "name": "Radford",
-          "conf": {
-            "2018": "Big South"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-6"
-          },
-          "ovr-record": {
-            "2018": "20-12"
-          }
-        },
-        "1242": {
-          "name": "Kansas",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-5"
-          },
-          "ovr-record": {
-            "2018": "27-7"
-          }
-        },
-        "1181": {
-          "name": "Duke",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "14-6"
-          },
-          "ovr-record": {
-            "2018": "26-7"
-          }
-        },
-        "1277": {
-          "name": "Michigan St",
-          "conf": {
-            "2018": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-3"
-          },
-          "ovr-record": {
-            "2018": "29-4"
-          }
-        },
-        "1120": {
-          "name": "Auburn",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-6"
-          },
-          "ovr-record": {
-            "2018": "25-7"
-          }
-        },
-        "1155": {
-          "name": "Clemson",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "12-8"
-          },
-          "ovr-record": {
-            "2018": "23-9"
-          }
-        },
-        "1395": {
-          "name": "TCU",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "9-10"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1348": {
-          "name": "Rhode Island",
-          "conf": {
-            "2018": "Atlantic 10"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "25-7"
-          }
-        },
-        "1371": {
-          "name": "Seton Hall",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-9"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1301": {
-          "name": "NC State",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "11-8"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1328": {
-          "name": "Oklahoma",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "8-11"
-          },
-          "ovr-record": {
-            "2018": "18-13"
-          }
-        },
-        "1113": {
-          "name": "Arizona St",
-          "conf": {
-            "2018": "Pac-12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "8-11"
-          },
-          "ovr-record": {
-            "2018": "20-11"
-          }
-        },
-        "1393": {
-          "name": "Syracuse",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "9-11"
-          },
-          "ovr-record": {
-            "2018": "20-13"
-          }
-        },
-        "1308": {
-          "name": "New Mexico St",
-          "conf": {
-            "2018": "Western Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-2"
-          },
-          "ovr-record": {
-            "2018": "25-5"
-          }
-        },
-        "1158": {
-          "name": "Col Charleston",
-          "conf": {
-            "2018": "Colonial Athletic Association"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "24-7"
-          }
-        },
-        "1137": {
-          "name": "Bucknell",
-          "conf": {
-            "2018": "Patriot League"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "19-2"
-          },
-          "ovr-record": {
-            "2018": "25-9"
-          }
-        },
-        "1233": {
-          "name": "Iona",
-          "conf": {
-            "2018": "Metro Atlantic Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "14-7"
-          },
-          "ovr-record": {
-            "2018": "20-13"
-          }
-        },
-        "1335": {
-          "name": "Penn",
-          "conf": {
-            "2018": "Ivy League"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "14-2"
-          },
-          "ovr-record": {
-            "2018": "23-8"
-          }
-        },
-        "1438": {
-          "name": "Virginia",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "20-1"
-          },
-          "ovr-record": {
-            "2018": "31-2"
-          }
-        },
-        "1153": {
-          "name": "Cincinnati",
-          "conf": {
-            "2018": "American Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "19-2"
-          },
-          "ovr-record": {
-            "2018": "30-4"
-          }
-        },
-        "1397": {
-          "name": "Tennessee",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-6"
-          },
-          "ovr-record": {
-            "2018": "25-8"
-          }
-        },
-        "1112": {
-          "name": "Arizona",
-          "conf": {
-            "2018": "Pac-12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "27-7"
-          }
-        },
-        "1246": {
-          "name": "Kentucky",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-8"
-          },
-          "ovr-record": {
-            "2018": "24-10"
-          }
-        },
-        "1274": {
-          "name": "Miami FL",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "11-8"
-          },
-          "ovr-record": {
-            "2018": "22-9"
-          }
-        },
-        "1305": {
-          "name": "Nevada",
-          "conf": {
-            "2018": "Mountain West"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-4"
-          },
-          "ovr-record": {
-            "2018": "27-7"
-          }
-        },
-        "1166": {
-          "name": "Creighton",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-9"
-          },
-          "ovr-record": {
-            "2018": "20-11"
-          }
-        },
-        "1243": {
-          "name": "Kansas St",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "11-9"
-          },
-          "ovr-record": {
-            "2018": "22-11"
-          }
-        },
-        "1400": {
-          "name": "Texas",
-          "conf": {
-            "2018": "Big 12"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "9-11"
-          },
-          "ovr-record": {
-            "2018": "19-14"
-          }
-        },
-        "1260": {
-          "name": "Loyola-Chicago",
-          "conf": {
-            "2018": "Missouri Valley"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "18-3"
-          },
-          "ovr-record": {
-            "2018": "27-5"
-          }
-        },
-        "1172": {
-          "name": "Davidson",
-          "conf": {
-            "2018": "Atlantic 10"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-5"
-          },
-          "ovr-record": {
-            "2018": "21-11"
-          }
-        },
-        "1138": {
-          "name": "Buffalo",
-          "conf": {
-            "2018": "Mid-American"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "18-3"
-          },
-          "ovr-record": {
-            "2018": "25-8"
-          }
-        },
-        "1460": {
-          "name": "Wright St",
-          "conf": {
-            "2018": "Horizon League"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-4"
-          },
-          "ovr-record": {
-            "2018": "23-9"
-          }
-        },
-        "1209": {
-          "name": "Georgia St",
-          "conf": {
-            "2018": "Sun Belt"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-6"
-          },
-          "ovr-record": {
-            "2018": "22-10"
-          }
-        },
-        "1420": {
-          "name": "UMBC",
-          "conf": {
-            "2018": "America East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-4"
-          },
-          "ovr-record": {
-            "2018": "21-10"
-          }
-        },
-        "1462": {
-          "name": "Xavier",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-4"
-          },
-          "ovr-record": {
-            "2018": "28-5"
-          }
-        },
-        "1314": {
-          "name": "North Carolina",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "14-8"
-          },
-          "ovr-record": {
-            "2018": "25-10"
-          }
-        },
-        "1276": {
-          "name": "Michigan",
-          "conf": {
-            "2018": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "17-5"
-          },
-          "ovr-record": {
-            "2018": "27-7"
-          }
-        },
-        "1211": {
-          "name": "Gonzaga",
-          "conf": {
-            "2018": "West Coast Conference"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "20-1"
-          },
-          "ovr-record": {
-            "2018": "30-4"
-          }
-        },
-        "1326": {
-          "name": "Ohio St",
-          "conf": {
-            "2018": "Big Ten"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-4"
-          },
-          "ovr-record": {
-            "2018": "24-8"
-          }
-        },
-        "1222": {
-          "name": "Houston",
-          "conf": {
-            "2018": "American Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-5"
-          },
-          "ovr-record": {
-            "2018": "26-7"
-          }
-        },
-        "1401": {
-          "name": "Texas A&M",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "9-10"
-          },
-          "ovr-record": {
-            "2018": "20-12"
-          }
-        },
-        "1281": {
-          "name": "Missouri",
-          "conf": {
-            "2018": "SEC"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "10-9"
-          },
-          "ovr-record": {
-            "2018": "19-12"
-          }
-        },
-        "1199": {
-          "name": "Florida St",
-          "conf": {
-            "2018": "Atlantic Coast"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "9-10"
-          },
-          "ovr-record": {
-            "2018": "20-11"
-          }
-        },
-        "1344": {
-          "name": "Providence",
-          "conf": {
-            "2018": "Big East"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "12-9"
-          },
-          "ovr-record": {
-            "2018": "21-13"
-          }
-        },
-        "1361": {
-          "name": "San Diego St",
-          "conf": {
-            "2018": "Mountain West"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "14-7"
-          },
-          "ovr-record": {
-            "2018": "21-10"
-          }
-        },
-        "1355": {
-          "name": "S Dakota St",
-          "conf": {
-            "2018": "Summit League"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "16-1"
-          },
-          "ovr-record": {
-            "2018": "24-6"
-          }
-        },
-        "1422": {
-          "name": "UNC Greensboro",
-          "conf": {
-            "2018": "Southern Conference"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "18-3"
-          },
-          "ovr-record": {
-            "2018": "24-7"
-          }
-        },
-        "1285": {
-          "name": "Montana",
-          "conf": {
-            "2018": "Big Sky"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "19-2"
-          },
-          "ovr-record": {
-            "2018": "24-7"
-          }
-        },
-        "1252": {
-          "name": "Lipscomb",
-          "conf": {
-            "2018": "Atlantic Sun"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-4"
-          },
-          "ovr-record": {
-            "2018": "20-9"
-          }
-        },
-        "1300": {
-          "name": "NC Central",
-          "conf": {
-            "2018": "Mid-Eastern Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "13-7"
-          },
-          "ovr-record": {
-            "2018": "16-15"
-          }
-        },
-        "1411": {
-          "name": "TX Southern",
-          "conf": {
-            "2018": "Southwest Athletic"
-          },
-          "location": "",
-          "conf-record": {
-            "2018": "15-6"
-          },
-          "ovr-record": {
-            "2018": "15-19"
-          }
+      }
+    }
+
+    var march_madness_2019 = {
+      "mm-regions": {
+        "2018": {
+          "W": "East",
+          "X": "Midwest",
+          "Y": "South",
+          "Z": "West"
+        },
+        "2019": {
+          "W": "",
+          "X": "",
+          "Y": "",
+          "Z": ""
         }
       },
-      "cbb-mens-team-ids": {
-        "Michigan": 1276,
-        "Michigan St": 1277,
-        "Purdue": 1345,
-        "Wisconsin": 1458,
-        "Maryland": 1268,
-        "Minnesota": 1278,
-        "Iowa": 1234,
-        "Ohio St": 1326,
-        "Indiana": 1231,
-        "Rutgers": 1353,
-        "Northwestern": 1321,
-        "Nebraska": 1304,
-        "Illinois": 1228,
-        "Penn St": 1336
+      "mm-seeds": {
+        "2018": {
+          "W01": 1437,
+          "W02": 1345,
+          "W03": 1403,
+          "W04": 1455,
+          "W05": 1452,
+          "W06": 1196,
+          "W07": 1116,
+          "W08": 1439,
+          "W09": 1104,
+          "W10": 1139,
+          "W11a": 1382,
+          "W11b": 1417,
+          "W12": 1293,
+          "W13": 1267,
+          "W14": 1372,
+          "W15": 1168,
+          "W16a": 1254,
+          "W16b": 1347,
+          "X01": 1242,
+          "X02": 1181,
+          "X03": 1277,
+          "X04": 1120,
+          "X05": 1155,
+          "X06": 1395,
+          "X07": 1348,
+          "X08": 1371,
+          "X09": 1301,
+          "X10": 1328,
+          "X11a": 1113,
+          "X11b": 1393,
+          "X12": 1308,
+          "X13": 1158,
+          "X14": 1137,
+          "X15": 1233,
+          "X16": 1335,
+          "Y01": 1438,
+          "Y02": 1153,
+          "Y03": 1397,
+          "Y04": 1112,
+          "Y05": 1246,
+          "Y06": 1274,
+          "Y07": 1305,
+          "Y08": 1166,
+          "Y09": 1243,
+          "Y10": 1400,
+          "Y11": 1260,
+          "Y12": 1172,
+          "Y13": 1138,
+          "Y14": 1460,
+          "Y15": 1209,
+          "Y16": 1420,
+          "Z01": 1462,
+          "Z02": 1314,
+          "Z03": 1276,
+          "Z04": 1211,
+          "Z05": 1326,
+          "Z06": 1222,
+          "Z07": 1401,
+          "Z08": 1281,
+          "Z09": 1199,
+          "Z10": 1344,
+          "Z11": 1361,
+          "Z12": 1355,
+          "Z13": 1422,
+          "Z14": 1285,
+          "Z15": 1252,
+          "Z16a": 1300,
+          "Z16b": 1411
+        }
       },
-      "tournaments": {
-        "mens-btt-2019": {
-          "1276": true,
-          "1277": true,
-          "1345": true,
-          "1458": true,
-          "1268": true,
-          "1278": true,
-          "1234": true,
-          "1326": true,
-          "1231": true,
-          "1353": true,
-          "1321": true,
-          "1304": true,
-          "1228": true,
-          "1336": true
+      "mm-structure": {
+        "2018": {
+          "R1W1": {
+            "W01": 0,
+            "W16": 0,
+            "score": {
+              "W01": 0,
+              "W16": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W1"
+          },
+          "R1W2": {
+            "W02": 0,
+            "W15": 0,
+            "score": {
+              "W02": 0,
+              "W15": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W2"
+          },
+          "R1W3": {
+            "W03": 0,
+            "W14": 0,
+            "score": {
+              "W03": 0,
+              "W14": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W3"
+          },
+          "R1W4": {
+            "W04": 0,
+            "W13": 0,
+            "score": {
+              "W04": 0,
+              "W13": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W4"
+          },
+          "R1W5": {
+            "W05": 0,
+            "W12": 0,
+            "score": {
+              "W05": 0,
+              "W12": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W4"
+          },
+          "R1W6": {
+            "W06": 0,
+            "W11": 0,
+            "score": {
+              "W06": 0,
+              "W11": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W3"
+          },
+          "R1W7": {
+            "W07": 0,
+            "W10": 0,
+            "score": {
+              "W07": 0,
+              "W10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W2"
+          },
+          "R1W8": {
+            "W08": 0,
+            "W09": 0,
+            "score": {
+              "W08": 0,
+              "W09": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2W1"
+          },
+          "R1X1": {
+            "X01": 0,
+            "X16": 0,
+            "score": {
+              "X01": 0,
+              "X16": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X1"
+          },
+          "R1X2": {
+            "X02": 0,
+            "X15": 0,
+            "score": {
+              "X02": 0,
+              "X15": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X2"
+          },
+          "R1X3": {
+            "X03": 0,
+            "X14": 0,
+            "score": {
+              "X03": 0,
+              "X14": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X3"
+          },
+          "R1X4": {
+            "X04": 0,
+            "X13": 0,
+            "score": {
+              "X04": 0,
+              "X13": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X4"
+          },
+          "R1X5": {
+            "X05": 0,
+            "X12": 0,
+            "score": {
+              "X05": 0,
+              "X12": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X4"
+          },
+          "R1X6": {
+            "X06": 0,
+            "X11": 0,
+            "score": {
+              "X06": 0,
+              "X11": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X3"
+          },
+          "R1X7": {
+            "X07": 0,
+            "X10": 0,
+            "score": {
+              "X07": 0,
+              "X10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X2"
+          },
+          "R1X8": {
+            "X08": 0,
+            "X09": 0,
+            "score": {
+              "X08": 0,
+              "X09": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2X1"
+          },
+          "R1Y1": {
+            "Y01": 0,
+            "Y16": 0,
+            "score": {
+              "Y01": 0,
+              "Y16": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y1"
+          },
+          "R1Y2": {
+            "Y02": 0,
+            "Y15": 0,
+            "score": {
+              "Y02": 0,
+              "Y15": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y2"
+          },
+          "R1Y3": {
+            "Y03": 0,
+            "Y14": 0,
+            "score": {
+              "Y03": 0,
+              "Y14": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y3"
+          },
+          "R1Y4": {
+            "Y04": 0,
+            "Y13": 0,
+            "score": {
+              "Y04": 0,
+              "Y13": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y4"
+          },
+          "R1Y5": {
+            "Y05": 0,
+            "Y12": 0,
+            "score": {
+              "Y05": 0,
+              "Y12": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y4"
+          },
+          "R1Y6": {
+            "Y06": 0,
+            "Y11": 0,
+            "score": {
+              "Y06": 0,
+              "Y11": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y3"
+          },
+          "R1Y7": {
+            "Y07": 0,
+            "Y10": 0,
+            "score": {
+              "Y07": 0,
+              "Y10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y2"
+          },
+          "R1Y8": {
+            "Y08": 0,
+            "Y09": 0,
+            "score": {
+              "Y08": 0,
+              "Y09": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Y1"
+          },
+          "R1Z1": {
+            "Z01": 0,
+            "Z16": 0,
+            "score": {
+              "Z01": 0,
+              "Z16": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z1"
+          },
+          "R1Z2": {
+            "Z02": 0,
+            "Z15": 0,
+            "score": {
+              "Z02": 0,
+              "Z15": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z2"
+          },
+          "R1Z3": {
+            "Z03": 0,
+            "Z14": 0,
+            "score": {
+              "Z03": 0,
+              "Z14": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z3"
+          },
+          "R1Z4": {
+            "Z04": 0,
+            "Z13": 0,
+            "score": {
+              "Z04": 0,
+              "Z13": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z4"
+          },
+          "R1Z5": {
+            "Z05": 0,
+            "Z12": 0,
+            "score": {
+              "Z05": 0,
+              "Z12": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z4"
+          },
+          "R1Z6": {
+            "Z06": 0,
+            "Z11": 0,
+            "score": {
+              "Z06": 0,
+              "Z11": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z3"
+          },
+          "R1Z7": {
+            "Z07": 0,
+            "Z10": 0,
+            "score": {
+              "Z07": 0,
+              "Z10": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z2"
+          },
+          "R1Z8": {
+            "Z08": 0,
+            "Z09": 0,
+            "score": {
+              "Z08": 0,
+              "Z09": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R2Z1"
+          },
+          "R2W1": {
+            "R1W1": 0,
+            "R1W8": 0,
+            "score": {
+              "R1W1": 0,
+              "R1W8": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3W1"
+          },
+          "R2W2": {
+            "R1W2": 0,
+            "R1W7": 0,
+            "score": {
+              "R1W2": 0,
+              "R1W7": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3W2"
+          },
+          "R2W3": {
+            "R1W3": 0,
+            "R1W6": 0,
+            "score": {
+              "R1W3": 0,
+              "R1W6": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3W2"
+          },
+          "R2W4": {
+            "R1W4": 0,
+            "R1W5": 0,
+            "score": {
+              "R1W4": 0,
+              "R1W5": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3W1"
+          },
+          "R2X1": {
+            "R1X1": 0,
+            "R1X8": 0,
+            "score": {
+              "R1X1": 0,
+              "R1X8": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3X1"
+          },
+          "R2X2": {
+            "R1X2": 0,
+            "R1X7": 0,
+            "score": {
+              "R1X2": 0,
+              "R1X7": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3X2"
+          },
+          "R2X3": {
+            "R1X3": 0,
+            "R1X6": 0,
+            "score": {
+              "R1X3": 0,
+              "R1X6": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3X2"
+          },
+          "R2X4": {
+            "R1X4": 0,
+            "R1X5": 0,
+            "score": {
+              "R1X4": 0,
+              "R1X5": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3X1"
+          },
+          "R2Y1": {
+            "R1Y1": 0,
+            "R1Y8": 0,
+            "score": {
+              "R1Y1": 0,
+              "R1Y8": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Y1"
+          },
+          "R2Y2": {
+            "R1Y2": 0,
+            "R1Y7": 0,
+            "score": {
+              "R1Y2": 0,
+              "R1Y7": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Y2"
+          },
+          "R2Y3": {
+            "R1Y3": 0,
+            "R1Y6": 0,
+            "score": {
+              "R1Y3": 0,
+              "R1Y6": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Y2"
+          },
+          "R2Y4": {
+            "R1Y4": 0,
+            "R1Y5": 0,
+            "score": {
+              "R1Y4": 0,
+              "R1Y5": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Y1"
+          },
+          "R2Z1": {
+            "R1Z1": 0,
+            "R1Z8": 0,
+            "score": {
+              "R1Z1": 0,
+              "R1Z8": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Z1"
+          },
+          "R2Z2": {
+            "R1Z2": 0,
+            "R1Z7": 0,
+            "score": {
+              "R1Z2": 0,
+              "R1Z7": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Z2"
+          },
+          "R2Z3": {
+            "R1Z3": 0,
+            "R1Z6": 0,
+            "score": {
+              "R1Z3": 0,
+              "R1Z6": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Z2"
+          },
+          "R2Z4": {
+            "R1Z4": 0,
+            "R1Z5": 0,
+            "score": {
+              "R1Z4": 0,
+              "R1Z5": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R3Z1"
+          },
+          "R3W1": {
+            "R2W1": 0,
+            "R2W4": 0,
+            "score": {
+              "R2W1": 0,
+              "R2W4": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4W1"
+          },
+          "R3W2": {
+            "R2W2": 0,
+            "R2W3": 0,
+            "score": {
+              "R2W2": 0,
+              "R2W3": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4W1"
+          },
+          "R3X1": {
+            "R2X1": 0,
+            "R2X4": 0,
+            "score": {
+              "R2X1": 0,
+              "R2X4": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4X1"
+          },
+          "R3X2": {
+            "R2X2": 0,
+            "R2X3": 0,
+            "score": {
+              "R2X2": 0,
+              "R2X3": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4X1"
+          },
+          "R3Y1": {
+            "R2Y1": 0,
+            "R2Y4": 0,
+            "score": {
+              "R2Y1": 0,
+              "R2Y4": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4Y1"
+          },
+          "R3Y2": {
+            "R2Y2": 0,
+            "R2Y3": 0,
+            "score": {
+              "R2Y2": 0,
+              "R2Y3": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4Y1"
+          },
+          "R3Z1": {
+            "R2Z1": 0,
+            "R2Z4": 0,
+            "score": {
+              "R2Z1": 0,
+              "R2Z4": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4Z1"
+          },
+          "R3Z2": {
+            "R2Z2": 0,
+            "R2Z3": 0,
+            "score": {
+              "R2Z2": 0,
+              "R2Z3": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R4Z1"
+          },
+          "R4W1": {
+            "R3W1": 0,
+            "R3W2": 0,
+            "score": {
+              "R3W1": 0,
+              "R3W2": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R5WX"
+          },
+          "R4X1": {
+            "R3X1": 0,
+            "R3X2": 0,
+            "score": {
+              "R3X1": 0,
+              "R3X2": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R5WX"
+          },
+          "R4Y1": {
+            "R3Y1": 0,
+            "R3Y2": 0,
+            "score": {
+              "R3Y1": 0,
+              "R3Y2": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R5YZ"
+          },
+          "R4Z1": {
+            "R3Z1": 0,
+            "R3Z2": 0,
+            "score": {
+              "R3Z1": 0,
+              "R3Z2": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R5YZ"
+          },
+          "R5WX": {
+            "R4W1": 0,
+            "R4X1": 0,
+            "score": {
+              "R4W1": 0,
+              "R4X1": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R6CH"
+          },
+          "R5YZ": {
+            "R4Y1": 0,
+            "R4Z1": 0,
+            "score": {
+              "R4Y1": 0,
+              "R4Z1": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "R6CH"
+          },
+          "R6CH": {
+            "R5WX": 0,
+            "R5YZ": 0,
+            "score": {
+              "R5WX": 0,
+              "R5YZ": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "date": 0,
+            "location": "",
+            "next-round": "n/a"
+          }
+        },
+        "2019": {
+          "R1W1": {
+            "team1": {
+              "seed": "W01",
+              "id": 0,
+              "name": ""
+            },
+            "team2": {
+              "seed": "W16",
+              "id": 0,
+              "name": ""
+            },
+            "date": "",
+            "location": "",
+            "next-round": "R2W1",
+            "score": {
+              "team1": 0,
+              "team2": 0,
+              "num-ot": 0
+            },
+            "status": "not-started",
+            "winner": "n/a"
+          },
+          "R1W2": {
+
+          }
         }
       }
     }
+
+    var march_madness_test = {
+      "mm-structure": {
+        "1111": {
+
+        }
+      },
+      "mm-seeds": {
+        "2018": {
+          "W01": 1437,
+          "W02": 1345,
+          "W03": 1403,
+          "W04": 1455,
+          "W05": 1452,
+          "W06": 1196,
+          "W07": 1116,
+          "W08": 1439,
+          "W09": 1104,
+          "W10": 1139,
+          "W11a": 1382,
+          "W11b": 1417,
+          "W12": 1293,
+          "W13": 1267,
+          "W14": 1372,
+          "W15": 1168,
+          "W16a": 1254,
+          "W16b": 1347,
+          "X01": 1242,
+          "X02": 1181,
+          "X03": 1277,
+          "X04": 1120,
+          "X05": 1155,
+          "X06": 1395,
+          "X07": 1348,
+          "X08": 1371,
+          "X09": 1301,
+          "X10": 1328,
+          "X11a": 1113,
+          "X11b": 1393,
+          "X12": 1308,
+          "X13": 1158,
+          "X14": 1137,
+          "X15": 1233,
+          "X16": 1335,
+          "Y01": 1438,
+          "Y02": 1153,
+          "Y03": 1397,
+          "Y04": 1112,
+          "Y05": 1246,
+          "Y06": 1274,
+          "Y07": 1305,
+          "Y08": 1166,
+          "Y09": 1243,
+          "Y10": 1400,
+          "Y11": 1260,
+          "Y12": 1172,
+          "Y13": 1138,
+          "Y14": 1460,
+          "Y15": 1209,
+          "Y16": 1420,
+          "Z01": 1462,
+          "Z02": 1314,
+          "Z03": 1276,
+          "Z04": 1211,
+          "Z05": 1326,
+          "Z06": 1222,
+          "Z07": 1401,
+          "Z08": 1281,
+          "Z09": 1199,
+          "Z10": 1344,
+          "Z11": 1361,
+          "Z12": 1355,
+          "Z13": 1422,
+          "Z14": 1285,
+          "Z15": 1252,
+          "Z16a": 1300,
+          "Z16b": 1411
+        },
+        "1111": {
+        }
+      },
+      "mm-regions": {
+        "2018": {
+          "W": "East",
+          "X": "Midwest",
+          "Y": "South",
+          "Z": "West"
+        },
+        "1111": {
+          "W": "East",
+          "X": "Midwest",
+          "Y": "South",
+          "Z": "West"
+        }
+      }
+    }
+
+    // gameId : nextRoundId
+    var tourneyMapDict = {
+      "R1W1": "R2W1",
+      "R1W2": "R2W2",
+      "R1W3": "R2W3",
+      "R1W4": "R2W4",
+      "R1W5": "R2W4",
+      "R1W6": "R2W3",
+      "R1W7": "R2W2",
+      "R1W8": "R2W1",
+      "R1X1": "R2X1",
+      "R1X2": "R2X2",
+      "R1X3": "R2X3",
+      "R1X4": "R2X4",
+      "R1X5": "R2X4",
+      "R1X6": "R2X3",
+      "R1X7": "R2X2",
+      "R1X8": "R2X1",
+      "R1Y1": "R2Y1",
+      "R1Y2": "R2Y2",
+      "R1Y3": "R2Y3",
+      "R1Y4": "R2Y4",
+      "R1Y5": "R2Y4",
+      "R1Y6": "R2Y3",
+      "R1Y7": "R2Y2",
+      "R1Y8": "R2Y1",
+      "R1Z1": "R2Z1",
+      "R1Z2": "R2Z2",
+      "R1Z3": "R2Z3",
+      "R1Z4": "R2Z4",
+      "R1Z5": "R2Z4",
+      "R1Z6": "R2Z3",
+      "R1Z7": "R2Z2",
+      "R1Z8": "R2Z1",
+      "R2W1": "R3W1",
+      "R2W2": "R3W2",
+      "R2W3": "R3W2",
+      "R2W4": "R3W1",
+      "R2X1": "R3X1",
+      "R2X2": "R3X2",
+      "R2X3": "R3X2",
+      "R2X4": "R3X1",
+      "R2Y1": "R3Y1",
+      "R2Y2": "R3Y2",
+      "R2Y3": "R3Y2",
+      "R2Y4": "R3Y1",
+      "R2Z1": "R3Z1",
+      "R2Z2": "R3Z2",
+      "R2Z3": "R3Z2",
+      "R2Z4": "R3Z1",
+      "R3W1": "R4W1",
+      "R3W2": "R4W1",
+      "R3X1": "R4X1",
+      "R3X2": "R4X1",
+      "R3Y1": "R4Y1",
+      "R3Y2": "R4Y1",
+      "R3Z1": "R4Z1",
+      "R3Z2": "R4Z1",
+      "R4W1": "R5WX",
+      "R4X1": "R5WX",
+      "R4Y1": "R5YZ",
+      "R4Z1": "R5YZ",
+      "R5WX": "R6CH",
+      "R5YZ": "R6CH",
+      "R6CH": "n/a"
+    }
+
+    // gameId : [seeds]
+    var seedMapDict = {
+      "R1W1": ["W01", "W16"],
+      "R1W2": ["W02", "W15"],
+      "R1W3": ["W03", "W14"],
+      "R1W4": ["W04", "W13"],
+      "R1W5": ["W05", "W12"],
+      "R1W6": ["W06", "W11"],
+      "R1W7": ["W07", "W10"],
+      "R1W8": ["W08", "W09"],
+      
+      "R1X1": ["X01", "X16"],
+      "R1X2": ["X02", "X15"],
+      "R1X3": ["X03", "X14"],
+      "R1X4": ["X04", "X13"],
+      "R1X5": ["X05", "X12"],
+      "R1X6": ["X06", "X11"],
+      "R1X7": ["X07", "X10"],
+      "R1X8": ["X08", "X09"],
+
+      "R1Y1": ["Y01", "Y16"],
+      "R1Y2": ["Y02", "Y15"],
+      "R1Y3": ["Y03", "Y14"],
+      "R1Y4": ["Y04", "Y13"],
+      "R1Y5": ["Y05", "Y12"],
+      "R1Y6": ["Y06", "Y11"],
+      "R1Y7": ["Y07", "Y10"],
+      "R1Y8": ["Y08", "Y09"],
+
+      "R1Z1": ["Z01", "Z16"],
+      "R1Z2": ["Z02", "Z15"],
+      "R1Z3": ["Z03", "Z14"],
+      "R1Z4": ["Z04", "Z13"],
+      "R1Z5": ["Z05", "Z12"],
+      "R1Z6": ["Z06", "Z11"],
+      "R1Z7": ["Z07", "Z10"],
+      "R1Z8": ["Z08", "Z09"],
+
+      "R2W1": ["R1W1", "R1W8"],
+      "R2W2": ["R1W2", "R1W7"],
+      "R2W3": ["R1W3", "R1W6"],
+      "R2W4": ["R1W4", "R1W5"],
+
+      "R2X1": ["R1X1", "R1X8"],
+      "R2X2": ["R1X2", "R1X7"],
+      "R2X3": ["R1X3", "R1X6"],
+      "R2X4": ["R1X4", "R1X5"],
+
+      "R2Y1": ["R1Y1", "R1Y8"],
+      "R2Y2": ["R1Y2", "R1Y7"],
+      "R2Y3": ["R1Y3", "R1Y6"],
+      "R2Y4": ["R1Y4", "R1Y5"],
+
+      "R2Z1": ["R1Z1", "R1Z8"],
+      "R2Z2": ["R1Z2", "R1Z7"],
+      "R2Z3": ["R1Z3", "R1Z6"],
+      "R2Z4": ["R1Z4", "R1Z5"],
+
+      "R3W1": ["R2W1", "R2W4"],
+      "R3W2": ["R2W2", "R2W3"],
+
+      "R3X1": ["R2X1", "R2X4"],
+      "R3X2": ["R2X2", "R2X3"],
+
+      "R3Y1": ["R2Y1", "R2Y4"],
+      "R3Y2": ["R2Y2", "R2Y3"],
+
+      "R3Z1": ["R2Z1", "R2Z4"],
+      "R3Z2": ["R2Z2", "R2Z3"],
+
+      "R4W1": ["R3W1", "R3W2"],
+      "R4X1": ["R3X1", "R3X2"],
+      "R4Y1": ["R3Y1", "R3Y2"],
+      "R4Z1": ["R3Z1", "R3Z2"],
+
+      "R5WX": ["R4W1", "R4X1"],
+      "R5YZ": ["R4Y1", "R4Z1"],
+
+      "R6CH": ["R5WX", "R5YZ"]
+    };
+
+    for (var gameId in tourneyMapDict) {
+      var gameObj = {
+        "date": "",
+        "location": "",
+        "next-round": tourneyMapDict[gameId],
+        "score": {
+          "team1": 0,
+          "team2": 0,
+          "num-ot": 0
+        },
+        "status": "not-started",
+        "team1": {
+          "id": 0,
+          "name": "",
+          "seed": seedMapDict[gameId][0]
+        },
+        "team2": {
+          "id": 0,
+          "name": "",
+          "seed": seedMapDict[gameId][1]
+        },
+        "winner": "n/a"
+      };
+
+      march_madness_test['mm-structure']['1111'][gameId] = gameObj;
+    }
+
+    console.log(march_madness_test);
 
     var btt_2019 = {
       "btt-structure": {
@@ -3253,6 +3404,7 @@ class DataService {
       }
     }
 
+<<<<<<< HEAD
     var btt_test = {
       "btt-teams": {
         "1111": {
@@ -3917,8 +4069,10 @@ class DataService {
     }
 
     database.ref('/').update(btt_test);
+=======
+    database.ref('/').update(march_madness_test);
+>>>>>>> 30a981fb431316bd20fbf6d8d8484ae84332c597
 
-    // database.ref('/sports/' + node_id + '/').update(sportObj);
   }
 }
 
