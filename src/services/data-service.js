@@ -2808,7 +2808,7 @@ class DataService {
         }
       },
       "mm-seeds": {
-        "2018": {
+        "1111": {
           "W01": 1437,
           "W02": 1345,
           "W03": 1403,
@@ -2877,22 +2877,19 @@ class DataService {
           "Z15": 1252,
           "Z16a": 1300,
           "Z16b": 1411
-        },
-        "1111": {
         }
       },
       "mm-regions": {
-        "2018": {
-          "W": "East",
-          "X": "Midwest",
-          "Y": "South",
-          "Z": "West"
-        },
         "1111": {
           "W": "East",
           "X": "Midwest",
           "Y": "South",
           "Z": "West"
+        }
+      },
+      "mm-teams": {
+        "1111": {
+
         }
       }
     }
@@ -3072,7 +3069,11 @@ class DataService {
       march_madness_test['mm-structure']['1111'][gameId] = gameObj;
     }
 
-    console.log(march_madness_test);
+    for (var seedId in march_madness_test['mm-seeds']['1111']) {
+      march_madness_test['mm-teams']['1111'][march_madness_test['mm-seeds']['1111'][seedId]] = true;
+    }
+
+    // console.log(march_madness_test);
 
     var btt_2019 = {
       "btt-structure": {
@@ -3404,7 +3405,6 @@ class DataService {
       }
     }
 
-<<<<<<< HEAD
     var btt_test = {
       "btt-teams": {
         "1111": {
@@ -4068,10 +4068,7 @@ class DataService {
       }
     }
 
-    database.ref('/').update(btt_test);
-=======
-    database.ref('/').update(march_madness_test);
->>>>>>> 30a981fb431316bd20fbf6d8d8484ae84332c597
+    // database.ref('/').update(march_madness_test);
 
   }
 }
