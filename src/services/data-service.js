@@ -552,6 +552,34 @@ class DataService {
     });
   }
 
+  getDefaultPayoutSettings = (tournamentCode) => {
+    var defaultPayoutSettings = {};
+    if (tournamentCode === 'btt') {
+      defaultPayoutSettings = {
+        'R1': 0.02,
+        'R2': 0.04,
+        'R3': 0.08,
+        'R4': 0.12,
+        'R5': 0.2,
+        'upset': 0.02,
+        'loss': 0.02
+      };
+    } else if (tournamentCode === 'mm') {
+      defaultPayoutSettings = {
+        'W1': 0.01,
+        'W2': 0.02,
+        'W3': 0.04,
+        'W4': 0.075,
+        'W5': 0.125,
+        'W6': 0.215,
+        'upset': 0.015,
+        'loss': 0.015
+      };
+    }
+
+    return defaultPayoutSettings;
+  }
+
   createLeague(uid, leagueName, leaguePassword, leagueSportCode, infoNode = '') {
     // TODO: add completion handler
 
@@ -572,16 +600,6 @@ class DataService {
         'use-tax': 0,
         'tax-rate': 0,
         'auction-interval': 15
-      },
-      // default payout settings
-      'payout-settings': {
-        'R1': 0.02,
-        'R2': 0.04,
-        'R3': 0.08,
-        'R4': 0.12,
-        'R5': 0.2,
-        'upset': 0.02,
-        'loss': 0.02
       },
       'sport': leagueSportCode,
       'info-node': infoNode,
@@ -620,6 +638,9 @@ class DataService {
       var tournamentCode = leagueSportCode.match(/[a-z]{2,}/g);
       tournamentCode = tournamentCode[0]; // tournament code (i.e. the big ten tournament is "btt")
       
+      let defaultPayoutSettings = this.getDefaultPayoutSettings(tournamentCode);
+      league['payout-settings'] = defaultPayoutSettings;
+
       let teamsObj = {};
       let pushId;
 
