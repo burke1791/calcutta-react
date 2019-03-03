@@ -137,13 +137,17 @@ class AuctionClock extends Component {
   }
 
   generateCountdownDisplay = () => {
-    if (this.state.timeRemaining < 10) {
+    if (this.state.timeRemaining <= 5) {
       return (
-        'Time Remaining: 00:0' + this.state.timeRemaining
+        <span className='text-danger'>{'00:0' + this.state.timeRemaining}</span>
+      );
+    } else if (this.state.timeRemaining < 10) {
+      return (
+        <span>{'00:0' + this.state.timeRemaining}</span>
       );
     } else {
       return (
-        'Time Remaining: 00:' + this.state.timeRemaining
+        <span>{'00:' + this.state.timeRemaining}</span>
       );
     }
     
@@ -152,7 +156,7 @@ class AuctionClock extends Component {
   render() {
     return (
       <div className='time-remaining'>
-        <h5>{this.generateCountdownDisplay()}</h5> 
+        <h5>{'Time Remaining: '}{this.generateCountdownDisplay()}</h5> 
       </div>
     );
   }
