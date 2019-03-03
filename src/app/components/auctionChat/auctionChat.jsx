@@ -48,7 +48,7 @@ class AuctionChat extends Component {
       messageKeys: keys
     });
 
-    this.messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    // this.messagesEnd.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
   }
 
   generateChatMessages = () => {
@@ -76,7 +76,7 @@ class AuctionChat extends Component {
 
   render() {
     return (
-      <div className='d-flex flex-column justify-content-end auction-chat'>
+      <div className='d-flex flex-column justify-content-start auction-chat'>
         <div className='chat-messages'>
           <ul className='messages-list'>
             {this.generateChatMessages()}
