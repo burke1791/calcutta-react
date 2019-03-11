@@ -21,7 +21,7 @@ li > p {
 }
 
 #author {
-  width: 100px;
+  max-width: 100px;
   padding-left: 4px;
 }
 
