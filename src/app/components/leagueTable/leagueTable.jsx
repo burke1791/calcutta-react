@@ -127,15 +127,26 @@ class LeagueTable extends Component {
             buyIn += Number(prizePool.bids[this.state.uid]);
           }
         }
+      } else if (prizePool.bids !== undefined) {
+        if (prizePool.bids[this.state.uid] !== undefined) {
+          buyIn += Number(prizePool.bids[this.state.uid]);
+        }
       }
     } else {
       for (const [key, value] of Object.entries(teams)) {
         if (value.owner === this.state.uid) {
           buyIn += Number(value.price);
-          payout += Number(value.return);
+          // payout += Number(value.return);
         }
       }
     }
+
+    for (const [key, value] of Object.entries(teams)) {
+      if (value.owner === this.state.uid) {
+        payout += Number(value.return);
+      }
+    }
+    
 
     netReturn = payout - buyIn;
 
