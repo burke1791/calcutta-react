@@ -327,21 +327,23 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
         biggestUpsetCount++;
       }
 
+      var roundCode;
       for (var gameId in winners) {
-        let roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
+        roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
 
-        let payoutRate;
+        var payoutRate;
         if (gameId === 'loss') {
-          payoutRate = Number(payouts['loss']);
+          payoutRate = Number(payouts['loss']) / biggestLossCount;
         } else if (gameId === 'upset') {
           payoutRate = Number(payouts['upset']) / biggestUpsetCount;
         } else if (roundCode !== 'n/a') {
-          payoutRate = Number(payouts[roundCode]) / biggestLossCount;
+          payoutRate = Number(payouts[roundCode]);
         } else {
           payoutRate = 0;
         }
-
-        let returnValue = total * payoutRate;
+        console.log('gameId: ' + gameId);
+        console.log('payoutRate: ' + payoutRate);
+        var returnValue = total * payoutRate;
 
         if (returnValue > 0) {
           if (!teamPayouts[winners[gameId]]) {
