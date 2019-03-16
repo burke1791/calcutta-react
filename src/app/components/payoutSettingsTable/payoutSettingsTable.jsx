@@ -24,6 +24,7 @@ class PayoutSettingsTable extends Component {
     this.savePayoutSettings = this.savePayoutSettings.bind(this);
     this.countNumGamesInRound = this.countNumGamesInRound.bind(this);
     this.onPayoutChange = this.onPayoutChange.bind(this);
+    this.calculateTotalShare = this.calculateTotalShare.bind(this);
     this.generateTableRows = this.generateTableRows.bind(this);
     this.generateTable = this.generateTable.bind(this);
   }
@@ -54,6 +55,7 @@ class PayoutSettingsTable extends Component {
         }
       }
 
+      // SEND TO calculateTotalShare
       for (payoutKey in payoutTotals) {
         totalShareValue += Number(payoutTotals[payoutKey]);
       }
@@ -93,6 +95,8 @@ class PayoutSettingsTable extends Component {
   onPayoutChange(payoutKey, newValue, gameCount) {
     var totalShareValue = 0;
 
+    // SEND TO calculateTotalShare
+    /*
     for (var key in this.state.payoutTotals) {
       if (key === payoutKey && (payoutKey === 'loss' || payoutKey === 'upset')) {
         totalShareValue += Number(newValue);
@@ -102,6 +106,9 @@ class PayoutSettingsTable extends Component {
         totalShareValue += Number(this.state.payoutTotals[key]);
       }
     }
+    */
+
+    totalShareValue = this.calculateTotalShare(payoutKey, newValue, gameCount);
 
     if (payoutKey === 'loss' || payoutKey === 'upset') {
       this.setState(prevState => ({
@@ -129,6 +136,23 @@ class PayoutSettingsTable extends Component {
       }));
     }
     
+  }
+
+  calculateTotalShare = (payoutKey, newValue, gameCount) => {
+    var totalShareValue;
+    if (this.state.tournamentId === 'btt') {
+      for (var key in this.state.payoutTotals) {
+        if (key === payoutKey && (payoutKey === 'loss' || payoutKey === 'upset')) {
+          totalShareValue += Number(newValue);
+        } else if (key === payoutKey) {
+          totalShareValue += Number(newValue) * Number(gameCount);
+        } else {
+          totalShareValue += Number(this.state.payoutTotals[key]);
+        }
+      }
+    }
+
+    return totalShareValue;
   }
 
   generateTableRows = () => {
