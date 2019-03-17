@@ -201,10 +201,17 @@ class DataService {
     }, function(errorObject) {
       console.log('the read failed: ' + errorObject.code);
     });
+
+    database.ref('/leagues/' + leagueId + '/teamGroups').on('value', function(snapshot) {
+      ns.postNotification(NOTIF_AUCTION_ITEM_SOLD, snapshot.val());
+    }, function(errorObject) {
+      console.log('the read failed: ' + errorObject.code);
+    });
   }
 
   detatchLeagueBiddingListener = (leagueId) => {
     database.ref('/leagues/' + leagueId + '/teams').off('value');
+    database.ref('/leagues/' + leagueId + '/teamGroups').off('value');
   }
 
   attachLeagueTotalsListener = (leagueId) => {
@@ -642,19 +649,10 @@ class DataService {
       league['payout-settings'] = defaultPayoutSettings;
 
       let teamsObj = {};
+      let teamGroupsObj = {};
       let pushId;
 
-      database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
-        seeds.forEach(child => {
-          var teamId = child.key;
-          var teamVal = child.val();
-
-          teamsObj[teamId] = {};
-          teamsObj[teamId].owner = '';
-          teamsObj[teamId].price = 0;
-          teamsObj[teamId].return = 0;
-        });
-        league['teams'] = teamsObj;
+      if (tournamentCode === 'mm') {
         database.ref('/leagues').push(league).then((snapshot) => {
           pushId = snapshot.key;
           database.ref('/auctions').child(pushId).set(auction);
@@ -663,7 +661,28 @@ class DataService {
           database.ref('/leagues-' + tournamentCode + '/' + season).update({[pushId]: true});
           database.ref('/users/' + uid + '/leagues/' + pushId).set(true);
         });
-      });
+      } else if (tournamentCode === 'btt') {
+        database.ref('/' + tournamentCode + '-teams/' + season).once('value').then((seeds) => {
+          seeds.forEach(child => {
+            var teamId = child.key;
+            var teamVal = child.val();
+  
+            teamsObj[teamId] = {};
+            teamsObj[teamId].owner = '';
+            teamsObj[teamId].price = 0;
+            teamsObj[teamId].return = 0;
+          });
+          league['teams'] = teamsObj;
+          database.ref('/leagues').push(league).then((snapshot) => {
+            pushId = snapshot.key;
+            database.ref('/auctions').child(pushId).set(auction);
+            ns.postNotification(NOTIF_LEAGUE_CREATED, null);
+          }).then(() => {
+            database.ref('/leagues-' + tournamentCode + '/' + season).update({[pushId]: true});
+            database.ref('/users/' + uid + '/leagues/' + pushId).set(true);
+          });
+        });
+      }
       // populate league info from all source nodes
       // TODO: create cloud function to add tourney structure
     }

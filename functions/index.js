@@ -98,12 +98,114 @@ exports.updateBTTSeedsInLeaguesNode = functions.database.ref('/btt-seeds/{year}/
 exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
   const pushId = context.params.pushId;
   const sport = snapshot.child('sport').val();
+  const tournamentId = sport.match(/[a-z]{2,}/g)[0];
   const infoNode = snapshot.child('info-node').val();
   const teams = snapshot.child('teams');
 
-  if (sport !== 'custom') {
+  if (tournamentId === 'mm') {
+    // populate the teams node from scratch
+    let year = sport.match(/[0-9]{4,}/g)[0];
+    let teamsObj = {};
+    let teamGroupsObj = {};
+
+    const regionsSnapshot = admin.database().ref('/' + tournamentId + '-regions/' + year).once('value');
+    const seedsSnapshot = admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value');
+    const teamsSnapshot = admin.database().ref('/' + tournamentId + '-teams/' + year).once('value');
+    const infoNodeSnapshot = admin.database().ref('/' + infoNode + '-team-info').once('value');
+
+    return Promise.all([regionsSnapshot, seedsSnapshot, teamsSnapshot, infoNodeSnapshot]).then(data => {
+      let regions = data[0].val();
+      let infoNode = data[3].val();
+      var regionCode;
+      var regionString;
+      var playInFlag = false;
+      var seedValue;
+      data[1].forEach(seed => {
+        playInFlag = false;
+        if (seed.key.match(/[a-z]/g) !== null) {
+          playInFlag = true;
+        }
+        seedValue = seed.key.match(/[0-9]+/g)[0];
+        regionCode = seed.key.match(/[A-Z]/g);
+        regionString = regions[regionCode];
+
+        var teamId = seed.val();
+        var name = infoNode[teamId]['name'];
+        var groupCode;
+        var teamObj = {};
+
+        // group lower seeds
+        if (seedValue >= 14) {
+          // check if this region already has a group in the teamGroupsObj
+          groupCode = regionCode + '-14-16';
+          if (teamGroupsObj[groupCode] !== undefined) {
+            teamObj = {
+              'name': name,
+              'return': 0,
+              'seed-value': Number(seedValue)
+            };
+            teamGroupsObj[groupCode]['teams'][teamId] = teamObj;
+          } else {
+            // create region group
+            teamGroupsObj[groupCode] = {
+              'name': regionString + ' (14-16)',
+              'price': 0,
+              'return': 0,
+              'owner': '',
+              'teams': {
+                [teamId]: {
+                  'name': name,
+                  'return': 0,
+                  'seed-value': Number(seedValue)
+                }
+              }
+            };
+          }
+        } else if (playInFlag) {
+          // check if this play-in game already has a group
+          groupCode = regionCode + seedValue;
+          if (teamGroupsObj[groupCode] !== undefined) {
+            teamObj = {
+              'name': name,
+              'return': 0,
+              'seed-value': Number(seedValue)
+            };
+            teamGroupsObj[groupCode]['teams'][teamId] = teamObj;
+          } else {
+            // create play-in group
+            teamGroupsObj[groupCode] = {
+              'name': regionString + ' ' + Number(seedValue) + ' Seed Play-In',
+              'return': 0,
+              'price': 0,
+              'owner': '',
+              'teams': {
+                [teamId]: {
+                  'name': name,
+                  'return': 0,
+                  'seed-value': Number(seedValue)
+                }
+              }
+            };
+          }
+        } else {
+          // populate regular teams
+          teamsObj[teamId] = {
+            'name': name,
+            'owner': '',
+            'price': 0,
+            'return': 0,
+            'seed-value': Number(seedValue)
+          };
+        }
+      });
+      let teamUpdates = {};
+      teamUpdates['/leagues/' + pushId + '/teams'] = teamsObj;
+      teamUpdates['/leagues/' + pushId + '/teamGroups'] = teamGroupsObj;
+
+      return admin.database().ref('/').update(teamUpdates);
+    });
+  } else if (sport !== 'custom') {
     // TODO: refactor to update the entire teams node at once to avoid the nested promise
-    let tournamentId = sport.match(/[a-z]{2,}/g)[0];
     let year = sport.match(/[0-9]{4,}/g)[0];
     return admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedsSnapshot => {
       return seedsSnapshot.val();
