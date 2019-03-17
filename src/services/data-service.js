@@ -229,16 +229,40 @@ class DataService {
   getTeamCodes = (leagueId) => {
     return new Promise((resolve, reject) => {
       var teams = {};
-      database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
-        snapshot.forEach(function(childSnapshot) {
-          var key = childSnapshot.key;
-          var owner = childSnapshot.child('owner').val();
+      database.ref('/leagues/' + leagueId).once('value').then(function(snapshot) {
+        let teams = snapshot.child('teams').val();
+        let teamGroups = snapshot.child('teamGroups').val();
+        let teamsObj = {};
+        
+        for (var teamKey in teams) {
+          var owner = teams[teamKey]['owner'];
 
           if (owner === '') {
-            teams[key] = childSnapshot.val();
+            teamsObj[teamKey] = teams[teamKey];
           }
-        });
-        resolve(teams);
+        }
+
+        if (teamGroups !== null) {
+          for (var groupKey in teamGroups) {
+            var owner = teamGroups[groupKey]['owner'];
+
+            if (owner === '') {
+              teamsObj[groupKey] = teamGroups[groupKey]
+            }
+          }
+        }
+
+        resolve(teamsObj);
+
+        // snapshot.forEach(function(childSnapshot) {
+        //   var key = childSnapshot.key;
+        //   var owner = childSnapshot.child('owner').val();
+
+        //   if (owner === '') {
+        //     teams[key] = childSnapshot.val();
+        //   }
+        // });
+        // resolve(teams);
       });
     });
   }

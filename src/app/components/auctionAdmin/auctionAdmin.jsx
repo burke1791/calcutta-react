@@ -72,6 +72,7 @@ class AuctionAdmin extends Component {
     var self = this;
     ds.getTeamCodes(this.state.leagueId).then(function(teams) {
       var codes = Object.keys(teams);
+      console.log(codes);
       self.setState({teamCodes: codes});
     });
   }
