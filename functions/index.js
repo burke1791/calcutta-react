@@ -489,11 +489,13 @@ exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/
   const newOwnerId = change.after.val();
 
   const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const teamGroups = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
   const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
 
-  return Promise.all([teams, settings]).then(data => {
+  return Promise.all([teams, teamGroups, settings]).then(data => {
     let teams = data[0].val();
-    let settings = data[1].val();
+    let teamGroups = data[1].val();
+    let settings = data[2].val();
 
     var useTax = false;
 
@@ -522,6 +524,113 @@ exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/
     for (teamId in teams) {
       uid = teams[teamId]['owner'];
       price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates each user's total bid amount from the teamGroups node
+    for (teamId in teamGroups) {
+      uid = teamGroups[teamId]['owner'];
+      price = Number(teamGroups[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates the amount of use tax each user owes
+    if (useTax) {
+      var bidTotal;
+      var useTaxOwed;
+      for (uid in updateObj['prize-pool']['bids']) {
+        bidTotal = updateObj['prize-pool']['bids'][uid];
+        if (bidTotal > noTaxLimit) {
+          useTaxOwed = (bidTotal - noTaxLimit) * taxRate;
+          updateObj['prize-pool']['use-tax'][uid] = useTaxOwed;
+
+          grandTotal += useTaxOwed;
+        }
+      }
+    }
+
+    updateObj['pool-total'] = grandTotal;
+    updateObj['prize-pool']['total'] = grandTotal;
+    
+    return admin.database().ref('/leagues/' + leagueId).update(updateObj);
+  });
+});
+
+exports.updateBiddingTotalsOnAuctionGroupItemSold = functions.database.ref('/leagues/{leagueId}/teamGroups/{teamId}/owner').onUpdate((change, context) => {
+  const leagueId = context.params.leagueId;
+  const teamId = context.params.teamId;
+  const newOwnerId = change.after.val();
+
+  const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const teamGroups = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
+  const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
+
+  return Promise.all([teams, teamGroups, settings]).then(data => {
+    let teams = data[0].val();
+    let teamGroups = data[1].val();
+    let settings = data[2].val();
+
+    var useTax = false;
+
+    if (settings['use-tax'] > 0) {
+      var noTaxLimit = settings['use-tax'];
+      var taxRate = settings['tax-rate'];
+      useTax = true;
+    }
+
+    let updateObj = {
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {},
+        'use-tax': {}
+      }
+    };
+
+    var grandTotal = 0;
+
+    var teamId;
+    var uid;
+    var price;
+
+    // calculates each user's total bid amount from the teams node
+    for (teamId in teams) {
+      uid = teams[teamId]['owner'];
+      price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates each user's total bid amount from the teamGroups node
+    for (teamId in teamGroups) {
+      uid = teamGroups[teamId]['owner'];
+      price = Number(teamGroups[teamId]['price']);
 
       grandTotal += price;
 
