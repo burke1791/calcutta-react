@@ -108,6 +108,7 @@ class AuctionAdmin extends Component {
         if (oldCode === '') {
           alert('All Items Have Been Auctioned Off');
         } else {
+          console.log('old code: ' + oldCode);
           self.loadNewItem(oldCode);
         }
       }, function(error) {
@@ -153,7 +154,8 @@ class AuctionAdmin extends Component {
             if (this.state.interval !== undefined) {
               interval = this.state.interval;
             }
-            ds.loadNextItem(newCode, this.state.leagueId, interval).then(() => {
+            ds.loadNextItem(newCode, this.state.leagueId, interval).then((test) => {
+              console.log('test return: ' + test);
               self.setState({teamCodes: codes});
             });
             break;

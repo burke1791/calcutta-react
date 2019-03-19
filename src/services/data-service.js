@@ -283,21 +283,54 @@ class DataService {
         }
         
         if (unclaimed || winnerUID !== '(unclaimed)') {
-          database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
-            'owner': winnerUID,
-            'price': winningBid
-          }, function(error) {
-            if (error) {
-              console.log('logAuctionItemResult failed');
-              reject();
+          const team = database.ref('/leagues/' + leagueId + '/teams/' + itemCode).once('value');
+          const teamGroup = database.ref('/leagues/' + leagueId + '/teamGroups/' + itemCode).once('value');
+
+          return Promise.all([team, teamGroup]).then(data => {
+            let team = data[0].val();
+            let teamGroup = data[1].val();
+
+            // check if teamCode refers to a team grouping
+            if (teamGroup !== null) {
+              database.ref('/leagues/' + leagueId + '/teamGroups/' + itemCode).update({
+                'owner': winnerUID,
+                'price': winningBid
+              }, function(error) {
+                if (error) {
+                  console.log('logAuctionItemResult failed: ' + error.code);
+                  reject();
+                } else {
+                  resolve(itemCode);
+                }
+              });
             } else {
-              resolve(itemCode);
+              database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
+                'owner': winnerUID,
+                'price': winningBid
+              }, function(error) {
+                if (error) {
+                  console.log('logAuctionItemResult failed: ' + error.code);
+                  reject();
+                } else {
+                  resolve(itemCode);
+                }
+              });
             }
           });
+          // database.ref('/leagues/' + leagueId + '/teams/' + itemCode).update({
+          //   'owner': winnerUID,
+          //   'price': winningBid
+          // }, function(error) {
+          //   if (error) {
+          //     console.log('logAuctionItemResult failed');
+          //     reject();
+          //   } else {
+          //     resolve(itemCode);
+          //   }
+          // });
         } else {
           resolve();
         }
-        
       });
     });
   }
@@ -305,16 +338,33 @@ class DataService {
   loadNextItem = (teamCode, leagueId, interval = 15) => {
     var name;
 
+    const teams = database.ref('/leagues/' + leagueId + '/teams').once('value');
+    const teamGroups = database.ref('/leagues/' + leagueId + '/teamGroups').once('value');
+
     return new Promise((resolve, reject) => {
-      database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
-        if (snapshot.child('seed-value').exists()) {
-          name = '(' + snapshot.child('seed-value').val() + ') ' + snapshot.child('name').val();
-        } else {
-          name = snapshot.child('name').val();
-        }
-
+      return Promise.all([teams, teamGroups]).then(data => {
+        let teams = data[0].val();
+        let teamGroups = data[1].val();
+  
         let endTime = fireDatabase.ServerValue.TIMESTAMP;
-
+        let auctionUpdate = {};
+  
+        // check for teamCode in teamGroups
+        if (teamGroups !== null && teamGroups[teamCode] !== undefined) {
+          if (teamGroups[teamCode]['seed-value'] !== undefined) {
+            name = '(' + teamGroups[teamCode]['seed-value'] + ') ' + teamGroups[teamCode]['name'];
+          } else {
+            name = teamGroups[teamCode]['name'];
+          }
+        } else {
+          // teamCode is a regular code
+          if (teams[teamCode]['seed-value'] !== undefined) {
+            name = '(' + teams[teamCode]['seed-value'] + ') ' + teams[teamCode]['name'];
+          } else {
+            name = teams[teamCode]['name'];
+          }
+        }
+  
         database.ref('/auctions/' + leagueId).update({
           'current-item': {
             'code': teamCode,
@@ -328,14 +378,48 @@ class DataService {
           'in-progress': true
         }, function(error) {
           if (error) {
-            console.log('loadNextItem failed');
+            console.log('loadNextItem failed: ' + error.code);
             reject();
           } else {
-            resolve();
+            console.log('Should have started a new item');
+            resolve('I returned to you');
           }
         });
       });
     });
+    
+
+    // return new Promise((resolve, reject) => {
+    //   database.ref('/leagues/' + leagueId + '/teams/' + teamCode).once('value').then(function(snapshot) {
+    //     if (snapshot.child('seed-value').exists()) {
+    //       name = '(' + snapshot.child('seed-value').val() + ') ' + snapshot.child('name').val();
+    //     } else {
+    //       name = snapshot.child('name').val();
+    //     }
+
+    //     let endTime = fireDatabase.ServerValue.TIMESTAMP;
+
+    //     database.ref('/auctions/' + leagueId).update({
+    //       'current-item': {
+    //         'code': teamCode,
+    //         'complete': false,
+    //         'current-bid': 0,
+    //         'current-winner': '',
+    //         'end-time': endTime,
+    //         'name': name,
+    //         'winner-uid': ''
+    //       },
+    //       'in-progress': true
+    //     }, function(error) {
+    //       if (error) {
+    //         console.log('loadNextItem failed');
+    //         reject();
+    //       } else {
+    //         resolve();
+    //       }
+    //     });
+    //   });
+    // });
     
   }
 
@@ -1935,10 +2019,10 @@ class DataService {
           "Z": "West"
         },
         "2019": {
-          "W": "",
-          "X": "",
-          "Y": "",
-          "Z": ""
+          "W": "East",
+          "X": "West",
+          "Y": "Midwest",
+          "Z": "South"
         }
       },
       "mm-seeds": {
@@ -2011,6 +2095,76 @@ class DataService {
           "Z15": 1252,
           "Z16a": 1300,
           "Z16b": 1411
+        },
+        "2019": {
+          "W01": 1181,
+          "W02": 1277,
+          "W03": 1261,
+          "W04": 1439,
+          "W05": 1280,
+          "W06": 1268,
+          "W07": 1257,
+          "W08": 1433,
+          "W09": 1416,
+          "W10": 1278,
+          "W11a": 1125,
+          "W11b": 1396,
+          "W12": 1251,
+          "W13": 1387,
+          "W14": 1463,
+          "W15": 1133,
+          "W16a": 1295,
+          "W16b": 1300,
+          "X01": 1211,
+          "X02": 1276,
+          "X03": 1403,
+          "X04": 1199,
+          "X05": 1266,
+          "X06": 1138,
+          "X07": 1305,
+          "X08": 1393,
+          "X09": 1124,
+          "X10": 1196,
+          "X11a": 1113,
+          "X11b": 1385,
+          "X12": 1293,
+          "X13": 1436,
+          "X14": 1297,
+          "X15": 1285,
+          "X16a": 1192,
+          "X16b": 1341,
+          "Y01": 1314,
+          "Y02": 1246,
+          "Y03": 1222,
+          "Y04": 1242,
+          "Y05": 1120,
+          "Y06": 1235,
+          "Y07": 1459,
+          "Y08": 1429,
+          "Y09": 1449,
+          "Y10": 1371,
+          "Y11": 1326,
+          "Y12": 1308,
+          "Y13": 1318,
+          "Y14": 1209,
+          "Y15": 1101,
+          "Y16": 1233,
+          "Z01": 1438,
+          "Z02": 1397,
+          "Z03": 1345,
+          "Z04": 1243,
+          "Z05": 1458,
+          "Z06": 1437,
+          "Z07": 1153,
+          "Z08": 1279,
+          "Z09": 1328,
+          "Z10": 1234,
+          "Z11": 1388,
+          "Z12": 1332,
+          "Z13": 1414,
+          "Z14": 1330,
+          "Z15": 1159,
+          "Z16": 1205
         }
       },
       "mm-structure": {
@@ -2836,33 +2990,1199 @@ class DataService {
           }
         },
         "2019": {
-          "R1W1": {
-            "team1": {
-              "seed": "W01",
-              "id": 0,
-              "name": ""
-            },
-            "team2": {
-              "seed": "W16",
-              "id": 0,
-              "name": ""
-            },
-            "date": "",
-            "location": "",
-            "next-round": "R2W1",
-            "score": {
-              "team1": 0,
-              "team2": 0,
-              "num-ot": 0
-            },
-            "status": "not-started",
-            "winner": "n/a"
-          },
-          "R1W2": {
-
-          }
+    
         }
       }
+    }
+
+    var march_madness_regions_2019 = {
+      "W": "East",
+      "X": "West",
+      "Y": "Midwest",
+      "Z": "South"
+    };
+
+    var teamNameMap = {
+      "1181": "Duke",
+      "1277": "Michigan St",
+      "1261": "LSU",
+      "1439": "Virginia Tech",
+      "1280": "Mississippi St",
+      "1268": "Maryland",
+      "1257": "Louisville",
+      "1433": "VA Commonwealth",
+      "1416": "UCF",
+      "1278": "Minnesota",
+      "1125": "Belmont",
+      "1396": "Temple",
+      "1251": "Liberty",
+      "1387": "St Louis",
+      "1463": "Yale",
+      "1133": "Bradley",
+      "1295": "N Dakota St",
+      "1300": "NC Central",
+      "1211": "Gonzaga",
+      "1276": "Michigan",
+      "1403": "Texas Tech",
+      "1199": "Florida St",
+      "1266": "Marquette",
+      "1138": "Buffalo",
+      "1305": "Nevada",
+      "1393": "Syracuse",
+      "1124": "Baylor",
+      "1196": "Florida",
+      "1113": "Arizona St",
+      "1385": "St John's",
+      "1293": "Murray St",
+      "1436": "Vermont",
+      "1297": "N Kentucky",
+      "1285": "Montana",
+      "1192": "F Dickinson",
+      "1341": "Prarie View",
+      "1314": "North Carolina",
+      "1246": "Kentucky",
+      "1222": "Houston",
+      "1242": "Kansas",
+      "1120": "Auburn",
+      "1235": "Iowa St",
+      "1459": "Wofford",
+      "1429": "Utah St",
+      "1449": "Washington",
+      "1371": "Seton Hall",
+      "1326": "Ohio St",
+      "1308": "New Mexico St",
+      "1318": "Northeastern",
+      "1209": "Georgia St",
+      "1101": "Abilene Chr",
+      "1233": "Iona",
+      "1438": "Virginia",
+      "1397": "Tennessee",
+      "1345": "Purdue",
+      "1243": "Kansas St",
+      "1458": "Wisconsin",
+      "1437": "Villanova",
+      "1153": "Cincinnati",
+      "1279": "Mississippi",
+      "1328": "Oklahoma",
+      "1234": "Iowa",
+      "1388": "St Mary's CA",
+      "1332": "Oregon",
+      "1414": "UC Irvine",
+      "1330": "Old Dominion",
+      "1159": "Colgate",
+      "1205": "Gardner Webb"
+    };
+
+    var teamInfoNodes = {
+      "1104" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "10-11"
+        },
+        "location" : "",
+        "name" : "Alabama",
+        "ovr-record" : {
+          "2018" : "19-15"
+        }
+      },
+      "1112" : {
+        "conf" : {
+          "2018" : "Pac-12"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "Arizona",
+        "ovr-record" : {
+          "2018" : "27-7"
+        }
+      },
+      "1113" : {
+        "conf" : {
+          "2018" : "Pac-12"
+        },
+        "conf-record" : {
+          "2018" : "8-11"
+        },
+        "location" : "",
+        "name" : "Arizona St",
+        "ovr-record" : {
+          "2018" : "20-11"
+        }
+      },
+      "1116" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "12-9"
+        },
+        "location" : "",
+        "name" : "Arkansas",
+        "ovr-record" : {
+          "2018" : "23-11"
+        }
+      },
+      "1120" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "13-6"
+        },
+        "location" : "",
+        "name" : "Auburn",
+        "ovr-record" : {
+          "2018" : "25-7"
+        }
+      },
+      "1137" : {
+        "conf" : {
+          "2018" : "Patriot League"
+        },
+        "conf-record" : {
+          "2018" : "19-2"
+        },
+        "location" : "",
+        "name" : "Bucknell",
+        "ovr-record" : {
+          "2018" : "25-9"
+        }
+      },
+      "1138" : {
+        "conf" : {
+          "2018" : "Mid-American"
+        },
+        "conf-record" : {
+          "2018" : "18-3"
+        },
+        "location" : "",
+        "name" : "Buffalo",
+        "ovr-record" : {
+          "2018" : "25-8"
+        }
+      },
+      "1139" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "10-10"
+        },
+        "location" : "",
+        "name" : "Butler",
+        "ovr-record" : {
+          "2018" : "20-13"
+        }
+      },
+      "1153" : {
+        "conf" : {
+          "2018" : "American Athletic"
+        },
+        "conf-record" : {
+          "2018" : "19-2"
+        },
+        "location" : "",
+        "name" : "Cincinnati",
+        "ovr-record" : {
+          "2018" : "30-4"
+        }
+      },
+      "1155" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "12-8"
+        },
+        "location" : "",
+        "name" : "Clemson",
+        "ovr-record" : {
+          "2018" : "23-9"
+        }
+      },
+      "1158" : {
+        "conf" : {
+          "2018" : "Colonial Athletic Association"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "Col Charleston",
+        "ovr-record" : {
+          "2018" : "24-7"
+        }
+      },
+      "1166" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "10-9"
+        },
+        "location" : "",
+        "name" : "Creighton",
+        "ovr-record" : {
+          "2018" : "20-11"
+        }
+      },
+      "1168" : {
+        "conf" : {
+          "2018" : "Big West"
+        },
+        "conf-record" : {
+          "2018" : "13-6"
+        },
+        "location" : "",
+        "name" : "CS Fullerton",
+        "ovr-record" : {
+          "2018" : "18-11"
+        }
+      },
+      "1172" : {
+        "conf" : {
+          "2018" : "Atlantic 10"
+        },
+        "conf-record" : {
+          "2018" : "16-5"
+        },
+        "location" : "",
+        "name" : "Davidson",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1181" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "14-6"
+        },
+        "location" : "",
+        "name" : "Duke",
+        "ovr-record" : {
+          "2018" : "26-7"
+        }
+      },
+      "1196" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "11-8"
+        },
+        "location" : "",
+        "name" : "Florida",
+        "ovr-record" : {
+          "2018" : "20-12"
+        }
+      },
+      "1199" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "9-10"
+        },
+        "location" : "",
+        "name" : "Florida St",
+        "ovr-record" : {
+          "2018" : "20-11"
+        }
+      },
+      "1209" : {
+        "conf" : {
+          "2018" : "Sun Belt"
+        },
+        "conf-record" : {
+          "2018" : "15-6"
+        },
+        "location" : "",
+        "name" : "Georgia St",
+        "ovr-record" : {
+          "2018" : "22-10"
+        }
+      },
+      "1211" : {
+        "conf" : {
+          "2018" : "West Coast Conference"
+        },
+        "conf-record" : {
+          "2018" : "20-1"
+        },
+        "location" : "",
+        "name" : "Gonzaga",
+        "ovr-record" : {
+          "2018" : "30-4"
+        }
+      },
+      "1222" : {
+        "conf" : {
+          "2018" : "American Athletic"
+        },
+        "conf-record" : {
+          "2018" : "16-5"
+        },
+        "location" : "",
+        "name" : "Houston",
+        "ovr-record" : {
+          "2018" : "26-7"
+        }
+      },
+      "1228" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "Champaign, IL",
+        "name" : "Illinois",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1231" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "Bloomington, IN",
+        "name" : "Indiana",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1233" : {
+        "conf" : {
+          "2018" : "Metro Atlantic Athletic"
+        },
+        "conf-record" : {
+          "2018" : "14-7"
+        },
+        "location" : "",
+        "name" : "Iona",
+        "ovr-record" : {
+          "2018" : "20-13"
+        }
+      },
+      "1234" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "",
+        "name" : "Iowa",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1242" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "16-5"
+        },
+        "location" : "",
+        "name" : "Kansas",
+        "ovr-record" : {
+          "2018" : "27-7"
+        }
+      },
+      "1243" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "11-9"
+        },
+        "location" : "",
+        "name" : "Kansas St",
+        "ovr-record" : {
+          "2018" : "22-11"
+        }
+      },
+      "1246" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "13-8"
+        },
+        "location" : "",
+        "name" : "Kentucky",
+        "ovr-record" : {
+          "2018" : "24-10"
+        }
+      },
+      "1252" : {
+        "conf" : {
+          "2018" : "Atlantic Sun"
+        },
+        "conf-record" : {
+          "2018" : "13-4"
+        },
+        "location" : "",
+        "name" : "Lipscomb",
+        "ovr-record" : {
+          "2018" : "20-9"
+        }
+      },
+      "1254" : {
+        "conf" : {
+          "2018" : "Northeast Conference"
+        },
+        "conf-record" : {
+          "2018" : "13-8"
+        },
+        "location" : "",
+        "name" : "Long Island",
+        "ovr-record" : {
+          "2018" : "17-16"
+        }
+      },
+      "1260" : {
+        "conf" : {
+          "2018" : "Missouri Valley"
+        },
+        "conf-record" : {
+          "2018" : "18-3"
+        },
+        "location" : "",
+        "name" : "Loyola-Chicago",
+        "ovr-record" : {
+          "2018" : "27-5"
+        }
+      },
+      "1267" : {
+        "conf" : {
+          "2018" : "Conference USA"
+        },
+        "conf-record" : {
+          "2018" : "15-6"
+        },
+        "location" : "",
+        "name" : "Marshall",
+        "ovr-record" : {
+          "2018" : "23-10"
+        }
+      },
+      "1268" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "",
+        "name" : "Maryland",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1274" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "11-8"
+        },
+        "location" : "",
+        "name" : "Miami FL",
+        "ovr-record" : {
+          "2018" : "22-9"
+        }
+      },
+      "1276" : {
+        "conf" : {
+          "2018" : "Big Ten"
+        },
+        "conf-record" : {
+          "2018" : "17-5"
+        },
+        "location" : "",
+        "name" : "Michigan",
+        "ovr-record" : {
+          "2018" : "27-7"
+        }
+      },
+      "1277" : {
+        "conf" : {
+          "2018" : "Big Ten"
+        },
+        "conf-record" : {
+          "2018" : "17-3"
+        },
+        "location" : "",
+        "name" : "Michigan St",
+        "ovr-record" : {
+          "2018" : "29-4"
+        }
+      },
+      "1278" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "",
+        "name" : "Minnesota",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1281" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "10-9"
+        },
+        "location" : "",
+        "name" : "Missouri",
+        "ovr-record" : {
+          "2018" : "19-12"
+        }
+      },
+      "1285" : {
+        "conf" : {
+          "2018" : "Big Sky"
+        },
+        "conf-record" : {
+          "2018" : "19-2"
+        },
+        "location" : "",
+        "name" : "Montana",
+        "ovr-record" : {
+          "2018" : "24-7"
+        }
+      },
+      "1293" : {
+        "conf" : {
+          "2018" : "Ohio Valley Conference"
+        },
+        "conf-record" : {
+          "2018" : "18-2"
+        },
+        "location" : "",
+        "name" : "Murray St",
+        "ovr-record" : {
+          "2018" : "24-5"
+        }
+      },
+      "1300" : {
+        "conf" : {
+          "2018" : "Mid-Eastern Athletic"
+        },
+        "conf-record" : {
+          "2018" : "13-7"
+        },
+        "location" : "",
+        "name" : "NC Central",
+        "ovr-record" : {
+          "2018" : "16-15"
+        }
+      },
+      "1301" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "11-8"
+        },
+        "location" : "",
+        "name" : "NC State",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1304" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "Lincoln, NE",
+        "name" : "Nebraska",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1305" : {
+        "conf" : {
+          "2018" : "Mountain West"
+        },
+        "conf-record" : {
+          "2018" : "16-4"
+        },
+        "location" : "",
+        "name" : "Nevada",
+        "ovr-record" : {
+          "2018" : "27-7"
+        }
+      },
+      "1308" : {
+        "conf" : {
+          "2018" : "Western Athletic"
+        },
+        "conf-record" : {
+          "2018" : "15-2"
+        },
+        "location" : "",
+        "name" : "New Mexico St",
+        "ovr-record" : {
+          "2018" : "25-5"
+        }
+      },
+      "1314" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "14-8"
+        },
+        "location" : "",
+        "name" : "North Carolina",
+        "ovr-record" : {
+          "2018" : "25-10"
+        }
+      },
+      "1321" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "Evanston, IL",
+        "name" : "Northwestern",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1326" : {
+        "conf" : {
+          "2018" : "Big Ten"
+        },
+        "conf-record" : {
+          "2018" : "15-4"
+        },
+        "location" : "",
+        "name" : "Ohio St",
+        "ovr-record" : {
+          "2018" : "24-8"
+        }
+      },
+      "1328" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "8-11"
+        },
+        "location" : "",
+        "name" : "Oklahoma",
+        "ovr-record" : {
+          "2018" : "18-13"
+        }
+      },
+      "1335" : {
+        "conf" : {
+          "2018" : "Ivy League"
+        },
+        "conf-record" : {
+          "2018" : "14-2"
+        },
+        "location" : "",
+        "name" : "Penn",
+        "ovr-record" : {
+          "2018" : "23-8"
+        }
+      },
+      "1336" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "",
+        "name" : "Penn St",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1344" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "12-9"
+        },
+        "location" : "",
+        "name" : "Providence",
+        "ovr-record" : {
+          "2018" : "21-13"
+        }
+      },
+      "1345" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "West Lafayette, IN",
+        "name" : "Purdue",
+        "ovr-record" : {
+          "2018" : "28-6"
+        }
+      },
+      "1347" : {
+        "conf" : {
+          "2018" : "Big South"
+        },
+        "conf-record" : {
+          "2018" : "15-6"
+        },
+        "location" : "",
+        "name" : "Radford",
+        "ovr-record" : {
+          "2018" : "20-12"
+        }
+      },
+      "1348" : {
+        "conf" : {
+          "2018" : "Atlantic 10"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "Rhode Island",
+        "ovr-record" : {
+          "2018" : "25-7"
+        }
+      },
+      "1353" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "",
+        "name" : "Rutgers",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1355" : {
+        "conf" : {
+          "2018" : "Summit League"
+        },
+        "conf-record" : {
+          "2018" : "16-1"
+        },
+        "location" : "",
+        "name" : "S Dakota St",
+        "ovr-record" : {
+          "2018" : "24-6"
+        }
+      },
+      "1361" : {
+        "conf" : {
+          "2018" : "Mountain West"
+        },
+        "conf-record" : {
+          "2018" : "14-7"
+        },
+        "location" : "",
+        "name" : "San Diego St",
+        "ovr-record" : {
+          "2018" : "21-10"
+        }
+      },
+      "1371" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "10-9"
+        },
+        "location" : "",
+        "name" : "Seton Hall",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1372" : {
+        "conf" : {
+          "2018" : "Southland Conference"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "SF Austin",
+        "ovr-record" : {
+          "2018" : "24-6"
+        }
+      },
+      "1382" : {
+        "conf" : {
+          "2018" : "Atlantic 10"
+        },
+        "conf-record" : {
+          "2018" : "15-5"
+        },
+        "location" : "",
+        "name" : "St Bonaventure",
+        "ovr-record" : {
+          "2018" : "25-7"
+        }
+      },
+      "1393" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "9-11"
+        },
+        "location" : "",
+        "name" : "Syracuse",
+        "ovr-record" : {
+          "2018" : "20-13"
+        }
+      },
+      "1395" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "9-10"
+        },
+        "location" : "",
+        "name" : "TCU",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1397" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "15-6"
+        },
+        "location" : "",
+        "name" : "Tennessee",
+        "ovr-record" : {
+          "2018" : "25-8"
+        }
+      },
+      "1400" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "9-11"
+        },
+        "location" : "",
+        "name" : "Texas",
+        "ovr-record" : {
+          "2018" : "19-14"
+        }
+      },
+      "1401" : {
+        "conf" : {
+          "2018" : "SEC"
+        },
+        "conf-record" : {
+          "2018" : "9-10"
+        },
+        "location" : "",
+        "name" : "Texas A&M",
+        "ovr-record" : {
+          "2018" : "20-12"
+        }
+      },
+      "1403" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "12-8"
+        },
+        "location" : "",
+        "name" : "Texas Tech",
+        "ovr-record" : {
+          "2018" : "24-9"
+        }
+      },
+      "1411" : {
+        "conf" : {
+          "2018" : "Southwest Athletic"
+        },
+        "conf-record" : {
+          "2018" : "15-6"
+        },
+        "location" : "",
+        "name" : "TX Southern",
+        "ovr-record" : {
+          "2018" : "15-19"
+        }
+      },
+      "1417" : {
+        "conf" : {
+          "2018" : "Pac-12"
+        },
+        "conf-record" : {
+          "2018" : "12-8"
+        },
+        "location" : "",
+        "name" : "UCLA",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1420" : {
+        "conf" : {
+          "2018" : "America East"
+        },
+        "conf-record" : {
+          "2018" : "15-4"
+        },
+        "location" : "",
+        "name" : "UMBC",
+        "ovr-record" : {
+          "2018" : "21-10"
+        }
+      },
+      "1422" : {
+        "conf" : {
+          "2018" : "Southern Conference"
+        },
+        "conf-record" : {
+          "2018" : "18-3"
+        },
+        "location" : "",
+        "name" : "UNC Greensboro",
+        "ovr-record" : {
+          "2018" : "24-7"
+        }
+      },
+      "1437" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "Villanova",
+        "ovr-record" : {
+          "2018" : "30-4"
+        }
+      },
+      "1438" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "20-1"
+        },
+        "location" : "",
+        "name" : "Virginia",
+        "ovr-record" : {
+          "2018" : "31-2"
+        }
+      },
+      "1439" : {
+        "conf" : {
+          "2018" : "Atlantic Coast"
+        },
+        "conf-record" : {
+          "2018" : "10-9"
+        },
+        "location" : "",
+        "name" : "Virginia Tech",
+        "ovr-record" : {
+          "2018" : "21-11"
+        }
+      },
+      "1452" : {
+        "conf" : {
+          "2018" : "Big 12"
+        },
+        "conf-record" : {
+          "2018" : "13-8"
+        },
+        "location" : "",
+        "name" : "West Virginia",
+        "ovr-record" : {
+          "2018" : "24-10"
+        }
+      },
+      "1455" : {
+        "conf" : {
+          "2018" : "American Athletic"
+        },
+        "conf-record" : {
+          "2018" : "15-5"
+        },
+        "location" : "",
+        "name" : "Wichita St",
+        "ovr-record" : {
+          "2018" : "25-7"
+        }
+      },
+      "1458" : {
+        "conf" : {
+          "2018" : "Big Ten",
+          "2019" : "Big Ten"
+        },
+        "conf-record" : {
+          "2019" : "0-0"
+        },
+        "location" : "Madison, WI",
+        "name" : "Wisconsin",
+        "ovr-record" : {
+          "2019" : "0-0"
+        }
+      },
+      "1460" : {
+        "conf" : {
+          "2018" : "Horizon League"
+        },
+        "conf-record" : {
+          "2018" : "17-4"
+        },
+        "location" : "",
+        "name" : "Wright St",
+        "ovr-record" : {
+          "2018" : "23-9"
+        }
+      },
+      "1462" : {
+        "conf" : {
+          "2018" : "Big East"
+        },
+        "conf-record" : {
+          "2018" : "16-4"
+        },
+        "location" : "",
+        "name" : "Xavier",
+        "ovr-record" : {
+          "2018" : "28-5"
+        }
+      }
+    };
+
+    for (var teamId in teamNameMap) {
+      teamInfoNodes[teamId] = {'name': teamNameMap[teamId]};
+    }
+
+    var march_madness_seeds_2019 = {
+      "W01": 1181,
+      "W02": 1277,
+      "W03": 1261,
+      "W04": 1439,
+      "W05": 1280,
+      "W06": 1268,
+      "W07": 1257,
+      "W08": 1433,
+      "W09": 1416,
+      "W10": 1278,
+      "W11a": 1125,
+      "W11b": 1396,
+      "W12": 1251,
+      "W13": 1387,
+      "W14": 1463,
+      "W15": 1133,
+      "W16a": 1295,
+      "W16b": 1300,
+      "X01": 1211,
+      "X02": 1276,
+      "X03": 1403,
+      "X04": 1199,
+      "X05": 1266,
+      "X06": 1138,
+      "X07": 1305,
+      "X08": 1393,
+      "X09": 1124,
+      "X10": 1196,
+      "X11a": 1113,
+      "X11b": 1385,
+      "X12": 1293,
+      "X13": 1436,
+      "X14": 1297,
+      "X15": 1285,
+      "X16a": 1192,
+      "X16b": 1341,
+      "Y01": 1314,
+      "Y02": 1246,
+      "Y03": 1222,
+      "Y04": 1242,
+      "Y05": 1120,
+      "Y06": 1235,
+      "Y07": 1459,
+      "Y08": 1429,
+      "Y09": 1449,
+      "Y10": 1371,
+      "Y11": 1326,
+      "Y12": 1308,
+      "Y13": 1318,
+      "Y14": 1209,
+      "Y15": 1101,
+      "Y16": 1233,
+      "Z01": 1438,
+      "Z02": 1397,
+      "Z03": 1345,
+      "Z04": 1243,
+      "Z05": 1458,
+      "Z06": 1437,
+      "Z07": 1153,
+      "Z08": 1279,
+      "Z09": 1328,
+      "Z10": 1234,
+      "Z11": 1388,
+      "Z12": 1332,
+      "Z13": 1414,
+      "Z14": 1330,
+      "Z15": 1159,
+      "Z16": 1205
+    };
+
+    var march_madness_teams_2019 = {
+      
+    };
+
+    for (var seedId in march_madness_seeds_2019) {
+      var teamId = march_madness_seeds_2019[seedId];
+      march_madness_teams_2019[teamId] = true;
     }
 
     var march_madness_test = {
@@ -3124,6 +4444,8 @@ class DataService {
       "R6CH": ["R5WX", "R5YZ"]
     };
 
+    var march_madness_structure_2019 = {};
+
     for (var gameId in tourneyMapDict) {
       var gameObj = {
         "date": "",
@@ -3148,7 +4470,8 @@ class DataService {
         "winner": "n/a"
       };
 
-      march_madness_test['mm-structure']['1111'][gameId] = gameObj;
+      // march_madness_test['mm-structure']['1111'][gameId] = gameObj;
+      march_madness_structure_2019[gameId] = gameObj;
     }
 
     for (var seedId in march_madness_test['mm-seeds']['1111']) {
@@ -4158,7 +5481,7 @@ class DataService {
       }
     }
 
-    // database.ref('/').update(march_madness_test);
+    // database.ref('/cbb-mens-team-info').update(teamInfoNodes);
 
   }
 }

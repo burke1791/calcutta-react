@@ -125,12 +125,21 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
         if (seed.key.match(/[a-z]/g) !== null) {
           playInFlag = true;
         }
-        seedValue = seed.key.match(/[0-9]+/g)[0];
-        regionCode = seed.key.match(/[A-Z]/g);
-        regionString = regions[regionCode];
+        seedValue = seed.key.match(/[0-9]+/g) === null ? 0 : seed.key.match(/[0-9]+/g)[0];
+        regionCode = seed.key.match(/[A-Z]/g) === null ? 'n-a' : seed.key.match(/[A-Z]/g);
+        if (regionCode === 'n-a') {
+          regionString = 'n-a';
+        } else {
+          regionString = regions[regionCode];
+        }
 
         var teamId = seed.val();
-        var name = infoNode[teamId]['name'];
+        var name;
+        if (infoNode[teamId] !== undefined) {
+          name = infoNode[teamId]['name'];
+        } else {
+          name = teamId;
+        }
         var groupCode;
         var teamObj = {};
 
@@ -170,11 +179,12 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
               'return': 0,
               'seed-value': Number(seedValue)
             };
+            teamGroupsObj[groupCode]['name'] = teamGroupsObj[groupCode]['name'] + '/' + name;
             teamGroupsObj[groupCode]['teams'][teamId] = teamObj;
           } else {
             // create play-in group
             teamGroupsObj[groupCode] = {
-              'name': regionString + ' ' + Number(seedValue) + ' Seed Play-In',
+              'name': '(' + Number(seedValue) + ') ' + name,
               'return': 0,
               'price': 0,
               'owner': '',
