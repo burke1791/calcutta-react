@@ -95,10 +95,16 @@ class ResultsTable extends Component {
   newItemSold(newData) {
     if (newData !== null) {
       var teams = newData;
-      var keys = Object.keys(newData);
+      
+      var newTeams = this.state.teams;
+      for (var team in teams) {
+        newTeams[team] = teams[team];
+      }
+
+      var keys = Object.keys(newTeams);
 
       this.setState({
-        teams: teams,
+        teams: newTeams,
         teamKeys: keys
       });
     }

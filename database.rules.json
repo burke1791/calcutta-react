@@ -36,6 +36,10 @@
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
     },
+    "leagues-mm": {
+      ".read": "auth.uid !== null",
+      ".write": "auth.uid !== null"
+    },
     "march-madness": {
       ".read": "auth.uid !== null",
       ".write": "root.child('admins').child(auth.uid).val() === true"
@@ -59,6 +63,22 @@
     "messages-auction": {
       ".read": "auth.uid !== null",
       ".write": "auth.uid !== null"
+    },
+    "mm-regions": {
+      ".read": "auth.uid !== null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "mm-seeds": {
+      ".read": "auth.uid !== null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "mm-structure": {
+      ".read": "auth.uid !== null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
+    },
+    "mm-teams": {
+      ".read": "auth.uid !== null",
+      ".write": "root.child('admins').child(auth.uid).val() === true"
     },
     "sports": {
       ".read": "auth.uid !== null",

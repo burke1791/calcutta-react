@@ -72,34 +72,150 @@ exports.updateBTTSeedsInLeaguesNode = functions.database.ref('/btt-seeds/{year}/
   
   const bttLeagues = admin.database().ref('/leagues-btt/' + year).once('value');
 
-  if (newTeamId !== 0) {
-    return bttLeagues.then(bttLeaguesSnapshot => {
-      bttLeaguesSnapshot.forEach(child => {
-        var leagueId = child.key;
-        var isActive = child.val();
-  
-        console.log(leagueId);
-        console.log(isActive);
-  
-        if (isActive) {
-          let seedValueUpdate = {'seed-value': seedValue};
-          admin.database().ref('leagues/' + leagueId + '/teams/' + newTeamId).update(seedValueUpdate);
+  return bttLeagues.then(bttLeaguesSnapshot => {
+    bttLeaguesSnapshot.forEach(child => {
+      var leagueId = child.key;
+      var isActive = child.val();
+
+      console.log(leagueId);
+      console.log(isActive);
+
+      if (isActive) {
+        let seedValueUpdate;
+        if (newTeamId === 0) {
+          seedValueUpdate = {'seed-value': 0}
+        } else {
+          seedValueUpdate = {'seed-value': seedValue};
         }
-      });
-      return;
+
+        admin.database().ref('leagues/' + leagueId + '/teams/' + newTeamId).update(seedValueUpdate);
+      }
     });
-  }
+    return;
+  });
 });
 
 exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').onCreate((snapshot, context) => {
   const pushId = context.params.pushId;
   const sport = snapshot.child('sport').val();
+  const tournamentId = sport.match(/[a-z]{2,}/g)[0];
   const infoNode = snapshot.child('info-node').val();
   const teams = snapshot.child('teams');
 
-  if (sport !== 'custom') {
+  if (tournamentId === 'mm') {
+    // populate the teams node from scratch
+    let year = sport.match(/[0-9]{4,}/g)[0];
+    let teamsObj = {};
+    let teamGroupsObj = {};
+
+    const regionsSnapshot = admin.database().ref('/' + tournamentId + '-regions/' + year).once('value');
+    const seedsSnapshot = admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value');
+    const teamsSnapshot = admin.database().ref('/' + tournamentId + '-teams/' + year).once('value');
+    const infoNodeSnapshot = admin.database().ref('/' + infoNode + '-team-info').once('value');
+
+    return Promise.all([regionsSnapshot, seedsSnapshot, teamsSnapshot, infoNodeSnapshot]).then(data => {
+      let regions = data[0].val();
+      let infoNode = data[3].val();
+      var regionCode;
+      var regionString;
+      var playInFlag = false;
+      var seedValue;
+      data[1].forEach(seed => {
+        playInFlag = false;
+        if (seed.key.match(/[a-z]/g) !== null) {
+          playInFlag = true;
+        }
+        seedValue = seed.key.match(/[0-9]+/g) === null ? 0 : seed.key.match(/[0-9]+/g)[0];
+        regionCode = seed.key.match(/[A-Z]/g) === null ? 'n-a' : seed.key.match(/[A-Z]/g);
+        if (regionCode === 'n-a') {
+          regionString = 'n-a';
+        } else {
+          regionString = regions[regionCode];
+        }
+
+        var teamId = seed.val();
+        var name;
+        if (infoNode[teamId] !== undefined) {
+          name = infoNode[teamId]['name'];
+        } else {
+          name = teamId;
+        }
+        var groupCode;
+        var teamObj = {};
+
+        // group lower seeds
+        if (seedValue >= 14) {
+          // check if this region already has a group in the teamGroupsObj
+          groupCode = regionCode + '-14-16';
+          if (teamGroupsObj[groupCode] !== undefined) {
+            teamObj = {
+              'name': name,
+              'return': 0,
+              'seed-value': Number(seedValue)
+            };
+            teamGroupsObj[groupCode]['teams'][teamId] = teamObj;
+          } else {
+            // create region group
+            teamGroupsObj[groupCode] = {
+              'name': regionString + ' (14-16)',
+              'price': 0,
+              'return': 0,
+              'owner': '',
+              'teams': {
+                [teamId]: {
+                  'name': name,
+                  'return': 0,
+                  'seed-value': Number(seedValue)
+                }
+              }
+            };
+          }
+        } else if (playInFlag) {
+          // check if this play-in game already has a group
+          groupCode = regionCode + seedValue;
+          if (teamGroupsObj[groupCode] !== undefined) {
+            teamObj = {
+              'name': name,
+              'return': 0,
+              'seed-value': Number(seedValue)
+            };
+            teamGroupsObj[groupCode]['name'] = teamGroupsObj[groupCode]['name'] + '/' + name;
+            teamGroupsObj[groupCode]['teams'][teamId] = teamObj;
+          } else {
+            // create play-in group
+            teamGroupsObj[groupCode] = {
+              'name': '(' + Number(seedValue) + ') ' + name,
+              'return': 0,
+              'price': 0,
+              'owner': '',
+              'teams': {
+                [teamId]: {
+                  'name': name,
+                  'return': 0,
+                  'seed-value': Number(seedValue)
+                }
+              }
+            };
+          }
+        } else {
+          // populate regular teams
+          teamsObj[teamId] = {
+            'name': name,
+            'owner': '',
+            'price': 0,
+            'return': 0,
+            'seed-value': Number(seedValue)
+          };
+        }
+      });
+      let teamUpdates = {};
+      teamUpdates['/leagues/' + pushId + '/teams'] = teamsObj;
+      teamUpdates['/leagues/' + pushId + '/teamGroups'] = teamGroupsObj;
+
+      return admin.database().ref('/').update(teamUpdates);
+    });
+  } else if (sport !== 'custom') {
     // TODO: refactor to update the entire teams node at once to avoid the nested promise
-    let tournamentId = sport.match(/[a-z]{2,}/g)[0];
     let year = sport.match(/[0-9]{4,}/g)[0];
     return admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedsSnapshot => {
       return seedsSnapshot.val();
@@ -327,21 +443,23 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
         biggestUpsetCount++;
       }
 
+      var roundCode;
       for (var gameId in winners) {
-        let roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
+        roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
 
-        let payoutRate;
+        var payoutRate;
         if (gameId === 'loss') {
-          payoutRate = Number(payouts['loss']);
+          payoutRate = Number(payouts['loss']) / biggestLossCount;
         } else if (gameId === 'upset') {
           payoutRate = Number(payouts['upset']) / biggestUpsetCount;
         } else if (roundCode !== 'n/a') {
-          payoutRate = Number(payouts[roundCode]) / biggestLossCount;
+          payoutRate = Number(payouts[roundCode]);
         } else {
           payoutRate = 0;
         }
-
-        let returnValue = total * payoutRate;
+        console.log('gameId: ' + gameId);
+        console.log('payoutRate: ' + payoutRate);
+        var returnValue = total * payoutRate;
 
         if (returnValue > 0) {
           if (!teamPayouts[winners[gameId]]) {
@@ -373,11 +491,13 @@ exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/
   const newOwnerId = change.after.val();
 
   const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const teamGroups = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
   const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
 
-  return Promise.all([teams, settings]).then(data => {
+  return Promise.all([teams, teamGroups, settings]).then(data => {
     let teams = data[0].val();
-    let settings = data[1].val();
+    let teamGroups = data[1].val();
+    let settings = data[2].val();
 
     var useTax = false;
 
@@ -406,6 +526,113 @@ exports.updateBiddingTotalsOnAuctionItemSold = functions.database.ref('/leagues/
     for (teamId in teams) {
       uid = teams[teamId]['owner'];
       price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates each user's total bid amount from the teamGroups node
+    for (teamId in teamGroups) {
+      uid = teamGroups[teamId]['owner'];
+      price = Number(teamGroups[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates the amount of use tax each user owes
+    if (useTax) {
+      var bidTotal;
+      var useTaxOwed;
+      for (uid in updateObj['prize-pool']['bids']) {
+        bidTotal = updateObj['prize-pool']['bids'][uid];
+        if (bidTotal > noTaxLimit) {
+          useTaxOwed = (bidTotal - noTaxLimit) * taxRate;
+          updateObj['prize-pool']['use-tax'][uid] = useTaxOwed;
+
+          grandTotal += useTaxOwed;
+        }
+      }
+    }
+
+    updateObj['pool-total'] = grandTotal;
+    updateObj['prize-pool']['total'] = grandTotal;
+    
+    return admin.database().ref('/leagues/' + leagueId).update(updateObj);
+  });
+});
+
+exports.updateBiddingTotalsOnAuctionGroupItemSold = functions.database.ref('/leagues/{leagueId}/teamGroups/{teamId}/owner').onUpdate((change, context) => {
+  const leagueId = context.params.leagueId;
+  const teamId = context.params.teamId;
+  const newOwnerId = change.after.val();
+
+  const teams = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+  const teamGroups = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
+  const settings = admin.database().ref('/leagues/' + leagueId + '/settings').once('value');
+
+  return Promise.all([teams, teamGroups, settings]).then(data => {
+    let teams = data[0].val();
+    let teamGroups = data[1].val();
+    let settings = data[2].val();
+
+    var useTax = false;
+
+    if (settings['use-tax'] > 0) {
+      var noTaxLimit = settings['use-tax'];
+      var taxRate = settings['tax-rate'];
+      useTax = true;
+    }
+
+    let updateObj = {
+      'pool-total': 0,
+      'prize-pool': {
+        'total': 0,
+        'bids': {},
+        'use-tax': {}
+      }
+    };
+
+    var grandTotal = 0;
+
+    var teamId;
+    var uid;
+    var price;
+
+    // calculates each user's total bid amount from the teams node
+    for (teamId in teams) {
+      uid = teams[teamId]['owner'];
+      price = Number(teams[teamId]['price']);
+
+      grandTotal += price;
+
+      if (uid !== '') {
+        if (!updateObj['prize-pool']['bids'][uid]) {
+          updateObj['prize-pool']['bids'][uid] = price;
+        } else {
+          updateObj['prize-pool']['bids'][uid] += price;
+        }
+      }
+    }
+
+    // calculates each user's total bid amount from the teamGroups node
+    for (teamId in teamGroups) {
+      uid = teamGroups[teamId]['owner'];
+      price = Number(teamGroups[teamId]['price']);
 
       grandTotal += price;
 
