@@ -625,9 +625,14 @@ class DataService {
   }
 
   getUserTeams = (leagueId, uid) => {
+    const teamsSnapshot = database.ref('/leagues/' + leagueId + '/teams').once('value');
+    const teamGroupsSnapshot = database.ref('/leagues/' + leagueId + '/teamGroups').once('value');
+
     return new Promise((resolve, reject) => {
-      database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
-        var teams = snapshot.val();
+      return Promise.all([teamsSnapshot, teamGroupsSnapshot]).then(data => {
+        let teams = data[0].val();
+        let teamGroups = data[1].val();
+  
         var userTeams = {};
 
         for (var team in teams) {
@@ -636,7 +641,7 @@ class DataService {
             price: 0,
             payout: 0,
             netReturn: 0
-          }
+          };
 
           if (teams[team].owner === uid) {
             userTeam.name = teams[team].name;
@@ -648,9 +653,57 @@ class DataService {
           }
         }
 
+        if (teamGroups !== null) {
+          for (var team in teamGroups) {
+            var userTeam = {
+              name: '',
+              price: 0,
+              payout: 0,
+              netReturn: 0
+            };
+
+            if (teamGroups[team].owner === uid) {
+              userTeam.name = teamGroups[team].name;
+              userTeam.price = teamGroups[team].price;
+              userTeam.payout = teamGroups[team].return;
+              userTeam.netReturn = Number(userTeam.payout) - Number(userTeam.price);
+
+              userTeams[team] = userTeam;
+            }
+          }
+        }
+
         resolve(userTeams);
       });
     });
+    
+    
+    // return new Promise((resolve, reject) => {
+    //   database.ref('/leagues/' + leagueId + '/teams').once('value').then(function(snapshot) {
+    //     var teams = snapshot.val();
+    //     var userTeams = {};
+
+    //     for (var team in teams) {
+    //       var userTeam = {
+    //         name: '',
+    //         price: 0,
+    //         payout: 0,
+    //         netReturn: 0
+    //       }
+
+    //       if (teams[team].owner === uid) {
+    //         userTeam.name = teams[team].name;
+    //         userTeam.price = teams[team].price;
+    //         userTeam.payout = teams[team].return;
+    //         userTeam.netReturn = Number(userTeam.payout) - Number(userTeam.price);
+
+    //         userTeams[team] = userTeam;
+    //       }
+    //     }
+
+    //     resolve(userTeams);
+    //   });
+    // });
     
   }
 
