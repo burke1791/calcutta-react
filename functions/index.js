@@ -666,3 +666,9 @@ exports.updateBiddingTotalsOnAuctionGroupItemSold = functions.database.ref('/lea
     return admin.database().ref('/leagues/' + leagueId).update(updateObj);
   });
 });
+
+// updateMMBracketAfterFinalScoreChange = functions.database.ref('/mm-structure/{year}/{gameId}/score').onUpdate((change, context)
+
+// updateMMLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/mm-structure/{year}/{gameId}/winner').onUpdate((change, context)
+
+// Change the name of updateBTTLeaguePayoutValues to updateMMLeaguePayoutValues and refactor to handle teamGroups
