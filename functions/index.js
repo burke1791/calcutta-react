@@ -414,7 +414,8 @@ exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/b
   }
 });
 
-exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/game-winners').onUpdate((change, context) => {
+// Change the name of updateBTTLeaguePayoutValues to updateMMLeaguePayoutValues and refactor to handle teamGroups
+exports.updateLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/game-winners').onUpdate((change, context) => {
   const leagueId = context.params.leagueId;
   const winners = change.after.val();
 
@@ -477,6 +478,112 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
       }
 
       return admin.database().ref('/leagues/' + leagueId + '/teams').update(teams);
+    });
+  } else if (winners['tournament-code'] === 'mm') {
+    const payoutSettings = admin.database().ref('/leagues/' + leagueId + '/payout-settings').once('value');
+    const poolTotal = admin.database().ref('/leagues/' + leagueId + '/pool-total').once('value');
+    const teamsNode = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+    const teamGroupsNode = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
+
+    return Promise.all([payoutSettings, poolTotal, teamsNode, teamGroupsNode]).then(data => {
+      let payouts = data[0].val();
+      let total = data[1].val();
+      let teams = data[2].val();
+      let teamGroups = data[3].val();
+      let teamPayouts = {};
+      let teamGroupPayouts = {};
+
+      let updates = {};
+
+      var biggestUpsetCount = 0;
+      var biggestLossCount = 0;
+
+      var ind;
+      for (ind in winners['loss']) {
+        biggestLossCount++;
+      }
+      
+      for (ind in winners['upset']) {
+        biggestUpsetCount++;
+      }
+
+      var roundCode;
+      for (var gameId in winners) {
+        roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
+        
+        if (roundCode === 'R1') {
+          roundCode = 'W1';
+        } else if (roundCode === 'R2') {
+          roundCode = 'W2';
+        } else if (roundCode === 'R3') {
+          roundCode = 'W3';
+        } else if (roundCode === 'R4') {
+          roundCode = 'W4';
+        } else if (roundCode === 'R5') {
+          roundCode = 'W5';
+        } else if (roundCode === 'R6') {
+          roundCode = 'W6';
+        }
+
+        var payoutRate;
+        if (gameId === 'loss') {
+          payoutRate = Number(payouts['loss']) / biggestLossCount;
+        } else if (gameId === 'upset') {
+          payoutRate = Number(payouts['upset']) / biggestUpsetCount;
+        } else if (roundCode !== 'n/a') {
+          payoutRate = Number(payouts[roundCode]);
+        } else {
+          payoutRate = 0;
+        }
+        console.log('gameId: ' + gameId);
+        console.log('payoutRate: ' + payoutRate);
+        var returnValue = total * payoutRate;
+
+        if (returnValue > 0) {
+          if (gameId === 'loss' || gameId === 'upset') {
+            if (!teamPayouts[winners[gameId]]) {
+              teamPayouts[winners[gameId]] = returnValue;
+            } else {
+              teamPayouts[winners[gameId]] = teamPayouts[winners[gameId]] + returnValue;
+            }
+          } else {
+            teamPayouts[winners[gameId]] = returnValue;
+          }
+        }
+      }
+
+      for (var teamId in teams) {
+        if (teamPayouts[teamId]) {
+          teams[teamId]['return'] = teamPayouts[teamId];
+        } else {
+          teams[teamId]['return'] = 0;
+        }
+      }
+
+      // set individual team payouts within their group
+      for (var groupId in teamGroups) {
+        for (teamId in teamGroups[groupId].teams) {
+          if (teamPayouts[teamId]) {
+            teamGroups[groupId].teams[teamId].return = teamPayouts[teamId];
+          } else {
+            teamGroups[groupId].teams[teamId].return = 0;
+          }
+        }
+      }
+
+      // calculate a group's total payout
+      for (groupId in teamGroups) {
+        var groupPayout = 0;
+        for (teamId in teamGroups[groupId].teams) {
+          groupPayout += Number(teamGroups[groupId].teams[teamId].return);
+        }
+        teamGroups[groupId].return = groupPayout;
+      }
+
+      updates['/leagues/' + leagueId + '/teams'] = teams;
+      updates['/leagues/' + leagueId + '/teamGroups'] = teamGroups;
+
+      return admin.database().ref('/').update(updates);
     });
   }
   
@@ -708,11 +815,11 @@ exports.updateMMBracketAfterFinalScoreChange = functions.database.ref('/mm-struc
     }
 
     if (nextGameId !== 'n/a') {
-      if (gamesObj[nextGameId]['team1']['id'] === 0) {
+      if (gamesObj[nextGameId]['team1']['seed'] === gameId) {
         var team1Update = {"id": winner, "seed-value": winnerSeedVal};
         const team1UpdateRef = admin.database().ref('/mm-structure/' + year + '/' + nextGameId + '/team1');
         return team1UpdateRef.update(team1Update);
-      } else if (gamesObj[nextGameId]['team2']['id'] === 0) {
+      } else if (gamesObj[nextGameId]['team2']['seed'] === gameId) {
         var team2Update = {"id": winner, "seed-value": winnerSeedVal};
         const team2UpdateRef = admin.database().ref('/mm-structure/' + year + '/' + nextGameId + '/team2');
         return team2UpdateRef.update(team2Update);
@@ -830,8 +937,6 @@ exports.updateMMLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/mm
     });
   }
 });
-
-// Change the name of updateBTTLeaguePayoutValues to updateMMLeaguePayoutValues and refactor to handle teamGroups
 
 exports.updateMMTeamNamesInStructureNode = functions.database.ref('/mm-structure/{year}/{gameId}/{team}/id').onUpdate((change, context) => {
   const oldTeamId = change.before.val();
