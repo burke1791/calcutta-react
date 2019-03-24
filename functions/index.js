@@ -32,7 +32,6 @@ exports.updateBTTTeamNamesInStructureNode = functions.database.ref('/btt-structu
       return bttGameRef.update(newNameUpdate);
     });
   }
-  
 });
 
 exports.updateBTTSeedsInStructureNode = functions.database.ref('/btt-seeds/{year}/{seedId}').onUpdate((change, context) => {
@@ -323,7 +322,6 @@ exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/b
     return Promise.all([currentBracket, bttLeagues]).then(data => {
       let winners = {'tournament-code': 'btt'};
 
-      // TODO: Add ability to determine biggest loss and largest upset
       var biggestLossGameId = [];
       var biggestLossTeamId = [];
       var pointDifferential = 0;
@@ -416,7 +414,8 @@ exports.updateBTTLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/b
   }
 });
 
-exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/game-winners').onUpdate((change, context) => {
+// Change the name of updateBTTLeaguePayoutValues to updateMMLeaguePayoutValues and refactor to handle teamGroups
+exports.updateLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/game-winners').onUpdate((change, context) => {
   const leagueId = context.params.leagueId;
   const winners = change.after.val();
 
@@ -479,6 +478,112 @@ exports.updateBTTLeaguePayoutValues = functions.database.ref('/leagues/{leagueId
       }
 
       return admin.database().ref('/leagues/' + leagueId + '/teams').update(teams);
+    });
+  } else if (winners['tournament-code'] === 'mm') {
+    const payoutSettings = admin.database().ref('/leagues/' + leagueId + '/payout-settings').once('value');
+    const poolTotal = admin.database().ref('/leagues/' + leagueId + '/pool-total').once('value');
+    const teamsNode = admin.database().ref('/leagues/' + leagueId + '/teams').once('value');
+    const teamGroupsNode = admin.database().ref('/leagues/' + leagueId + '/teamGroups').once('value');
+
+    return Promise.all([payoutSettings, poolTotal, teamsNode, teamGroupsNode]).then(data => {
+      let payouts = data[0].val();
+      let total = data[1].val();
+      let teams = data[2].val();
+      let teamGroups = data[3].val();
+      let teamPayouts = {};
+      let teamGroupPayouts = {};
+
+      let updates = {};
+
+      var biggestUpsetCount = 0;
+      var biggestLossCount = 0;
+
+      var ind;
+      for (ind in winners['loss']) {
+        biggestLossCount++;
+      }
+      
+      for (ind in winners['upset']) {
+        biggestUpsetCount++;
+      }
+
+      var roundCode;
+      for (var gameId in winners) {
+        roundCode = gameId.match(/R[0-9]+/g) !== null ? gameId.match(/R[0-9]+/g)[0] : 'n/a';
+        
+        if (roundCode === 'R1') {
+          roundCode = 'W1';
+        } else if (roundCode === 'R2') {
+          roundCode = 'W2';
+        } else if (roundCode === 'R3') {
+          roundCode = 'W3';
+        } else if (roundCode === 'R4') {
+          roundCode = 'W4';
+        } else if (roundCode === 'R5') {
+          roundCode = 'W5';
+        } else if (roundCode === 'R6') {
+          roundCode = 'W6';
+        }
+
+        var payoutRate;
+        if (gameId === 'loss') {
+          payoutRate = Number(payouts['loss']) / biggestLossCount;
+        } else if (gameId === 'upset') {
+          payoutRate = Number(payouts['upset']) / biggestUpsetCount;
+        } else if (roundCode !== 'n/a') {
+          payoutRate = Number(payouts[roundCode]);
+        } else {
+          payoutRate = 0;
+        }
+        console.log('gameId: ' + gameId);
+        console.log('payoutRate: ' + payoutRate);
+        var returnValue = total * payoutRate;
+
+        if (returnValue > 0) {
+          if (gameId === 'loss' || gameId === 'upset') {
+            if (!teamPayouts[winners[gameId]]) {
+              teamPayouts[winners[gameId]] = returnValue;
+            } else {
+              teamPayouts[winners[gameId]] = teamPayouts[winners[gameId]] + returnValue;
+            }
+          } else {
+            teamPayouts[winners[gameId]] = returnValue;
+          }
+        }
+      }
+
+      for (var teamId in teams) {
+        if (teamPayouts[teamId]) {
+          teams[teamId]['return'] = teamPayouts[teamId];
+        } else {
+          teams[teamId]['return'] = 0;
+        }
+      }
+
+      // set individual team payouts within their group
+      for (var groupId in teamGroups) {
+        for (teamId in teamGroups[groupId].teams) {
+          if (teamPayouts[teamId]) {
+            teamGroups[groupId].teams[teamId].return = teamPayouts[teamId];
+          } else {
+            teamGroups[groupId].teams[teamId].return = 0;
+          }
+        }
+      }
+
+      // calculate a group's total payout
+      for (groupId in teamGroups) {
+        var groupPayout = 0;
+        for (teamId in teamGroups[groupId].teams) {
+          groupPayout += Number(teamGroups[groupId].teams[teamId].return);
+        }
+        teamGroups[groupId].return = groupPayout;
+      }
+
+      updates['/leagues/' + leagueId + '/teams'] = teams;
+      updates['/leagues/' + leagueId + '/teamGroups'] = teamGroups;
+
+      return admin.database().ref('/').update(updates);
     });
   }
   
@@ -665,4 +770,195 @@ exports.updateBiddingTotalsOnAuctionGroupItemSold = functions.database.ref('/lea
     
     return admin.database().ref('/leagues/' + leagueId).update(updateObj);
   });
+});
+
+exports.updateMMBracketAfterFinalScoreChange = functions.database.ref('/mm-structure/{year}/{gameId}/score').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+
+  const team1Score = Number(change.after.child('team1').val());
+  const team2Score = Number(change.after.child('team2').val());
+
+  let gamesObj;
+  let gameObj;
+  let nextGameId;
+  let winner;
+
+  return admin.database().ref('/mm-structure/' + year).once('value').then(games => {
+    gamesObj = games.val();
+    gameObj = games.child(gameId).val();
+    
+    let team1Id = gameObj['team1']['id'];
+    let team2Id = gameObj['team2']['id'];
+
+    nextGameId = gameObj['next-round'];
+
+    const updateRef = admin.database().ref('/mm-structure/' + year + '/' + gameId);
+
+    if (team1Score > team2Score) {
+      winner = team1Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else if (team2Score > team1Score) {
+      winner = team2Id;
+      winnerUpdate = {'winner': winner};
+      return updateRef.update(winnerUpdate);
+    } else {
+      return null;
+    }
+  }).then(() => {
+    let winnerSeedVal;
+    if (winner === gamesObj[gameId]['team1']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team1']['seed-value'];
+    } else if (winner === gamesObj[gameId]['team2']['id']) {
+      winnerSeedVal = gamesObj[gameId]['team2']['seed-value'];
+    }
+
+    if (nextGameId !== 'n/a') {
+      if (gamesObj[nextGameId]['team1']['seed'] === gameId) {
+        var team1Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team1UpdateRef = admin.database().ref('/mm-structure/' + year + '/' + nextGameId + '/team1');
+        return team1UpdateRef.update(team1Update);
+      } else if (gamesObj[nextGameId]['team2']['seed'] === gameId) {
+        var team2Update = {"id": winner, "seed-value": winnerSeedVal};
+        const team2UpdateRef = admin.database().ref('/mm-structure/' + year + '/' + nextGameId + '/team2');
+        return team2UpdateRef.update(team2Update);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  });
+});
+
+exports.updateMMLeagueWinnersNodesAfterScoreUpdate = functions.database.ref('/mm-structure/{year}/{gameId}/winner').onUpdate((change, context) => {
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+  const winnerId = change.after.val();
+
+  const allLeaguesRef = admin.database().ref('/leagues/');
+
+  const currentBracket = admin.database().ref('/mm-structure/' + year).once('value');
+  const mmLeagues = admin.database().ref('/leagues-mm/' + year).once('value');
+
+  if (winnerId !== 'n/a') {
+    return Promise.all([currentBracket, mmLeagues]).then(data => {
+      let winners = {'tournament-code': 'mm'};
+
+      var biggestLossGameId = [];
+      var biggestLossTeamId = [];
+      var pointDifferential = 0;
+      var prevPointDifferential = 0;
+
+      var biggestUpsetGameId = [];
+      var biggestUpsetTeamId = [];
+      var upsetDifferential = 0;
+      var prevUpsetDifferential = 0;
+
+      data[0].forEach(game => {
+        let gameObj = game.val();
+
+        let team1Score = Number(gameObj['score']['team1']);
+        let team2Score = Number(gameObj['score']['team2']);
+
+        let team1SeedVal = Number(gameObj['team1']['seed-value']);
+        let team2SeedVal = Number(gameObj['team2']['seed-value']);
+
+        let team1Id = gameObj['team1']['id'];
+        let team2Id = gameObj['team2']['id'];
+
+        if (gameObj['winner'] !== 'n/a') {
+          winners[game.key] = gameObj['winner'];
+
+          // find the game with the largest point differential
+          pointDifferential = Math.abs(team1Score - team2Score);
+          if (pointDifferential > prevPointDifferential) {
+            biggestLossGameId = [game.key];
+            if (team1Score < team2Score) {
+              biggestLossTeamId = [gameObj['team1']['id']];
+            } else {
+              biggestLossTeamId = [gameObj['team2']['id']];
+            }
+            prevPointDifferential = pointDifferential;
+          } else if (pointDifferential === prevPointDifferential) {
+            biggestLossGameId.push(game.key);
+            if (team1Score < team2Score) {
+              biggestLossTeamId.push(gameObj['team1']['id']);
+            } else {
+              biggestLossTeamId.push(gameObj['team2']['id']);
+            }
+          }
+
+          var winnerKey;
+          // find the game with the biggest upset
+          if (gameObj['winner'] === team1Id) {
+            winnerKey = 'team1';
+            // check if game was an upset
+            if (team1SeedVal - team2SeedVal > 0) {
+              upsetDifferential = team1SeedVal - team2SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          } else if (gameObj['winner'] === team2Id) {
+            winnerKey = 'team2';
+            // check if game was an upset
+            if (team2SeedVal - team1SeedVal > 0) {
+              upsetDifferential = team2SeedVal - team1SeedVal;
+            } else {
+              upsetDifferential = -1;
+            }
+          }
+
+          if (upsetDifferential > prevUpsetDifferential && upsetDifferential > 0) {
+            prevUpsetDifferential = upsetDifferential;
+            biggestUpsetGameId = [game.key];
+            biggestUpsetTeamId = [gameObj['winner']];
+          } else if (upsetDifferential === prevUpsetDifferential && upsetDifferential > 0) {
+            biggestUpsetGameId.push(game.key);
+            biggestUpsetTeamId.push(gameObj['winner']);
+          }
+        }
+      });
+
+      winners['loss'] = biggestLossTeamId;
+      winners['upset'] = biggestUpsetTeamId;
+
+      data[1].forEach(league => {
+        let leagueId = league.key;
+        let leagueStatus = league.val();
+
+        if (leagueStatus) {
+          admin.database().ref('/leagues/' + leagueId + '/game-winners').set(winners);
+        }
+      });
+
+      return;
+    });
+  }
+});
+
+exports.updateMMTeamNamesInStructureNode = functions.database.ref('/mm-structure/{year}/{gameId}/{team}/id').onUpdate((change, context) => {
+  const oldTeamId = change.before.val();
+  const newTeamId = change.after.val();
+
+  const year = context.params.year;
+  const gameId = context.params.gameId;
+  const team = context.params.team;
+
+  const teamInfoRef = admin.database().ref('/cbb-mens-team-info/' + newTeamId);
+  const mmGameRef = admin.database().ref('/mm-structure/' + year + '/' + gameId + '/' + team);
+
+  if (newTeamId === 0 || newTeamId === '0') {
+    // resets team name to an empty string
+    const newNameUpdate = {"name": ""};
+    return mmGameRef.update(newNameUpdate);
+  } else {
+    return teamInfoRef.once('value').then(snapshot => {
+      const newName = snapshot.val().name;
+      const newNameUpdate = {"name": newName};
+  
+      return mmGameRef.update(newNameUpdate);
+    });
+  }
 });

@@ -150,6 +150,16 @@ class PayoutSettingsTable extends Component {
           totalShareValue += Number(this.state.payoutTotals[key]);
         }
       }
+    } else if (this.state.tournamentId === 'mm') {
+      for (var key in this.state.payoutTotals) {
+        if (key === payoutKey && (payoutKey === 'loss' || payoutKey === 'upset')) {
+          totalShareValue += Number(newValue);
+        } else if (key === payoutKey) {
+          totalShareValue += Number(newValue) * Number(Math.ceil(gameCount / 2));
+        } else {
+          totalShareValue += Number(this.state.payoutTotals[key]);
+        }
+      }
     }
 
     return totalShareValue;
@@ -179,10 +189,10 @@ class PayoutSettingsTable extends Component {
         } else if (basicPayoutCode[0] === 'W') {
           if (Number(roundNum) === 1) {
             payoutCategory = roundNum + ' win';
-            gameCount = this.countNumGamesInRound(roundNum);
+            gameCount = Math.ceil(this.countNumGamesInRound(roundNum) / 2);
           } else if (roundNum) {
             payoutCategory = roundNum + ' wins';
-            gameCount = this.countNumGamesInRound(roundNum);
+            gameCount = Math.ceil(this.countNumGamesInRound(roundNum) / 2);
           }
         }
 

@@ -575,6 +575,7 @@ class DataService {
       database.ref('/leagues/' + leagueId).once('value').then(function(league) {
         var members = league.child('members').val();
         var teams = league.val().teams;
+        let teamGroups = league.val().teamGroups;
 
         for (var mem in members) {
           var member = {
@@ -592,6 +593,12 @@ class DataService {
               if (teams[team].owner === mem) {
                 buyIn += Number(teams[team].price);
                 payout += Number(teams[team].return);
+              }
+            }
+
+            for (var teamGroup in teamGroups) {
+              if (teamGroups[teamGroup].owner === mem) {
+                payout += Number(teamGroups[teamGroup].return);
               }
             }
             member.buyIn = buyIn;
@@ -4500,6 +4507,40 @@ class DataService {
     var march_madness_structure_2019 = {};
 
     for (var gameId in tourneyMapDict) {
+      var team1Id = march_madness_2019['mm-seeds']['2019'][seedMapDict[gameId][0]];
+      var team2Id = march_madness_2019['mm-seeds']['2019'][seedMapDict[gameId][1]];
+      var team1Name = '';
+      var team2Name = '';
+      var team1Seed = seedMapDict[gameId][0];
+      var team2Seed = seedMapDict[gameId][1];
+
+      var team1SeedValue = team1Seed.match(/[0-9]{1,}/g);
+      var team2SeedValue = team2Seed.match(/[0-9]{1,}/g);
+
+      if (team1SeedValue.length === 1) {
+        team1SeedValue = team1SeedValue[0];
+      } else {
+        team1SeedValue = '';
+      }
+
+      if (team2SeedValue.length === 1) {
+        team2SeedValue = team2SeedValue[0];
+      } else {
+        team2SeedValue = '';
+      }
+
+      if (team1Id === undefined) {
+        team1Id = 0;
+      } else {
+        team1Name = teamNameMap[team1Id];
+      }
+
+      if (team2Id === undefined) {
+        team2Id = 0;
+      } else {
+        team2Name = teamNameMap[team2Id];
+      }
+      
       var gameObj = {
         "date": "",
         "location": "",
@@ -4511,14 +4552,16 @@ class DataService {
         },
         "status": "not-started",
         "team1": {
-          "id": 0,
-          "name": "",
-          "seed": seedMapDict[gameId][0]
+          "id": team1Id,
+          "name": team1Name,
+          "seed": team1Seed,
+          "seed-value": team1SeedValue
         },
         "team2": {
-          "id": 0,
-          "name": "",
-          "seed": seedMapDict[gameId][1]
+          "id": team2Id,
+          "name": team2Name,
+          "seed": team2Seed,
+          "seed-value": team2SeedValue
         },
         "winner": "n/a"
       };
@@ -5534,7 +5577,7 @@ class DataService {
       }
     }
 
-    // database.ref('/cbb-mens-team-info').update(teamInfoNodes);
+    // database.ref('/mm-structure/2019').update(march_madness_structure_2019);
 
   }
 }

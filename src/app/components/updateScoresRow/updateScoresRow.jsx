@@ -107,8 +107,8 @@ class UpdateScoresRow extends Component {
 
     // var gameNum = Number(this.props.gameId.match(/[0-9]{1,}/g));
     var gameNum = this.props.gameNum;
-    var firstTeam = this.props.game.team1.name === '' ? 'TBD' : '(' + this.props.game.team1['seed-value'] + ') ' + this.props.game.team1.name;
-    var secondTeam = this.props.game.team2.name === '' ? 'TBD' : '(' + this.props.game.team2['seed-value'] + ') ' + this.props.game.team2.name;
+    var firstTeam = this.props.game.team1.name === '' ? 'TBD' : '(' + Number(this.props.game.team1['seed-value']) + ') ' + this.props.game.team1.name;
+    var secondTeam = this.props.game.team2.name === '' ? 'TBD' : '(' + Number(this.props.game.team2['seed-value']) + ') ' + this.props.game.team2.name;
     var firstTeamScore = this.props.game.score.team1;
     var secondTeamScore = this.props.game.score.team2;
     var numOT = this.props.game.score['num-ot'];

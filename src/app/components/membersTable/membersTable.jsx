@@ -158,9 +158,8 @@ class MembersTable extends Component {
         var netReturn = ds.formatMoney(netReturnVal);
 
         var netReturnNegativeClass = netReturnVal < 0 ? 'col col-md-2 text-danger' : 'col col-md-2';
-
+ 
         return (
-          // TODO: Create a MemberRow component that has a "rank" column
           <MembersRow key={mem} id={mem} uid={authService.getUser().uid} rank={this.state.members[mem].rank} name={this.state.users[mem]} buyIn={buyIn} payout={payout} netReturn={netReturn} netReturnClass={netReturnNegativeClass} />
         );
       });
