@@ -575,6 +575,7 @@ class DataService {
       database.ref('/leagues/' + leagueId).once('value').then(function(league) {
         var members = league.child('members').val();
         var teams = league.val().teams;
+        let teamGroups = league.val().teamGroups;
 
         for (var mem in members) {
           var member = {
@@ -592,6 +593,12 @@ class DataService {
               if (teams[team].owner === mem) {
                 buyIn += Number(teams[team].price);
                 payout += Number(teams[team].return);
+              }
+            }
+
+            for (var teamGroup in teamGroups) {
+              if (teamGroups[teamGroup].owner === mem) {
+                payout += Number(teamGroups[teamGroup].return);
               }
             }
             member.buyIn = buyIn;
