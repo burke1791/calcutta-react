@@ -51,7 +51,6 @@ class DataService {
           resolve(false);
         }
       }, function(error) {
-        console.log('premission denied');
         resolve(false);
       });
     });

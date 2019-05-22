@@ -164,9 +164,12 @@ class LeagueForm extends Component {
   generateLeagueOptions = () => {
     if (this.state.tournamentKeys !== '') {
       const list = this.state.tournamentKeys.map((tournamentKey, i) => {
-        return (
-          <option value={tournamentKey} key={i}>{this.state.tournaments[tournamentKey]['name']}</option>
-        );
+        if (!tournamentKey.includes('1111')) {
+          return (
+            <option value={tournamentKey} key={i}>{this.state.tournaments[tournamentKey]['name']}</option>
+          );
+        }
+        return null;
       });
       return (list);
     } else {

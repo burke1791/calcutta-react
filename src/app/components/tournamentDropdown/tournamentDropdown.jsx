@@ -53,6 +53,7 @@ class TournamentDropdown extends Component {
   generateDropdownItems = () => {
     if (this.state.tournamentKeys !== '') {
       const list = this.state.tournamentKeys.map((tournamentKey, i) => {
+        console.log(tournamentKey);
         return <TournamentDropdownItem tournamentKey={tournamentKey} tournamentName={this.state.tournaments[tournamentKey]['name']} key={i} />;
       });
 
