@@ -59,8 +59,9 @@ class LeagueTable extends Component {
 
   loadLeagues(uid) {
     // TODO: move this to DataService (maybe)
-
-    if (uid !== null) {
+    console.log('load leagues');
+    let userId = uid || this.state.uid;
+    if (userId) {
       var self = this;
       var sourceData = this.state.tableDataSource; // Determines which leagues to fetch from the database
       var leagues = [];
@@ -73,10 +74,11 @@ class LeagueTable extends Component {
           var members = childSnapshot.child('members').val();
           var leagueStatus = childSnapshot.child('status').val();
 
-          if (members[uid] && leagueStatus === sourceData) {
+          if (members[userId] && leagueStatus === sourceData) {
             leagues.push(league);
           }
         });
+        console.log(leagues);
         self.setState({leagues: leagues});
       });
     }
