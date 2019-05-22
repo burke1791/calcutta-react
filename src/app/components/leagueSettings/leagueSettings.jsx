@@ -262,8 +262,8 @@ class LeagueSettings extends Component {
               </div>
             </div>
           </div>
-          <div className='row justify-content-center'>
-            <div className='col input-group my-1'>
+          <div className='row'>
+            <div className='col input-group my-1 justify-content-center'>
               <div className='form-check'>
                 <input className='form-check-input' type='checkbox' checked={this.state.unclaimed} onChange={this.onUnclaimedChange} />
                 <label className='form-check-label'>Allow Unclaimed Teams?</label>
