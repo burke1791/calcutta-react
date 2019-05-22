@@ -102,7 +102,6 @@ class LeagueHome extends Component {
   }
 
   loadMembers() {
-    console.log('loadMembers() called');
     if (this.state.usersDownloaded) {
       var uid = authService.getUser() != null ? authService.getUser().uid : null;
       var self = this;

@@ -55,8 +55,6 @@ class LeagueTable extends Component {
     ns.removeObserver(this, NOTIF_SIGNOUT);
     ns.removeObserver(this, NOTIF_LEAGUE_CREATED);
     ns.removeObserver(this, NOTIF_LEAGUE_JOINED);
-
-    console.log('leagueTable unmounted');
   }
 
   loadLeagues(uid) {
@@ -86,7 +84,6 @@ class LeagueTable extends Component {
 
   onSignIn(newUser) {
     var uid = newUser !== null ? newUser : null;
-    console.log('notif user: ' + newUser);
 
     this.setState({
       isAuthenticated: true,

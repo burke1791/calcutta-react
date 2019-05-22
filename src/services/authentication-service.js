@@ -41,9 +41,6 @@ class AuthenticationService {
         // var errorCode = error.code;
         var errorMessage = error.message;
         var errorCode = error.code;
-  
-        console.log('sign in error: ' + errorMessage);
-        console.log('sign in error code: ' + errorCode);
 
         reject(error);
       });
@@ -101,8 +98,6 @@ class AuthenticationService {
         auth.sendPasswordResetEmail(userEmail).then(() => {
           resolve();
         }).catch(function(error) {
-          console.log('error sending password reset email');
-          console.log(error);
           reject(error);
         });
       } else {
@@ -124,7 +119,6 @@ class AuthenticationService {
         });
         ns.postNotification(NOTIF_SIGNIN, user.uid);
       } else {
-        console.log('user is signed out');
         ns.postNotification(NOTIF_SIGNOUT);
         thisApp.setState({
           authenticatedUser: {},

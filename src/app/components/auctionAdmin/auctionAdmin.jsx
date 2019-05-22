@@ -72,7 +72,7 @@ class AuctionAdmin extends Component {
     var self = this;
     ds.getTeamCodes(this.state.leagueId).then(function(teams) {
       var codes = Object.keys(teams);
-      console.log(codes);
+
       self.setState({teamCodes: codes});
     });
   }
@@ -108,7 +108,7 @@ class AuctionAdmin extends Component {
         if (oldCode === '') {
           alert('All Items Have Been Auctioned Off');
         } else {
-          console.log('old code: ' + oldCode);
+
           self.loadNewItem(oldCode);
         }
       }, function(error) {
@@ -121,12 +121,11 @@ class AuctionAdmin extends Component {
   loadNewItem(oldCode) {
     var self = this;
     var codes = this.state.teamCodes;
-    console.log(this.state.auctionStarted);
+
     if (!this.state.auctionStarted) {
       alert('Auction Is Not Active');
     } else if (!oldCode) {
       // called when Start Auction is pressed
-      console.log('supposed to be from a fresh auction');
       if (this.state.randomize) {
         var newCode = codes[Math.floor(Math.random() * codes.length)];
       } else {
@@ -155,7 +154,6 @@ class AuctionAdmin extends Component {
               interval = this.state.interval;
             }
             ds.loadNextItem(newCode, this.state.leagueId, interval).then((test) => {
-              console.log('test return: ' + test);
               self.setState({teamCodes: codes});
             });
             break;

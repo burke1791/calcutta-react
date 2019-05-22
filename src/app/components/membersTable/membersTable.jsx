@@ -146,7 +146,6 @@ class MembersTable extends Component {
     // TODO: write logic to display them in order of rank
     var numMembers = this.state.memberRanks.length;
     var useTaxFlag = this.state.prizePool['use-tax'] !== undefined ? true : false;
-    console.log(this.state.members);
     if (numMembers > 0) {
       const list = this.state.memberRanks.map((mem, index) => {
         var buyInVal = this.calculateBuyIn(mem);

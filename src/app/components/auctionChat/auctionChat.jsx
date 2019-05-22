@@ -36,7 +36,6 @@ class AuctionChat extends Component {
   }
 
   newMessage(newData) {
-    console.log('newData: ' + newData);
     var messages = newData;
     var keys = [];
     if (messages != null && typeof(messages) != 'undefined') {

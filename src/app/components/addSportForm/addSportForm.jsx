@@ -42,9 +42,6 @@ class AddSportForm extends Component {
     var teams = this.state.teams;
     var length = teams.length;
 
-    console.log('teams: ' + teams);
-    console.log('length: ' + length);
-
     teams.push('team' + length);
 
     this.setState({teams: teams});
@@ -55,8 +52,6 @@ class AddSportForm extends Component {
       const list = this.state.teams.map((team, i) => {
         var properties = this.state.properties;
         var numProps = properties.length;
-
-        console.log('team: ' + team);
 
         return (
           <AddSportTeam id={team.key} key={i} properties={properties} />

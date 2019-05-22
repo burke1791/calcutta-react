@@ -61,7 +61,6 @@ class AuctionClock extends Component {
   synchronizeClockWithServer() {
     var self = this;
     ds.getClientServerTimeOffset().then(offset => {
-      console.log('offset: ' + offset);
       self.setState({
         offset: offset,
         synchronizedWithServer: true
@@ -87,8 +86,6 @@ class AuctionClock extends Component {
     let endTime = newData['current-item']['end-time'] + (this.props.interval * 1000);
     let currentTime = new Date().getTime();
 
-    console.log('currentTime: ' + currentTime);
-
     if (this.state.currentTeam !== code && !itemComplete) {
       clearInterval(this.timerID);
       this.setState({
@@ -98,8 +95,6 @@ class AuctionClock extends Component {
         endTime: endTime
       });
       this.startClock();
-      console.log('endTime: ' + endTime);
-      console.log('currentTime: ' + currentTime);
     } else {
       if (itemComplete) {
         clearInterval(this.timerID);
@@ -122,8 +117,6 @@ class AuctionClock extends Component {
   }
 
   checkClockSynchronization(timeRemaining) {
-    console.log('timeRemaining: ' + timeRemaining);
-    console.log('interval: ' + this.props.interval);
     if (Math.abs(timeRemaining - this.props.interval) > 1) {
       this.resetClockSynchronizationStateVariables();
     }

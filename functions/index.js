@@ -76,9 +76,6 @@ exports.updateBTTSeedsInLeaguesNode = functions.database.ref('/btt-seeds/{year}/
       var leagueId = child.key;
       var isActive = child.val();
 
-      console.log(leagueId);
-      console.log(isActive);
-
       if (isActive) {
         let seedValueUpdate;
         if (newTeamId === 0) {
@@ -219,8 +216,6 @@ exports.setTeamNamesForNewLeague = functions.database.ref('/leagues/{pushId}').o
     return admin.database().ref('/' + tournamentId + '-seeds/' + year).once('value').then(seedsSnapshot => {
       return seedsSnapshot.val();
     }).then((seeds) => {
-      console.log('seeds: ');
-      console.log(seeds);
       teams.forEach(child => {
         const teamId = child.key;
 
@@ -456,8 +451,7 @@ exports.updateLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/g
         } else {
           payoutRate = 0;
         }
-        console.log('gameId: ' + gameId);
-        console.log('payoutRate: ' + payoutRate);
+
         var returnValue = total * payoutRate;
 
         if (returnValue > 0) {
@@ -535,8 +529,7 @@ exports.updateLeaguePayoutValues = functions.database.ref('/leagues/{leagueId}/g
         } else {
           payoutRate = 0;
         }
-        console.log('gameId: ' + gameId);
-        console.log('payoutRate: ' + payoutRate);
+
         var returnValue = total * payoutRate;
 
         if (returnValue > 0) {

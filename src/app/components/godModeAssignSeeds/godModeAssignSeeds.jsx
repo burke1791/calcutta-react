@@ -83,7 +83,6 @@ class GodModeAssignSeeds extends Component {
   resetSeeds(event) {
     event.preventDefault();
     if (!(this.state.tournamentId == '') || !(this.state.year == '')) {
-      console.log('calling reset seeds');
       ds.resetSeedsByTournamentIdAndYear(this.state.tournamentId, this.state.year);
     }
     this.setState({

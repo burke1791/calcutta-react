@@ -26,14 +26,10 @@ class ChatInput extends Component {
   sendMessage(event) {
     event.preventDefault();
 
-    console.log('send btn pressed');
-    console.log(this.state.uid);
-
     var self = this;
 
     if (this.state.uid === '' || this.state.uid === undefined || this.state.uid === null) {
       this.setState({uid: authService.getUser().uid});
-      console.log('uid: ' + this.state.uid);
     }
     
     if (this.state.uid !== '' && this.state.uid !== undefined && this.state.uid !== null) {

@@ -84,7 +84,6 @@ class AuctionBid extends Component {
         });
       }
     }, function(error) {
-      console.log('fetchLeagueSettings error');
       console.log(error);
     });
   }
@@ -159,7 +158,6 @@ class AuctionBid extends Component {
   newAuctionData(newData) {
     var currentBid = newData['current-item']['current-bid'];
     var itemComplete = newData['current-item']['complete'];
-    console.log('item complete: ' + itemComplete);
 
     // var minBid = Number(currentBid) <= Number(this.state.minBidAllowed) ? this.state.minBidAllowed : Number(currentBid) + 1;
     var minBid = Number(currentBid) + 1;
@@ -190,8 +188,6 @@ class AuctionBid extends Component {
       disabled = true;
       bidBtnDisabled = true;
     }
-
-    console.log('disabled: ' + disabled == true);
 
     return (
       <div className='card justify-content-center bid-actions mx-2'>

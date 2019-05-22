@@ -34,7 +34,6 @@ class TeamTable extends Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.match.params.uid !== prevProps.match.params.uid) {
-      console.log('team table updated');
       this.loadTeams();
     }
   }

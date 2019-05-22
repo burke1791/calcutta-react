@@ -169,8 +169,6 @@ class PayoutSettingsTable extends Component {
     if (Object.keys(this.state.payoutSettings)) {
       const list = Object.keys(this.state.payoutSettings).map((key, ind) => {
         var basicPayoutCode = key.match(/[A-Z]{1}/g);
-        console.log('payout code: ');
-        console.log(basicPayoutCode);
         
         var roundNum = key.match(/[0-9]+/g);
         var payoutCategory;
