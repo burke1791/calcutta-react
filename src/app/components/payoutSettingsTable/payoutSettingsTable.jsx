@@ -216,7 +216,7 @@ class PayoutSettingsTable extends Component {
     
     if (this.state.tournamentId === 'btt') {
       return (
-        <table className='table table-striped table-sm'>
+        <table className='table table-striped table-sm my-2'>
           <thead>
             <tr>
               <th>Category</th>

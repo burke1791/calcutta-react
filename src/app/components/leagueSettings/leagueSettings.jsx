@@ -234,8 +234,8 @@ class LeagueSettings extends Component {
             <div className='col-6'>
               <div className='my-1'>
                 <label><strong>Minimum Bid Amount</strong></label>
-                <div className='input-group'>
-                  <div className='input-group-prepend'>
+                <div className='input-group leagueSetting'>
+                  <div className='input-group-prepend leagueSettingPrepend'>
                     <span className='input-group-text'>$</span>
                   </div>
                   <input type='number' className='form-control' value={this.state.minBid} onChange={this.onMinBidChange} />
@@ -243,8 +243,8 @@ class LeagueSettings extends Component {
               </div>
               <div className='my-1'>
                 <label><strong>Minimum Buy In</strong></label>
-                <div className='input-group'>
-                  <div className='input-group-prepend'>
+                <div className='input-group leagueSetting'>
+                  <div className='input-group-prepend leagueSettingPrepend'>
                     <span className='input-group-text'>$</span>
                   </div>
                   <input type='number' className='form-control' value={this.state.minBuyIn} onChange={this.onMinBuyInChange} />
@@ -253,8 +253,8 @@ class LeagueSettings extends Component {
               <div className='my-1'>
                 <label><strong>Maximum Buy In</strong></label>
                 <p>(Enter $0 for unlimited)</p>
-                <div className='input-group'>
-                  <div className='input-group-prepend'>
+                <div className='input-group leagueSetting'>
+                  <div className='input-group-prepend leagueSettingPrepend'>
                     <span className='input-group-text'>$</span>
                   </div>
                   <input type='number' className='form-control' value={this.state.maxBuyIn} onChange={this.onMaxBuyInChange} />
@@ -273,15 +273,15 @@ class LeagueSettings extends Component {
           <div className='row justify-content-center'>
             <div className='col-6 my-1'>
               <label><strong>Use Tax</strong></label>
-              <div className='input-group'>
-                <div className='input-group-prepend'>
+              <div className='input-group leagueSetting'>
+                <div className='input-group-prepend leagueSettingPrepend'>
                   <span className='input-group-text'>$</span>
                 </div>
                 <input type='number' className='form-control' value={this.state.useTax} onChange={this.onUseTaxChange} />
               </div>
               <label><strong>Tax Rate</strong></label>
-              <div className='input-group'>
-                <div className='input-group-prepend'>
+              <div className='input-group leagueSetting'>
+                <div className='input-group-prepend leagueSettingPrepend'>
                   <span className='input-group-text'>$</span>
                 </div>
                 <input type='number' className='form-control' value={this.state.taxRate} onChange={this.onTaxRateChange} />
